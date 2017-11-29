@@ -9,6 +9,14 @@ public class Task {
     private String contacts;
     private boolean active;
 
+    public Task(String name, String info, Calendar dateTime, String contacts){
+        this.name = name;
+        this.info = info;
+        this.dateTime = dateTime;
+        this.contacts = contacts;
+        this.active = true;
+    }
+
     public String getName() {
         return name;
     }
@@ -47,5 +55,15 @@ public class Task {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return "Task\n" +
+                "Name: " + name + "\n" +
+                "Info: " + info + "\n" +
+                "DateNotify: " + dateTime.toString() + "\n" +
+                "Contacts: " + contacts + "\n" +
+                "Is Active: " + active;
     }
 }
