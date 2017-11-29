@@ -1,4 +1,6 @@
-import model.Task;
+package src;
+
+import src.model.Task;
 
 import java.util.Calendar;
 
