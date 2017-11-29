@@ -62,7 +62,7 @@ public class Task {
         return "Task\n" +
                 "Name: " + name + "\n" +
                 "Info: " + info + "\n" +
-                "DateNotify: " + dateTime.toString() + "\n" +
+                "DateNotify: " + dateTime.getTime() + "\n" +
                 "Contacts: " + contacts + "\n" +
                 "Is Active: " + active;
     }
