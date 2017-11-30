@@ -10,6 +10,14 @@ public class Task implements Serializable{
     private String contacts;
     private boolean active;
 
+    public Task(){
+        name = null;
+        info = null;
+        dateTime = null;
+        contacts = null;
+        active = false;
+    }
+
     public Task(String name, String info, Calendar dateTime, String contacts){
         this.name = name;
         this.info = info;
