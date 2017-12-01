@@ -1,11 +1,12 @@
 package src;
 
+import src.controller.Controller;
 import src.controller.TaskList;
 import src.model.Task;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -21,7 +22,16 @@ public class Main {
         TaskList taskList = new TaskList(new ArrayList<>());
         taskList.addTask(task);
         taskList.addTask(task2);
+//        taskList.deleteTask(task);
 
-        taskList.deleteTask(task);
+        try {
+            Controller.writeTaskList(taskList);
+            TaskList newTaskList = Controller.readTaskList();
+        } catch (IOException e) {
+            System.out.print("Err!!");
+        } catch (ClassNotFoundException e) {
+            System.out.print("Err2!!");
+        }
+
     }
 }
