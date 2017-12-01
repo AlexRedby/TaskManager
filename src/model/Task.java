@@ -1,8 +1,9 @@
 package src.model;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Task {
+public class Task implements Serializable{
     private String name;
     private String info;
     private Calendar dateTime;
@@ -65,5 +66,27 @@ public class Task {
                 "DateNotify: " + dateTime.getTime() + "\n" +
                 "Contacts: " + contacts + "\n" +
                 "Is Active: " + active;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Task)) return false;
+
+        Task task = (Task) o;
+
+        if (name != null ? !name.equals(task.name) : task.name != null) return false;
+        if (info != null ? !info.equals(task.info) : task.info != null) return false;
+        if (dateTime != null ? !dateTime.equals(task.dateTime) : task.dateTime != null) return false;
+        return contacts != null ? contacts.equals(task.contacts) : task.contacts == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (info != null ? info.hashCode() : 0);
+        result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
+        result = 31 * result + (contacts != null ? contacts.hashCode() : 0);
+        return result;
     }
 }

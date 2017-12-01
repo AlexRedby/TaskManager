@@ -1,10 +1,15 @@
 package src.controller;
 
 import src.model.Task;
+
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class TaskList {
+
+public class TaskList implements Serializable {
     private List<Task> taskList;
 
     public TaskList(List<Task> taskList){
@@ -13,6 +18,15 @@ public class TaskList {
 
     public List<Task> getTaskList() {
         return taskList;
+    }
+    public List<Task> getTaskList(boolean active) {
+        List<Task> newTaskList = new ArrayList<>();
+        for ( Task task: taskList){
+            if (task.isActive() == active){
+                newTaskList.add(task);
+            }
+        }
+        return newTaskList;
     }
 
     public void setTaskList(List<Task> taskList) {
@@ -34,4 +48,10 @@ public class TaskList {
         task.setContacts(contacts);
         task.setActive(active);
     }
+
+    public boolean isExist(Task task){
+        return taskList.contains(task);
+    }
+
+
 }
