@@ -2,8 +2,9 @@ package src.model;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Comparator;
 
-public class Task implements Serializable{
+public class Task implements Serializable, Comparable<Task>{
     private String name;
     private String info;
     private Calendar dateTime;
@@ -96,5 +97,19 @@ public class Task implements Serializable{
         result = 31 * result + (dateTime != null ? dateTime.hashCode() : 0);
         result = 31 * result + (contacts != null ? contacts.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(Task o) {
+        if (this.getDateTime().before(o.getDateTime()) ) return -1;
+        if (this.getDateTime().after(o.getDateTime()) ) return 1;
+        return 0;
+    }
+
+    public static class dateTimeComparator implements Comparator<Task> {
+        @Override
+        public int compare(Task o1, Task o2) {
+            return o1.compareTo(o2);
+        }
     }
 }

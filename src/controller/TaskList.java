@@ -4,16 +4,14 @@ import src.model.Task;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 
 public class TaskList implements Serializable {
     private List<Task> taskList;
 
     public TaskList(){
-        this(new ArrayList<Task>());
+        this.taskList = new ArrayList<Task>();
     }
 
     public TaskList(List<Task> taskList){
@@ -58,6 +56,12 @@ public class TaskList implements Serializable {
     //Ставит задачу в неактивное состояние
     public void complete(Task task){
         editTask(task, task.getName(), task.getInfo(), task.getDateTime(), task.getContacts(), false);
+    }
+
+    public Task getActualTask(){
+        List<Task> tl = this.getTaskList(true);
+        tl.sort(new Task.dateTimeComparator());
+        return tl.get(0);
     }
 
     public void editTask(Task task, String name, String info, Calendar dateTime, String contacts, boolean active){
