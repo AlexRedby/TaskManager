@@ -1,10 +1,11 @@
 package src;
 
-import src.controller.Controller;
 import src.controller.TaskList;
 import src.model.Task;
+import src.view.MainFrame;
 
-import java.io.*;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -34,14 +35,15 @@ public class Main {
         System.out.println();
         System.out.print(taskList.getActualTask());
 
-        try {
-            Controller.writeTaskList(taskList);
-            TaskList newTaskList = Controller.readTaskList();
-        } catch (IOException e) {
-            System.out.print("Err!!");
-        } catch (ClassNotFoundException e) {
-            System.out.print("Err2!!");
-        }
+//        try {
+//            Controller.writeTaskList(taskList);
+//            TaskList newTaskList = Controller.readTaskList();
+//        } catch (IOException e) {
+//            System.out.print("Err!!");
+//        } catch (ClassNotFoundException e) {
+//            System.out.print("Err2!!");
+//        }
 
+        JFrame frame = new MainFrame(taskList);
     }
 }

@@ -60,6 +60,9 @@ public class TaskList implements Serializable {
 
     public Task getActualTask(){
         List<Task> tl = this.getTaskList(true);
+        if (tl.size() == 0){ // Возвращает null если список задач пуст
+            return null;
+        }
         tl.sort(new Task.dateTimeComparator());
         return tl.get(0);
     }

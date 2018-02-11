@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.util.Calendar;
 
 public class AlarmThread implements Runnable {
-    TaskList taskList;
+    private TaskList taskList;
 
     public AlarmThread(TaskList taskList){
         this.taskList = taskList;
@@ -18,7 +18,8 @@ public class AlarmThread implements Runnable {
         while(true){
             try {
                 Task task = taskList.getActualTask();
-                if(task.getDateTime().compareTo(Calendar.getInstance()) <= 0) {
+                // Когда список задач пуст теперь не вылетает исключение
+                if ((task != null) && (task.getDateTime().compareTo(Calendar.getInstance()) <= 0)) {
 
                     JFrame frame = new AlarmFrame(task, taskList);
                     while (frame.isVisible())
