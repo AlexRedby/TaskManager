@@ -19,12 +19,12 @@ public class Task implements Serializable, Comparable<Task>{
         active = false;
     }
 
-    public Task(String name, String info, Calendar dateTime, String contacts){
+    public Task(String name, String info, Calendar dateTime, String contacts, Boolean active){
         this.name = name;
         this.info = info;
         this.dateTime = dateTime;
         this.contacts = contacts;
-        this.active = true;
+        this.active = active;
     }
 
     public String getName() {

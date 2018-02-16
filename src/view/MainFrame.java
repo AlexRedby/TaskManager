@@ -4,8 +4,6 @@ import src.controller.TaskList;
 import src.model.Task;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 
 public class MainFrame extends JFrame{
@@ -68,12 +66,9 @@ public class MainFrame extends JFrame{
             taskList.deleteTask(selectedTask);
             ((DefaultListModel)list1.getModel()).remove(selectedIdx);
         });
+        btAdd.addActionListener(event -> new AddTaskFrame(taskList));
+        btEdit.addActionListener(event -> new AddTaskFrame(taskList, list1.getSelectedValue()));
 
-        // TODO: 11.02.2018 Добавить действие на Изменение/Добавление таска (сделать форму)
-//        btEdit.addActionListener(event -> {
-//            Task selectedTask = list1.getSelectedValue();
-//            JFrame frame = new EditTaskFrame(selectedTask);
-//        });
 
         // TODO: 11.02.2018 Как сделать, чтобы список задач обновлялся без нажатия на кнопки (и надо ли это?)
 
