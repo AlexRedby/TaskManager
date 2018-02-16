@@ -4,7 +4,12 @@ import src.controller.TaskList;
 import src.model.Task;
 
 import javax.swing.*;
+import javax.swing.text.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
 
 public class AlarmFrame extends JFrame{
     private Task task;
@@ -19,15 +24,43 @@ public class AlarmFrame extends JFrame{
     private JRadioButton rb30Minute;
     private JRadioButton rbHour;
     private JRadioButton rbDay;
+    private JRadioButton rbManually;
     private ButtonGroup radioButtonGroup;
 
     private JLabel lTaskInfo;
+    private JFormattedTextField formattedTextField;
 
-    public AlarmFrame(Task task, TaskList taskList){
+    public AlarmFrame(Task task, TaskList taskList) {
         this.task = task;
         this.taskList = taskList;
         groupRadioButton();
         showTask();
+
+        //Добавляем слушателей на RadioButton
+        Enumeration<AbstractButton> buttons = radioButtonGroup.getElements();
+        while (buttons.hasMoreElements()) {
+            AbstractButton b = buttons.nextElement();
+            if(b != rbManually)
+                b.addActionListener(event -> {
+                        formattedTextField.setEnabled(false);
+                });
+            else
+                b.addActionListener(event -> {
+                    formattedTextField.setEnabled(true);
+                });
+        }
+
+        //TODO: Нужно придумать что-то получше для ввода даты, может JDataPicker(нужно скачивать)
+        //Устанавливаем MaskFormatter на FormattedTextField
+        MaskFormatter mf = null;
+        try {
+            mf = new MaskFormatter("##-##-#### ##:##");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        mf.setPlaceholderCharacter('_');
+        DefaultFormatterFactory dff = new DefaultFormatterFactory(mf);
+        formattedTextField.setFormatterFactory(dff);
 
         //Завершаем Task
         btCompleteTask.addActionListener(event -> {
@@ -37,6 +70,8 @@ public class AlarmFrame extends JFrame{
 
         //Откладываем Task
         btPostponeTask.addActionListener(event -> {
+            boolean isCorrect = true;
+            Calendar newDate = Calendar.getInstance();
             int minutes = 0;
             if(rb5Minute.isSelected())
                 minutes = 5;
@@ -48,12 +83,27 @@ public class AlarmFrame extends JFrame{
                 minutes = 60;
             else if(rbDay.isSelected())
                 minutes = 1440;
-
-            Calendar newDate = Calendar.getInstance();
-            newDate.add(Calendar.MINUTE, minutes);
-
-            taskList.postpone(task, newDate);
-            dispose();
+            else if(rbManually.isSelected()) {
+                Date date = null;
+                try {
+                    date = new SimpleDateFormat("dd-MM-yyyy HH:mm")
+                            .parse((String)formattedTextField.getValue());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                //Сравниваем введённое время с текущим
+                if(new Date().before(date)){
+                    JOptionPane.showMessageDialog(this,
+                            "Невозможно отложить задачу в прошлое!");
+                    isCorrect = false;
+                }
+                newDate.setTime(date);
+            }
+            if(isCorrect) {
+                newDate.add(Calendar.MINUTE, minutes);
+                taskList.postpone(task, newDate);
+                dispose();
+            }
         });
 
         setContentPane(panelMain);
@@ -70,6 +120,7 @@ public class AlarmFrame extends JFrame{
         radioButtonGroup.add(rb30Minute);
         radioButtonGroup.add(rbHour);
         radioButtonGroup.add(rbDay);
+        radioButtonGroup.add(rbManually);
     }
 
     private void showTask(){

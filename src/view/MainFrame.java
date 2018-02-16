@@ -6,6 +6,7 @@ import src.model.Task;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 
 public class MainFrame extends JFrame{
     private JPanel panelMain;
@@ -25,6 +26,23 @@ public class MainFrame extends JFrame{
         this.taskList = taskList;
         showTaskList();
 
+        //Чтобы активные задачи отличались от не активных
+        list1.setCellRenderer(new DefaultListCellRenderer () {
+            @Override
+            public Component getListCellRendererComponent(JList list,
+                                                          Object value, int index, boolean isSelected,
+                                                          boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index,
+                        isSelected, cellHasFocus);
+
+                Task task = (Task) value;
+                if (!task.isActive()) {
+                    setBackground(Color.GRAY);
+                }
+                return this;
+            }
+        });
+
         // Задаем актовность кнопок
         btDelete.setEnabled(false);
         btEdit.setEnabled(false);
@@ -43,8 +61,19 @@ public class MainFrame extends JFrame{
         btShowNotActive.addActionListener(event -> showList(false) );
         btShowAll.addActionListener(event -> showList());
 
-        // TODO: 11.02.2018 Добавить действие на удаление таска
+        //Удаление Task
+        btDelete.addActionListener(event -> {
+            Task selectedTask = list1.getSelectedValue();
+            int selectedIdx = list1.getSelectedIndex();
+            taskList.deleteTask(selectedTask);
+            ((DefaultListModel)list1.getModel()).remove(selectedIdx);
+        });
+
         // TODO: 11.02.2018 Добавить действие на Изменение/Добавление таска (сделать форму)
+//        btEdit.addActionListener(event -> {
+//            Task selectedTask = list1.getSelectedValue();
+//            JFrame frame = new EditTaskFrame(selectedTask);
+//        });
 
         // TODO: 11.02.2018 Как сделать, чтобы список задач обновлялся без нажатия на кнопки (и надо ли это?)
 
@@ -67,6 +96,9 @@ public class MainFrame extends JFrame{
             dfm.addElement(taskList.getTaskList().get(i));
         }
         list1.setModel(dfm);
+
+        btDelete.setEnabled(false);
+        btEdit.setEnabled(false);
     }
 
     private void showList(boolean active){
@@ -76,6 +108,8 @@ public class MainFrame extends JFrame{
         }
         list1.setModel(dfm);
 
+        btDelete.setEnabled(false);
+        btEdit.setEnabled(false);
     }
 
 }

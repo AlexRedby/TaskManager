@@ -79,7 +79,13 @@ public class Task implements Serializable, Comparable<Task>{
 
 // Переделала toString, для более лаконичной визуализации в формочке
     public String toString() {
-        return ""
+        String str = null;
+
+        if(active) str = "✓";
+        else str = "x";
+
+        return str
+                + "  "
                 + name
                 + " ["
                 + info
