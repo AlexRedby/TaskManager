@@ -68,21 +68,12 @@ public class Task implements Serializable, Comparable<Task>{
     }
 
     @Override
-//    public String toString() {
-//        return "Task \n" +
-//                "Name: " + name + " \n" +
-//                "Info: " + info + " \n" +
-//                "DateNotify: " + dateTime.getTime() + " \n" +
-//                "Contacts: " + contacts + " \n" +
-//                "Is Active: " + active;
-//    }
-
-// Переделала toString, для более лаконичной визуализации в формочке
+    // Переделала toString, для более лаконичной визуализации в формочке
     public String toString() {
         String str = null;
 
-        if(active) str = "✓";
-        else str = "x";
+        if(!active) str = "✓";
+        else str = "   ";
 
         return str
                 + "  "

@@ -54,7 +54,7 @@ public class AlarmFrame extends JFrame{
         //Устанавливаем MaskFormatter на FormattedTextField
         MaskFormatter mf = null;
         try {
-            mf = new MaskFormatter("##-##-#### ##:##");
+            mf = new MaskFormatter("##/##/####   ##:##");
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -86,13 +86,14 @@ public class AlarmFrame extends JFrame{
             else if(rbManually.isSelected()) {
                 Date date = null;
                 try {
-                    date = new SimpleDateFormat("dd-MM-yyyy HH:mm")
+                    formattedTextField.commitEdit();
+                    date = new SimpleDateFormat("dd/MM/yyyy   HH:mm")
                             .parse((String)formattedTextField.getValue());
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
                 //Сравниваем введённое время с текущим
-                if(new Date().before(date)){
+                if(new Date().after(date)){
                     JOptionPane.showMessageDialog(this,
                             "Невозможно отложить задачу в прошлое!");
                     isCorrect = false;

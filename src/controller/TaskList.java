@@ -1,8 +1,10 @@
 package src.controller;
 
 import src.model.Task;
+import src.view.MainFrame;
 
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -11,7 +13,15 @@ public class TaskList implements Serializable {
     private List<Task> taskList;
 
     public TaskList(){
-        this.taskList = new ArrayList<Task>();
+        //TODO: Что-то мне это не нравится(как-то переделать?)
+        try {
+            this.taskList = Controller.readTaskList().getTaskList();
+        } catch (IOException e) {
+            //e.printStackTrace();
+            this.taskList = new ArrayList<Task>();
+        } catch (ClassNotFoundException e) {
+            this.taskList = new ArrayList<Task>();
+        }
     }
 
     public TaskList(List<Task> taskList){
@@ -42,10 +52,14 @@ public class TaskList implements Serializable {
 
     public void addTask(Task task){
         taskList.add(task);
+        
+        update();
     }
 
     public void deleteTask(Task task) {
         taskList.remove(task);
+        
+        update();
     }
 
     //Откладывание задачи
@@ -73,9 +87,24 @@ public class TaskList implements Serializable {
         task.setDateTime(dateTime);
         task.setContacts(contacts);
         task.setActive(active);
+        
+        update();
     }
 
     public boolean isExist(Task task){
         return taskList.contains(task);
+    }
+    
+    //По-хоршему нужен интерфейс
+    //transient - чтобы не сериализовался
+    private transient MainFrame mainFrame;
+
+    public void setChangeListener(MainFrame mainFrame){
+        this.mainFrame = mainFrame;
+    }
+
+    private void update(){
+        if(mainFrame != null)
+            mainFrame.update();
     }
 }

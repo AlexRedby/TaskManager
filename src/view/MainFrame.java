@@ -1,10 +1,14 @@
 package src.view;
 
+import src.controller.Controller;
 import src.controller.TaskList;
 import src.model.Task;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
 
 public class MainFrame extends JFrame{
     private JPanel panelMain;
@@ -20,8 +24,47 @@ public class MainFrame extends JFrame{
 
     private TaskList taskList;
 
+    //<0 - Неактивные
+    //0  - All
+    //>0 - Активные
+    private int currentOutput;
+
     public MainFrame(TaskList taskList){
+        //TODO: Добавить запись в файл при закрытии(может быть спрашивать пользователя?)
+        currentOutput = 0;
         this.taskList = taskList;
+
+        //Действия по закрытию приложения
+        //Сохранение
+        this.addWindowListener(new WindowListener() {
+            public void windowActivated(WindowEvent event) { }
+            public void windowClosed(WindowEvent event) { }
+            public void windowClosing(WindowEvent event) {
+                Object[] options = {"Да", "Нет!"};
+                int n = JOptionPane
+                        .showOptionDialog(event.getWindow(), "Сохранить всё?",
+                                "Сохранение", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE, null, options,
+                                options[0]);
+                if (n == 0) {
+                    try {
+                        //TODO: Запись не работает
+                        Controller.writeTaskList(taskList);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.exit(0);
+            }
+            public void windowDeactivated(WindowEvent event) { }
+            public void windowDeiconified(WindowEvent event) { }
+            public void windowIconified(WindowEvent event) { }
+            public void windowOpened(WindowEvent event) { }
+        });
+
+        //Чтобы узнавать об изменениях списка задач
+        taskList.setChangeListener(this);
+
         showTaskList();
 
         //Чтобы активные задачи отличались от не активных
@@ -69,9 +112,6 @@ public class MainFrame extends JFrame{
         btAdd.addActionListener(event -> new AddTaskFrame(taskList));
         btEdit.addActionListener(event -> new AddTaskFrame(taskList, list1.getSelectedValue()));
 
-
-        // TODO: 11.02.2018 Как сделать, чтобы список задач обновлялся без нажатия на кнопки (и надо ли это?)
-
     }
 
     private void showTaskList(){
@@ -94,6 +134,15 @@ public class MainFrame extends JFrame{
 
         btDelete.setEnabled(false);
         btEdit.setEnabled(false);
+    }
+
+    public void update(){
+        if(currentOutput == 0)
+            showList();
+        else if(currentOutput > 0)
+            showList(true);
+        else
+            showList(false);
     }
 
     private void showList(boolean active){
