@@ -22,6 +22,8 @@ public class TaskList implements Serializable {
         } catch (ClassNotFoundException e) {
             this.taskList = new ArrayList<Task>();
         }
+
+        startAlarm();
     }
 
     public TaskList(List<Task> taskList){
@@ -92,7 +94,15 @@ public class TaskList implements Serializable {
     }
 
     public boolean isExist(Task task){
-        return taskList.contains(task);
+        if(taskList.contains(task))
+            return true;
+        for(Task currentTask : taskList)
+            if(currentTask.getDateTime().equals(task.getDateTime())
+                    && currentTask.getName().equals(task.getName())
+                    && currentTask.getInfo().equals(task.getInfo())){
+                return true;
+            }
+        return false;
     }
     
     //По-хоршему нужен интерфейс

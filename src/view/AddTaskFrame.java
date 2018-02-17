@@ -8,6 +8,7 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
@@ -95,11 +96,21 @@ public class AddTaskFrame extends JFrame{
             active = false;
         }
 
-        Task task = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
-        taskList.addTask(task);
+        try {
+            Task task = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
+            //Если такой задачи не сущетвует, то добавляем
+            if(!taskList.isExist(task)) {
+                taskList.addTask(task);
 
-        dispose();
-
+                dispose();
+            }
+            //Иначе сообщение с оповищением
+            else JOptionPane.showMessageDialog(this,
+                    "Такая задача уже существует. Изменити название, описание или дату.");
+        }
+        catch (DateTimeException e){
+            e.printStackTrace();
+        }
     }
 
     private void formatDateTime(Calendar dateTime) throws ParseException{
@@ -116,22 +127,7 @@ public class AddTaskFrame extends JFrame{
         ftfDate.setText(dataTimeString.toString());
     }
 
-    private Calendar getDateTime(){
-        /*try {
-            ftfDate.commitEdit();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        String s = (String) ftfDate.getValue();
-        String[] date = s.split("/");
-        String[] time = date[2].split("   ")[1].split(":");
-        int DD = Integer.parseInt(date[0]);
-        int MM = Integer.parseInt(date[1]);
-        int YYYY = Integer.parseInt(date[2].split("   ")[0]);
-
-        int hh = Integer.parseInt(time[0]);
-        int mm = Integer.parseInt(time[1]);
-        Calendar dateTime = new GregorianCalendar(YYYY, MM, DD, hh, mm);*/
+    private Calendar getDateTime() throws DateTimeException{
         Date date = null;
         try {
             ftfDate.commitEdit();
@@ -140,6 +136,14 @@ public class AddTaskFrame extends JFrame{
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        //Сравниваем введённое время с текущим
+        if(new Date().after(date)){
+            JOptionPane.showMessageDialog(this,
+                    "Невозможно отложить задачу в прошлое!");
+            throw new DateTimeException("Ошибка с датой!");
+        }
+
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(date);
         return calendar;

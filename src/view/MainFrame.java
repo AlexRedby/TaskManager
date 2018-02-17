@@ -48,7 +48,6 @@ public class MainFrame extends JFrame{
                                 options[0]);
                 if (n == 0) {
                     try {
-                        //TODO: Запись не работает
                         Controller.writeTaskList(taskList);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -104,10 +103,18 @@ public class MainFrame extends JFrame{
 
         //Удаление Task
         btDelete.addActionListener(event -> {
-            Task selectedTask = list1.getSelectedValue();
-            int selectedIdx = list1.getSelectedIndex();
-            taskList.deleteTask(selectedTask);
-            ((DefaultListModel)list1.getModel()).remove(selectedIdx);
+            Object[] options = {"Да", "Нет!"};
+            int n = JOptionPane
+                    .showOptionDialog(this, "Вы хотите удалить выбранную задачу?",
+                            "Удаление", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, options,
+                            options[0]);
+            if (n == 0) {
+                Task selectedTask = list1.getSelectedValue();
+                int selectedIdx = list1.getSelectedIndex();
+                taskList.deleteTask(selectedTask);
+                ((DefaultListModel)list1.getModel()).remove(selectedIdx);
+            }
         });
         btAdd.addActionListener(event -> new AddTaskFrame(taskList));
         btEdit.addActionListener(event -> new AddTaskFrame(taskList, list1.getSelectedValue()));
