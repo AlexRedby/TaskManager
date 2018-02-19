@@ -6,7 +6,9 @@
       <xy x="20" y="24" width="500" height="399"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border type="empty">
+      <size top="5" left="5" bottom="5" right="5"/>
+    </border>
     <children>
       <component id="3a839" class="javax.swing.JButton" binding="btCancel">
         <constraints>
