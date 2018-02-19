@@ -47,8 +47,9 @@ public class AddTaskFrame extends JFrame{
         btCancel.addActionListener(event -> dispose());
         btSaveTask.addActionListener(event -> addTask());
         try {
-        formatDateTime(Calendar.getInstance());
-
+            Calendar dateTime = Calendar.getInstance();
+            dateTime.add(Calendar.MINUTE, 5);
+            formatDateTime(dateTime);
         }
         catch (ParseException e ) {
         }
@@ -89,10 +90,9 @@ public class AddTaskFrame extends JFrame{
 
     private void addTask(){
         boolean active;
-        if(rbActive.isSelected()){
+        if(rbActive.isSelected()) {
             active = true;
-        }
-        else {
+        } else {
             active = false;
         }
 
