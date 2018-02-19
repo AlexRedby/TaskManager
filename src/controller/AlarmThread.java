@@ -4,32 +4,37 @@ import src.model.Task;
 import src.view.AlarmFrame;
 
 import javax.swing.*;
-import java.util.Calendar;
+import java.util.*;
 
-public class AlarmThread implements Runnable {
+public class AlarmThread extends TimerTask {
     private TaskList taskList;
+    Map<Task, JFrame> editingTaskList;
 
-    public AlarmThread(TaskList taskList){
+    public AlarmThread(TaskList taskList) {
         this.taskList = taskList;
+        editingTaskList = new HashMap<>();
     }
 
     @Override
     public void run() {
-        while(true){
-            try {
-                Task task = taskList.getActualTask();
-                // Когда список задач пуст теперь не вылетает исключение
-                if ((task != null) && (task.getDateTime().compareTo(Calendar.getInstance()) <= 0)) {
+        List<Task> activeTaskList = taskList.getTaskList(true);
 
-                    JFrame frame = new AlarmFrame(task, taskList);
-                    while (frame.isVisible())
-                        Thread.sleep(1000);
+        for (Task currentTask : activeTaskList) {
+            if (currentTask.getDateTime().before(Calendar.getInstance())) {
+                JFrame foundFrame = editingTaskList.get(currentTask);
+
+                if (foundFrame == null || !foundFrame.isVisible()) {
+                    JFrame frame = new AlarmFrame(currentTask, taskList);
+                    editingTaskList.put(currentTask, frame);
                 }
-
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
+
+        //Очистка Map
+        Collection<JFrame> frames = editingTaskList.values();
+        for (JFrame frame : frames)
+            if (!frame.isVisible())
+                frames.remove(frame);
     }
+
 }

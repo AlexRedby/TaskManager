@@ -45,7 +45,7 @@ public class TaskList implements Serializable {
     }
 
     private void startAlarm(){
-        new Thread(new AlarmThread(this)).start();
+        new Timer().schedule(new AlarmThread(this), 0, 1000);
     }
 
     public void setTaskList(List<Task> taskList) {

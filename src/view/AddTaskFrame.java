@@ -107,7 +107,7 @@ public class AddTaskFrame extends JFrame{
             }
             //Иначе сообщение с оповищением
             else JOptionPane.showMessageDialog(this,
-                    "Такая задача уже существует. Изменити название, описание или дату.");
+                    "Такая задача уже существует. Измените название, описание или дату.");
         }
         catch (DateTimeException e){
             e.printStackTrace();
