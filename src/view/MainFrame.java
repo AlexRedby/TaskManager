@@ -111,9 +111,7 @@ public class MainFrame extends JFrame{
                             options[0]);
             if (n == 0) {
                 Task selectedTask = list1.getSelectedValue();
-                int selectedIdx = list1.getSelectedIndex();
                 taskList.deleteTask(selectedTask);
-                ((DefaultListModel)list1.getModel()).remove(selectedIdx);
             }
         });
         btAdd.addActionListener(event -> new AddTaskFrame(taskList));
