@@ -3,6 +3,7 @@ package src.model;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Formatter;
 
 public class Task implements Serializable, Comparable<Task>{
     private String name;
@@ -68,12 +69,14 @@ public class Task implements Serializable, Comparable<Task>{
     }
 
     @Override
-    // Переделала toString, для более лаконичной визуализации в формочке
     public String toString() {
         String str = null;
 
         if(!active) str = "✓";
         else str = "   ";
+
+        Formatter dataTimeString = new Formatter();
+        dataTimeString.format("%td/%tm/%tY   %tH:%tM", dateTime, dateTime, dateTime, dateTime, dateTime);
 
         return str
                 + "  "
@@ -83,7 +86,7 @@ public class Task implements Serializable, Comparable<Task>{
                 + " (c) "
                 + contacts
                 + "]             "
-                + dateTime.getTime();
+                + dataTimeString.toString();
 
     }
 

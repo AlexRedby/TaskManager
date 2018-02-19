@@ -49,6 +49,7 @@ public class AddTaskFrame extends JFrame{
         try {
             Calendar dateTime = Calendar.getInstance();
             dateTime.add(Calendar.MINUTE, 5);
+            dateTime.set(Calendar.SECOND, 0);
             formatDateTime(dateTime);
         }
         catch (ParseException e ) {
