@@ -13,19 +13,15 @@ public class TaskList implements Serializable {
     private List<Task> taskList;
 
     public TaskList() {
-        //TODO: Что-то мне это не нравится(как-то переделать?)
         try {
             this.taskList = Controller.readTaskList().getTaskList();
         } catch (IOException | ClassNotFoundException e) {
             this.taskList = new ArrayList<Task>();
         }
-
-        startAlarm();
     }
 
     public TaskList(List<Task> taskList) {
         this.taskList = taskList;
-        startAlarm();
     }
 
     public List<Task> getTaskList() {
@@ -42,24 +38,16 @@ public class TaskList implements Serializable {
         return newTaskList;
     }
 
-    private void startAlarm() {
-        new Timer().schedule(new AlarmThread(this), 0, 1000);
-    }
-
     public void setTaskList(List<Task> taskList) {
         this.taskList = taskList;
     }
 
     public void addTask(Task task) {
         taskList.add(task);
-
-        update();
     }
 
     public void deleteTask(Task task) {
         taskList.remove(task);
-
-        update();
     }
 
     //Откладывание задачи
@@ -87,8 +75,6 @@ public class TaskList implements Serializable {
         task.setDateTime(dateTime);
         task.setContacts(contacts);
         task.setActive(active);
-
-        update();
     }
 
     public boolean isExist(Task task) {
@@ -101,18 +87,5 @@ public class TaskList implements Serializable {
                 return true;
             }
         return false;
-    }
-
-    //По-хоршему нужен интерфейс
-    //transient - чтобы не сериализовался
-    private transient MainFrame mainFrame;
-
-    public void setChangeListener(MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
-    }
-
-    private void update() {
-        if (mainFrame != null)
-            mainFrame.update();
     }
 }

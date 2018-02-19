@@ -9,8 +9,10 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Formatter;
 
 
@@ -33,9 +35,11 @@ public class AddTaskFrame extends JFrame {
     private JFormattedTextField ftfDate;
 
     private TaskList taskList;
+    private MainFrame mainFrame;
 
-    public AddTaskFrame(TaskList taskList) {
+    public AddTaskFrame(TaskList taskList, MainFrame mainFrame) {
         this.taskList = taskList;
+        this.mainFrame = mainFrame;
 
         btCancel.addActionListener(event -> dispose());
         btSaveTask.addActionListener(event -> addTask());
@@ -61,8 +65,9 @@ public class AddTaskFrame extends JFrame {
         setVisible(true);
     }
 
-    public AddTaskFrame(TaskList taskList, Task task) {
+    public AddTaskFrame(TaskList taskList, Task task, MainFrame mainFrame) {
         this.taskList = taskList;
+        this.mainFrame = mainFrame;
 
         tfName.setText(task.getName());
         taInfo.setText(task.getInfo());
@@ -110,6 +115,7 @@ public class AddTaskFrame extends JFrame {
             if (!taskList.isExist(task)) {
                 taskList.addTask(task);
 
+                mainFrame.update();
                 dispose();
             }
             //Иначе сообщение с оповищением
@@ -117,7 +123,7 @@ public class AddTaskFrame extends JFrame {
                     "Такая задача уже существует. Измените название, описание или дату.");
         }
         //Если getDateTime() ввернёт ошибку
-        catch (DateTimeException e) {
+        catch (DateTimeException | ParseException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Ошибка", JOptionPane.WARNING_MESSAGE);
         }
@@ -137,20 +143,20 @@ public class AddTaskFrame extends JFrame {
         ftfDate.setText(dataTimeString.toString());
     }
 
-    private Calendar getDateTime() throws DateTimeException {
-        Calendar calendar = null;
-        try {
-            ftfDate.commitEdit();
-            calendar = Controller.getDateTime((String) ftfDate.getValue());
+    private Calendar getDateTime() throws DateTimeException, ParseException {
+        ftfDate.commitEdit();
 
-            //Сравниваем введённое время с текущим
-            if (Calendar.getInstance().after(calendar)) {
-                throw new DateTimeException("Невозможно отложить задачу в прошлое!");
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy   HH:mm");
+        sdf.setLenient(false);
+        Date date = sdf.parse((String) ftfDate.getValue());
+
+        //Сравниваем введённое время с текущим
+        if (new Date().after(date)) {
+            throw new DateTimeException("Невозможно отложить задачу в прошлое!");
         }
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
         return calendar;
     }
 

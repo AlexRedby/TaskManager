@@ -2,16 +2,19 @@ package src.controller;
 
 import src.model.Task;
 import src.view.AlarmFrame;
+import src.view.MainFrame;
 
 import javax.swing.*;
 import java.util.*;
 
 public class AlarmThread extends TimerTask {
     private TaskList taskList;
-    Map<Task, JFrame> editingTaskList;
+    private MainFrame mainFrame;
+    private Map<Task, JFrame> editingTaskList;
 
-    public AlarmThread(TaskList taskList) {
+    public AlarmThread(TaskList taskList, MainFrame mainFrame) {
         this.taskList = taskList;
+        this.mainFrame = mainFrame;
         editingTaskList = new HashMap<>();
     }
 
@@ -24,7 +27,7 @@ public class AlarmThread extends TimerTask {
                 JFrame foundFrame = editingTaskList.get(currentTask);
 
                 if (foundFrame == null || !foundFrame.isVisible()) {
-                    JFrame frame = new AlarmFrame(currentTask, taskList);
+                    JFrame frame = new AlarmFrame(currentTask, taskList, mainFrame);
                     editingTaskList.put(currentTask, frame);
                 }
             }

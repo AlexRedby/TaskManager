@@ -8,13 +8,17 @@ import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.Formatter;
 
 public class AlarmFrame extends JFrame {
     private Task task;
     private TaskList taskList;
+    private MainFrame mainFrame;
 
     private JPanel panelMain;
     private JButton btCompleteTask;
@@ -31,9 +35,10 @@ public class AlarmFrame extends JFrame {
     private JLabel lTaskInfo;
     private JFormattedTextField formattedTextField;
 
-    public AlarmFrame(Task task, TaskList taskList) {
+    public AlarmFrame(Task task, TaskList taskList, MainFrame mainFrame) {
         this.task = task;
         this.taskList = taskList;
+        this.mainFrame = mainFrame;
         groupRadioButton();
         showTask();
 
@@ -65,6 +70,7 @@ public class AlarmFrame extends JFrame {
         //Завершаем Task
         btCompleteTask.addActionListener(event -> {
             taskList.complete(task);
+            mainFrame.update();
             dispose();
         });
 
@@ -86,18 +92,19 @@ public class AlarmFrame extends JFrame {
             else if (rbManually.isSelected()) {
                 try {
                     formattedTextField.commitEdit();
-                    newDate = Controller.getDateTime((String) formattedTextField.getValue());
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy   HH:mm");
+                    sdf.setLenient(false);
+                    Date date = sdf.parse((String) formattedTextField.getValue());
 
                     //Сравниваем введённое время с текущим
-                    if (Calendar.getInstance().after(newDate)) {
+                    if (new Date().after(date)) {
                         JOptionPane.showMessageDialog(this,
                                 "Невозможно отложить задачу в прошлое!");
                         isCorrect = false;
                     }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    //Если что-то не так с датой
-                } catch (DateTimeException e) {
+
+                    newDate.setTime(date);
+                } catch (ParseException | DateTimeException e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(),
                             "Ошибка", JOptionPane.WARNING_MESSAGE);
                     isCorrect = false;
@@ -106,6 +113,7 @@ public class AlarmFrame extends JFrame {
             if (isCorrect) {
                 newDate.add(Calendar.MINUTE, minutes);
                 taskList.postpone(task, newDate);
+                mainFrame.update();
                 dispose();
             }
         });
@@ -135,10 +143,14 @@ public class AlarmFrame extends JFrame {
     }
 
     private void showTask() {
+        Calendar dateTime = task.getDateTime();
+        Formatter dataTimeString = new Formatter();
+        dataTimeString.format("%td/%tm/%tY   %tH:%tM", dateTime, dateTime, dateTime, dateTime, dateTime);
+
         String text = "<html>"
                 + task.getName() + "<br>"
                 + task.getInfo() + "<br>"
-                + task.getDateTime().getTime() + "<br><br>"
+                + dataTimeString.toString() + "<br><br>"
                 + "Отложить на:"
                 + "</html>";
         lTaskInfo.setText(text);

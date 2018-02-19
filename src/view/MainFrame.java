@@ -1,5 +1,6 @@
 package src.view;
 
+import src.controller.AlarmThread;
 import src.controller.Controller;
 import src.controller.TaskList;
 import src.model.Task;
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.util.Timer;
 
 public class MainFrame extends JFrame {
     private JPanel panelMain;
@@ -32,6 +34,7 @@ public class MainFrame extends JFrame {
     public MainFrame(TaskList taskList) {
         currentOutput = 0;
         this.taskList = taskList;
+        startAlarm();
 
         //Действия по закрытию приложения
         //Сохранение
@@ -60,9 +63,6 @@ public class MainFrame extends JFrame {
             public void windowIconified(WindowEvent event) {}
             public void windowOpened(WindowEvent event) {}
         });
-
-        //Чтобы узнавать об изменениях списка задач
-        taskList.setChangeListener(this);
 
         showTaskList();
 
@@ -108,8 +108,8 @@ public class MainFrame extends JFrame {
                 taskList.deleteTask(selectedTask);
             }
         });
-        btAdd.addActionListener(event -> new AddTaskFrame(taskList));
-        btEdit.addActionListener(event -> new AddTaskFrame(taskList, list1.getSelectedValue()));
+        btAdd.addActionListener(event -> new AddTaskFrame(taskList, this));
+        btEdit.addActionListener(event -> new AddTaskFrame(taskList, list1.getSelectedValue(), this));
 
         setContentPane(panelMain);
         setTitle("MainFrame");
@@ -124,6 +124,10 @@ public class MainFrame extends JFrame {
 
         setVisible(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    private void startAlarm() {
+        new Timer().schedule(new AlarmThread(taskList, this), 1000, 2000);
     }
 
     private void showTaskList() {
