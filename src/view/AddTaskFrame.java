@@ -6,6 +6,7 @@ import src.model.Task;
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
+import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
@@ -38,12 +39,6 @@ public class AddTaskFrame extends JFrame{
     public AddTaskFrame(TaskList taskList){
         this.taskList = taskList;
 
-        groupRadioButton(true);
-        setContentPane(panel1);
-        setTitle("AddTaskFrame");
-        setSize(500, 300);
-        setVisible(true);
-
         btCancel.addActionListener(event -> dispose());
         btSaveTask.addActionListener(event -> addTask());
         try {
@@ -55,15 +50,23 @@ public class AddTaskFrame extends JFrame{
         catch (ParseException e ) {
         }
 
+        groupRadioButton(true);
+        setContentPane(panel1);
+        setTitle("AddTaskFrame");
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int sizeWidth = 500;
+        int sizeHeight = 300;
+        int locationX = (screenSize.width - sizeWidth) / 2;
+        int locationY = (screenSize.height - sizeHeight) / 2;
+        setBounds(locationX, locationY, sizeWidth, sizeHeight);
+
+        setVisible(true);
     }
+
     public AddTaskFrame(TaskList taskList, Task task){
         this.taskList = taskList;
 
-        groupRadioButton(task.isActive());
-        setContentPane(panel1);
-        setTitle("EditTaskFrame");
-        setSize(500, 300);
-        setVisible(true);
         tfName.setText(task.getName());
         taInfo.setText(task.getInfo());
         tfContacts.setText(task.getContacts());
@@ -79,6 +82,18 @@ public class AddTaskFrame extends JFrame{
         catch (ParseException e ) {
         }
 
+        groupRadioButton(task.isActive());
+        setContentPane(panel1);
+        setTitle("EditTaskFrame");
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int sizeWidth = 500;
+        int sizeHeight = 300;
+        int locationX = (screenSize.width - sizeWidth) / 2;
+        int locationY = (screenSize.height - sizeHeight) / 2;
+        setBounds(locationX, locationY, sizeWidth, sizeHeight);
+
+        setVisible(true);
     }
 
     private void groupRadioButton(boolean active){

@@ -91,12 +91,6 @@ public class MainFrame extends JFrame{
             btEdit.setEnabled(true);
         });
 
-        setContentPane(panelMain);
-        setTitle("MainFrame");
-        setSize(600, 400);
-        setVisible(true);
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         btShowActive.addActionListener(event -> showList(true) );
         btShowNotActive.addActionListener(event -> showList(false) );
         btShowAll.addActionListener(event -> showList());
@@ -117,6 +111,18 @@ public class MainFrame extends JFrame{
         btAdd.addActionListener(event -> new AddTaskFrame(taskList));
         btEdit.addActionListener(event -> new AddTaskFrame(taskList, list1.getSelectedValue()));
 
+        setContentPane(panelMain);
+        setTitle("MainFrame");
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int sizeWidth = 600;
+        int sizeHeight = 400;
+        int locationX = (screenSize.width - sizeWidth) / 2;
+        int locationY = (screenSize.height - sizeHeight) / 2;
+        setBounds(locationX, locationY, sizeWidth, sizeHeight);
+
+        setVisible(true);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     private void showTaskList(){

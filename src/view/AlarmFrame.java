@@ -5,6 +5,7 @@ import src.model.Task;
 
 import javax.swing.*;
 import javax.swing.text.*;
+import java.awt.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -50,7 +51,6 @@ public class AlarmFrame extends JFrame{
                 });
         }
 
-        //TODO: Нужно придумать что-то получше для ввода даты, может JDataPicker(нужно скачивать)
         //Устанавливаем MaskFormatter на FormattedTextField
         MaskFormatter mf = null;
         try {
@@ -109,7 +109,14 @@ public class AlarmFrame extends JFrame{
 
         setContentPane(panelMain);
         setTitle("AlarmFrame");
-        setSize(300, 400);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int sizeWidth = 300;
+        int sizeHeight = 400;
+        int locationX = (screenSize.width - sizeWidth) / 2;
+        int locationY = (screenSize.height - sizeHeight) / 2;
+        setBounds(locationX, locationY, sizeWidth, sizeHeight);
+
         setVisible(true);
     }
 
