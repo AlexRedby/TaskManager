@@ -5,14 +5,14 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Formatter;
 
-public class Task implements Serializable, Comparable<Task>{
+public class Task implements Serializable, Comparable<Task> {
     private String name;
     private String info;
     private Calendar dateTime;
     private String contacts;
     private boolean active;
 
-    public Task(){
+    public Task() {
         name = null;
         info = null;
         dateTime = null;
@@ -20,7 +20,7 @@ public class Task implements Serializable, Comparable<Task>{
         active = false;
     }
 
-    public Task(String name, String info, Calendar dateTime, String contacts, Boolean active){
+    public Task(String name, String info, Calendar dateTime, String contacts, Boolean active) {
         this.name = name;
         this.info = info;
         this.dateTime = dateTime;
@@ -72,7 +72,7 @@ public class Task implements Serializable, Comparable<Task>{
     public String toString() {
         String str = null;
 
-        if(!active) str = "✓";
+        if (!active) str = "✓";
         else str = "   ";
 
         Formatter dataTimeString = new Formatter();
@@ -114,8 +114,8 @@ public class Task implements Serializable, Comparable<Task>{
 
     @Override
     public int compareTo(Task o) {
-        if (this.getDateTime().before(o.getDateTime()) ) return -1;
-        if (this.getDateTime().after(o.getDateTime()) ) return 1;
+        if (this.getDateTime().before(o.getDateTime())) return -1;
+        if (this.getDateTime().after(o.getDateTime())) return 1;
         return 0;
     }
 

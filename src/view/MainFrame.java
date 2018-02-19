@@ -10,7 +10,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
 
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame {
     private JPanel panelMain;
     private JLabel lbl;
     private JList<Task> list1;
@@ -29,16 +29,13 @@ public class MainFrame extends JFrame{
     //>0 - Активные
     private int currentOutput;
 
-    public MainFrame(TaskList taskList){
-        //TODO: Добавить запись в файл при закрытии(может быть спрашивать пользователя?)
+    public MainFrame(TaskList taskList) {
         currentOutput = 0;
         this.taskList = taskList;
 
         //Действия по закрытию приложения
         //Сохранение
         this.addWindowListener(new WindowListener() {
-            public void windowActivated(WindowEvent event) { }
-            public void windowClosed(WindowEvent event) { }
             public void windowClosing(WindowEvent event) {
                 Object[] options = {"Да", "Нет!"};
                 int n = JOptionPane
@@ -55,10 +52,13 @@ public class MainFrame extends JFrame{
                 }
                 System.exit(0);
             }
-            public void windowDeactivated(WindowEvent event) { }
-            public void windowDeiconified(WindowEvent event) { }
-            public void windowIconified(WindowEvent event) { }
-            public void windowOpened(WindowEvent event) { }
+
+            public void windowActivated(WindowEvent event) {}
+            public void windowClosed(WindowEvent event) {}
+            public void windowDeactivated(WindowEvent event) {}
+            public void windowDeiconified(WindowEvent event) {}
+            public void windowIconified(WindowEvent event) {}
+            public void windowOpened(WindowEvent event) {}
         });
 
         //Чтобы узнавать об изменениях списка задач
@@ -66,8 +66,8 @@ public class MainFrame extends JFrame{
 
         showTaskList();
 
-        //Чтобы активные задачи отличались от не активных
-        list1.setCellRenderer(new DefaultListCellRenderer () {
+        //Чтобы фон активных задач отличался от не активных
+        list1.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList list,
                                                           Object value, int index, boolean isSelected,
@@ -83,7 +83,7 @@ public class MainFrame extends JFrame{
             }
         });
 
-        // Задаем актовность кнопок
+        // Задаем активность кнопок
         btDelete.setEnabled(false);
         btEdit.setEnabled(false);
         list1.addListSelectionListener(e -> {
@@ -91,8 +91,8 @@ public class MainFrame extends JFrame{
             btEdit.setEnabled(true);
         });
 
-        btShowActive.addActionListener(event -> showList(true) );
-        btShowNotActive.addActionListener(event -> showList(false) );
+        btShowActive.addActionListener(event -> showList(true));
+        btShowNotActive.addActionListener(event -> showList(false));
         btShowAll.addActionListener(event -> showList());
 
         //Удаление Task
@@ -114,6 +114,7 @@ public class MainFrame extends JFrame{
         setContentPane(panelMain);
         setTitle("MainFrame");
 
+        //Устанавливаем формочку по центру и задаём её начальный размер
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int sizeWidth = 600;
         int sizeHeight = 400;
@@ -125,18 +126,15 @@ public class MainFrame extends JFrame{
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    private void showTaskList(){
+    private void showTaskList() {
         String text = "Ваш список задач:";
         lbl.setText(text);
         showList();
 
     }
 
-    // TODO: 11.02.2018 Как в этом случае не дублировать код?
-
-    private void showList(){
+    private void showList() {
         // Добавляем все задач из taskList'a в список
-        // TODO: 11.02.2018 Можно итератор написать для forEach
         DefaultListModel dfm = new DefaultListModel();
         for (int i = 0; i < taskList.getTaskList().size(); i++) {
             dfm.addElement(taskList.getTaskList().get(i));
@@ -147,16 +145,7 @@ public class MainFrame extends JFrame{
         btEdit.setEnabled(false);
     }
 
-    public void update(){
-        if(currentOutput == 0)
-            showList();
-        else if(currentOutput > 0)
-            showList(true);
-        else
-            showList(false);
-    }
-
-    private void showList(boolean active){
+    private void showList(boolean active) {
         DefaultListModel dfm = new DefaultListModel();
         for (int i = 0; i < taskList.getTaskList(active).size(); i++) {
             dfm.addElement(taskList.getTaskList(active).get(i));
@@ -167,4 +156,12 @@ public class MainFrame extends JFrame{
         btEdit.setEnabled(false);
     }
 
+    public void update() {
+        if (currentOutput == 0)
+            showList();
+        else if (currentOutput > 0)
+            showList(true);
+        else
+            showList(false);
+    }
 }
