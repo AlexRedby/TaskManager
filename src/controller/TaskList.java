@@ -69,14 +69,6 @@ public class TaskList implements Serializable {
     }
 
     public boolean isExist(Task task) {
-        if (taskList.contains(task))
-            return true;
-        for (Task currentTask : taskList)
-            if (currentTask.getDateTime().equals(task.getDateTime())
-                    && currentTask.getName().equals(task.getName())
-                    && currentTask.getInfo().equals(task.getInfo())) {
-                return true;
-            }
-        return false;
+        return taskList.contains(task);
     }
 }
