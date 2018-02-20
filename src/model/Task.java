@@ -119,10 +119,4 @@ public class Task implements Serializable, Comparable<Task> {
         return 0;
     }
 
-    public static class dateTimeComparator implements Comparator<Task> {
-        @Override
-        public int compare(Task o1, Task o2) {
-            return o1.compareTo(o2);
-        }
-    }
 }
