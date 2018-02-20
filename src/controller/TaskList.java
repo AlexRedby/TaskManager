@@ -56,15 +56,6 @@ public class TaskList implements Serializable {
         editTask(task, task.getName(), task.getInfo(), task.getDateTime(), task.getContacts(), false);
     }
 
-    public Task getActualTask() {
-        List<Task> tl = this.getTaskList(true);
-        if (tl.size() == 0) { // Возвращает null если список задач пуст
-            return null;
-        }
-        tl.sort(new Task.dateTimeComparator());
-        return tl.get(0);
-    }
-
     public void editTask(Task task, String name, String info, Calendar dateTime, String contacts, boolean active) {
         task.setName(name);
         task.setInfo(info);
@@ -74,14 +65,6 @@ public class TaskList implements Serializable {
     }
 
     public boolean isExist(Task task) {
-        if (taskList.contains(task))
-            return true;
-        for (Task currentTask : taskList)
-            if (currentTask.getDateTime().equals(task.getDateTime())
-                    && currentTask.getName().equals(task.getName())
-                    && currentTask.getInfo().equals(task.getInfo())) {
-                return true;
-            }
-        return false;
+        return taskList.contains(task);
     }
 }

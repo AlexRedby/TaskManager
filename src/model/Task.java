@@ -99,8 +99,7 @@ public class Task implements Serializable, Comparable<Task> {
 
         if (name != null ? !name.equals(task.name) : task.name != null) return false;
         if (info != null ? !info.equals(task.info) : task.info != null) return false;
-        if (dateTime != null ? !dateTime.equals(task.dateTime) : task.dateTime != null) return false;
-        return contacts != null ? contacts.equals(task.contacts) : task.contacts == null;
+        return  (dateTime != null ? dateTime.equals(task.dateTime) : task.dateTime == null);
     }
 
     @Override
@@ -119,10 +118,4 @@ public class Task implements Serializable, Comparable<Task> {
         return 0;
     }
 
-    public static class dateTimeComparator implements Comparator<Task> {
-        @Override
-        public int compare(Task o1, Task o2) {
-            return o1.compareTo(o2);
-        }
-    }
 }
