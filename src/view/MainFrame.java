@@ -106,6 +106,7 @@ public class MainFrame extends JFrame {
             if (n == 0) {
                 Task selectedTask = list1.getSelectedValue();
                 taskList.deleteTask(selectedTask);
+                update();
             }
         });
         btAdd.addActionListener(event -> new AddTaskFrame(taskList, this));
