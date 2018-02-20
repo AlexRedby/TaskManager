@@ -1,19 +1,24 @@
 package src.controller;
 
+import com.google.gson.Gson;
+
 import java.io.*;
 
 public class Controller {
+    private static final String FILE_NAME = "TaskList.json";
 
     public static void writeTaskList(TaskList taskList) throws IOException {
-        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("TaskLog.bin"));
-        out.writeObject(taskList);
-        out.close();
+        String outputStr = new Gson().toJson(taskList);
+
+        FileWriter fileWriter = new FileWriter(FILE_NAME);
+        fileWriter.write(outputStr);
+        fileWriter.close();
     }
 
-    public static TaskList readTaskList() throws IOException, ClassNotFoundException {
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream("TaskLog.bin"));
-        TaskList readedTaskList = (TaskList) in.readObject();
-        in.close();
-        return readedTaskList;
+    public static TaskList readTaskList() throws IOException {
+        FileReader reader = new FileReader(FILE_NAME);
+        TaskList taskList = new Gson().fromJson(reader, TaskList.class);
+        reader.close();
+        return taskList;
     }
 }

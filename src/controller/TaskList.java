@@ -13,11 +13,7 @@ public class TaskList implements Serializable {
     private List<Task> taskList;
 
     public TaskList() {
-        try {
-            this.taskList = Controller.readTaskList().getTaskList();
-        } catch (IOException | ClassNotFoundException e) {
-            this.taskList = new ArrayList<Task>();
-        }
+        this.taskList = new ArrayList<Task>();
     }
 
     public TaskList(List<Task> taskList) {
