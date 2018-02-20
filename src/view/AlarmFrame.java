@@ -1,5 +1,6 @@
 package src.view;
 
+import src.controller.AlarmThread;
 import src.controller.Controller;
 import src.controller.TaskList;
 import src.model.Task;
@@ -7,6 +8,9 @@ import src.model.Task;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
@@ -18,7 +22,7 @@ import java.util.Formatter;
 public class AlarmFrame extends JFrame {
     private Task task;
     private TaskList taskList;
-    private MainFrame mainFrame;
+    private AlarmThread parent;
 
     private JPanel panelMain;
     private JButton btCompleteTask;
@@ -35,12 +39,19 @@ public class AlarmFrame extends JFrame {
     private JLabel lTaskInfo;
     private JFormattedTextField formattedTextField;
 
-    public AlarmFrame(Task task, TaskList taskList, MainFrame mainFrame) {
+    public AlarmFrame(Task task, TaskList taskList, AlarmThread parent) {
         this.task = task;
         this.taskList = taskList;
-        this.mainFrame = mainFrame;
+        this.parent = parent;
         groupRadioButton();
         showTask();
+
+        this.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e) {
+               parent.update((JFrame) e.getSource());
+            }
+        });
 
         //Добавляем слушателей на RadioButton
         Enumeration<AbstractButton> buttons = radioButtonGroup.getElements();
@@ -70,8 +81,7 @@ public class AlarmFrame extends JFrame {
         //Завершаем Task
         btCompleteTask.addActionListener(event -> {
             taskList.complete(task);
-            mainFrame.update();
-            dispose();
+            parent.update(this);
         });
 
         //Откладываем Task
@@ -113,8 +123,7 @@ public class AlarmFrame extends JFrame {
             if (isCorrect) {
                 newDate.add(Calendar.MINUTE, minutes);
                 taskList.postpone(task, newDate);
-                mainFrame.update();
-                dispose();
+                parent.update(this);
             }
         });
 

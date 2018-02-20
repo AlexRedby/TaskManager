@@ -18,6 +18,12 @@ public class AlarmThread extends TimerTask {
         editingTaskList = new HashMap<>();
     }
 
+    public void update(JFrame frame){
+        frame.dispose();
+        editingTaskList.values().remove(frame);
+        mainFrame.update();
+    }
+
     @Override
     public void run() {
         List<Task> activeTaskList = taskList.getTaskList(true);
@@ -27,17 +33,11 @@ public class AlarmThread extends TimerTask {
                 JFrame foundFrame = editingTaskList.get(currentTask);
 
                 if (foundFrame == null || !foundFrame.isVisible()) {
-                    JFrame frame = new AlarmFrame(currentTask, taskList, mainFrame);
+                    JFrame frame = new AlarmFrame(currentTask, taskList, this);
                     editingTaskList.put(currentTask, frame);
                 }
             }
         }
-
-        //Очистка Map
-        Collection<JFrame> frames = editingTaskList.values();
-        for (JFrame frame : frames)
-            if (!frame.isVisible())
-                frames.remove(frame);
     }
 
 }
