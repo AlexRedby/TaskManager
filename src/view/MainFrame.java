@@ -152,8 +152,8 @@ public class MainFrame extends JFrame {
 
     private void showList(boolean active) {
         DefaultListModel dfm = new DefaultListModel();
-        for (int i = 0; i < taskList.getTaskList(active).size(); i++) {
-            dfm.addElement(taskList.getTaskList(active).get(i));
+        for (Task currentTask: taskList.getTaskList(active)){
+            dfm.addElement(currentTask);
         }
         list1.setModel(dfm);
 
