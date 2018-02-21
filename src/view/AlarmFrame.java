@@ -48,7 +48,7 @@ public class AlarmFrame extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                parent.update((JFrame) e.getSource());
+                parent.update(AlarmFrame.this);
             }
         });
 
