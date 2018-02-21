@@ -13,10 +13,10 @@ public class Task implements Serializable, Comparable<Task> {
     private boolean active;
 
     public Task() {
-        name = null;
-        info = null;
-        dateTime = null;
-        contacts = null;
+        name = "";
+        info = "";
+        dateTime = Calendar.getInstance();
+        contacts = "";
         active = false;
     }
 
