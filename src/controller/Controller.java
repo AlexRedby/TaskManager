@@ -8,17 +8,15 @@ public class Controller {
     private static final String FILE_NAME = "TaskList.json";
 
     public static void writeTaskList(TaskList taskList) throws IOException {
-        String outputStr = new Gson().toJson(taskList);
-
-        FileWriter fileWriter = new FileWriter(FILE_NAME);
-        fileWriter.write(outputStr);
-        fileWriter.close();
+        try (FileWriter fileWriter = new FileWriter(FILE_NAME)) {
+            String outputStr = new Gson().toJson(taskList);
+            fileWriter.write(outputStr);
+        }
     }
 
     public static TaskList readTaskList() throws IOException {
-        FileReader reader = new FileReader(FILE_NAME);
-        TaskList taskList = new Gson().fromJson(reader, TaskList.class);
-        reader.close();
-        return taskList;
+        try (FileReader reader = new FileReader(FILE_NAME)) {
+            return new Gson().fromJson(reader, TaskList.class);
+        }
     }
 }
