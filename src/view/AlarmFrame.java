@@ -117,6 +117,7 @@ public class AlarmFrame extends JFrame {
             }
             if (isCorrect) {
                 newDate.add(Calendar.MINUTE, minutes);
+                newDate.set(Calendar.SECOND, 0);
                 taskList.postpone(task, newDate);
                 parent.update(this);
             }
