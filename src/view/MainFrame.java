@@ -27,13 +27,12 @@ public class MainFrame extends JFrame {
 
     private TaskList taskList;
 
-    //<0 - Неактивные
-    //0  - All
-    //>0 - Активные
-    private int currentOutput;
+    private enum CurrentOutput {ACTIVE, NOT_ACTIVE, ALL}
+
+    private CurrentOutput currentOutput;
 
     public MainFrame(TaskList taskList) {
-        currentOutput = 0;
+        currentOutput = CurrentOutput.ALL;
         this.taskList = taskList;
         startAlarm();
 
@@ -103,8 +102,14 @@ public class MainFrame extends JFrame {
             btEdit.setEnabled(true);
         });
 
-        btShowActive.addActionListener(event -> showList(true));
-        btShowNotActive.addActionListener(event -> showList(false));
+        btShowActive.addActionListener(event -> {
+            showList(true);
+            currentOutput = CurrentOutput.ACTIVE;
+        });
+        btShowNotActive.addActionListener(event -> {
+            showList(false);
+            currentOutput = CurrentOutput.NOT_ACTIVE;
+        });
         btShowAll.addActionListener(event -> showList());
 
         //Удаление Task
@@ -152,7 +157,7 @@ public class MainFrame extends JFrame {
 
     private void showList() {
         // Добавляем все задач из taskList'a в список
-        DefaultListModel dfm = new DefaultListModel();
+        DefaultListModel<Task> dfm = new DefaultListModel<>();
         for (int i = 0; i < taskList.getTaskList().size(); i++) {
             dfm.addElement(taskList.getTaskList().get(i));
         }
@@ -163,7 +168,7 @@ public class MainFrame extends JFrame {
     }
 
     private void showList(boolean active) {
-        DefaultListModel dfm = new DefaultListModel();
+        DefaultListModel<Task> dfm = new DefaultListModel<>();
         for (Task currentTask : taskList.getTaskList(active)) {
             dfm.addElement(currentTask);
         }
@@ -174,11 +179,11 @@ public class MainFrame extends JFrame {
     }
 
     public void update() {
-        if (currentOutput == 0)
+        if (currentOutput == CurrentOutput.ALL)
             showList();
-        else if (currentOutput > 0)
+        else if (currentOutput == CurrentOutput.ACTIVE)
             showList(true);
-        else
+        else if (currentOutput == CurrentOutput.NOT_ACTIVE)
             showList(false);
     }
 }
