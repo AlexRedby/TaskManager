@@ -12,7 +12,7 @@ public class TaskList implements Serializable {
     private List<Task> taskList;
 
     public TaskList() {
-        this.taskList = new ArrayList<Task>();
+        this.taskList = new ArrayList<>();
     }
 
     public List<Task> getTaskList() {
@@ -43,19 +43,16 @@ public class TaskList implements Serializable {
 
     //Откладывание задачи
     public void postpone(Task task, Calendar dateTime) {
-        editTask(task, task.getName(), task.getInfo(), dateTime, task.getContacts(), true);
+        editTask(task, dateTime, true);
     }
 
     //Ставит задачу в неактивное состояние
     public void complete(Task task) {
-        editTask(task, task.getName(), task.getInfo(), task.getDateTime(), task.getContacts(), false);
+        editTask(task, task.getDateTime(), false);
     }
 
-    private void editTask(Task task, String name, String info, Calendar dateTime, String contacts, boolean active) {
-        task.setName(name);
-        task.setInfo(info);
+    private void editTask(Task task, Calendar dateTime, boolean active) {
         task.setDateTime(dateTime);
-        task.setContacts(contacts);
         task.setActive(active);
     }
 
