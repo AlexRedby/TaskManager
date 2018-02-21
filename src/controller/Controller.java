@@ -1,6 +1,7 @@
 package src.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.*;
 
@@ -9,7 +10,10 @@ public class Controller {
 
     public static void writeTaskList(TaskList taskList) throws IOException {
         try (FileWriter fileWriter = new FileWriter(FILE_NAME)) {
-            String outputStr = new Gson().toJson(taskList);
+            Gson gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+            String outputStr = gson.toJson(taskList);
             fileWriter.write(outputStr);
         }
     }
