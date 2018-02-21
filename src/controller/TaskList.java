@@ -1,12 +1,11 @@
 package src.controller;
 
 import src.model.Task;
-import src.view.MainFrame;
 
-
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 
 public class TaskList implements Serializable {
@@ -14,10 +13,6 @@ public class TaskList implements Serializable {
 
     public TaskList() {
         this.taskList = new ArrayList<Task>();
-    }
-
-    public TaskList(List<Task> taskList) {
-        this.taskList = taskList;
     }
 
     public List<Task> getTaskList() {
@@ -56,7 +51,7 @@ public class TaskList implements Serializable {
         editTask(task, task.getName(), task.getInfo(), task.getDateTime(), task.getContacts(), false);
     }
 
-    public void editTask(Task task, String name, String info, Calendar dateTime, String contacts, boolean active) {
+    private void editTask(Task task, String name, String info, Calendar dateTime, String contacts, boolean active) {
         task.setName(name);
         task.setInfo(info);
         task.setDateTime(dateTime);
