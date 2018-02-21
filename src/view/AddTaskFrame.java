@@ -1,7 +1,7 @@
 package src.view;
 
-import src.controller.Controller;
 import src.controller.TaskList;
+import src.model.Constants;
 import src.model.Task;
 
 import javax.swing.*;
@@ -45,7 +45,7 @@ public class AddTaskFrame extends JFrame {
         btSaveTask.addActionListener(event -> addTask());
         try {
             Calendar dateTime = Calendar.getInstance();
-            dateTime.add(Calendar.MINUTE, 5);
+            dateTime.add(Calendar.MINUTE, Constants.FIVE_MINUTES);
             dateTime.set(Calendar.SECOND, 0);
             formatDateTime(dateTime);
         } catch (ParseException e) {
@@ -56,8 +56,8 @@ public class AddTaskFrame extends JFrame {
         setTitle("AddTaskFrame");
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int sizeWidth = 500;
-        int sizeHeight = 300;
+        int sizeWidth = Constants.ADD_TASK_FRAME_WIDTH;
+        int sizeHeight = Constants.ADD_TASK_FRAME_HEIGHT;
         int locationX = (screenSize.width - sizeWidth) / 2;
         int locationY = (screenSize.height - sizeHeight) / 2;
         setBounds(locationX, locationY, sizeWidth, sizeHeight);
@@ -88,8 +88,8 @@ public class AddTaskFrame extends JFrame {
         setTitle("EditTaskFrame");
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int sizeWidth = 500;
-        int sizeHeight = 300;
+        int sizeWidth = Constants.ADD_TASK_FRAME_WIDTH;
+        int sizeHeight = Constants.ADD_TASK_FRAME_HEIGHT;
         int locationX = (screenSize.width - sizeWidth) / 2;
         int locationY = (screenSize.height - sizeHeight) / 2;
         setBounds(locationX, locationY, sizeWidth, sizeHeight);
@@ -124,13 +124,13 @@ public class AddTaskFrame extends JFrame {
         }
         //Если getDateTime() ввернёт ошибку
         catch (DateTimeException | ParseException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(),
+            JOptionPane.showMessageDialog(this, "Введена некорректная дата",
                     "Ошибка", JOptionPane.WARNING_MESSAGE);
         }
     }
 
     private void formatDateTime(Calendar dateTime) throws ParseException {
-        MaskFormatter dateFormatter = new MaskFormatter("##/##/####   ##:##");
+        MaskFormatter dateFormatter = new MaskFormatter(Constants.DATE_TIME_MASK);
         dateFormatter.setValidCharacters("0123456789");
         dateFormatter.setPlaceholderCharacter('_');
         dateFormatter.setValueClass(String.class);
@@ -146,7 +146,7 @@ public class AddTaskFrame extends JFrame {
     private Calendar getDateTime() throws DateTimeException, ParseException {
         ftfDate.commitEdit();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy   HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_TIME_PATTERN);
         sdf.setLenient(false);
         Date date = sdf.parse((String) ftfDate.getValue());
 

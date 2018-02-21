@@ -3,6 +3,7 @@ package src.view;
 import src.controller.AlarmThread;
 import src.controller.Controller;
 import src.controller.TaskList;
+import src.model.Constants;
 import src.model.Task;
 
 import javax.swing.*;
@@ -56,12 +57,23 @@ public class MainFrame extends JFrame {
                 System.exit(0);
             }
 
-            public void windowActivated(WindowEvent event) {}
-            public void windowClosed(WindowEvent event) {}
-            public void windowDeactivated(WindowEvent event) {}
-            public void windowDeiconified(WindowEvent event) {}
-            public void windowIconified(WindowEvent event) {}
-            public void windowOpened(WindowEvent event) {}
+            public void windowActivated(WindowEvent event) {
+            }
+
+            public void windowClosed(WindowEvent event) {
+            }
+
+            public void windowDeactivated(WindowEvent event) {
+            }
+
+            public void windowDeiconified(WindowEvent event) {
+            }
+
+            public void windowIconified(WindowEvent event) {
+            }
+
+            public void windowOpened(WindowEvent event) {
+            }
         });
 
         showTaskList();
@@ -117,8 +129,8 @@ public class MainFrame extends JFrame {
 
         //Устанавливаем формочку по центру и задаём её начальный размер
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int sizeWidth = 600;
-        int sizeHeight = 400;
+        int sizeWidth = Constants.MAIN_FRAME_WIDTH;
+        int sizeHeight = Constants.MAIN_FRAME_HEIGHT;
         int locationX = (screenSize.width - sizeWidth) / 2;
         int locationY = (screenSize.height - sizeHeight) / 2;
         setBounds(locationX, locationY, sizeWidth, sizeHeight);
@@ -152,7 +164,7 @@ public class MainFrame extends JFrame {
 
     private void showList(boolean active) {
         DefaultListModel dfm = new DefaultListModel();
-        for (Task currentTask: taskList.getTaskList(active)){
+        for (Task currentTask : taskList.getTaskList(active)) {
             dfm.addElement(currentTask);
         }
         list1.setModel(dfm);

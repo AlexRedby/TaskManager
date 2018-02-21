@@ -18,7 +18,7 @@ public class AlarmThread extends TimerTask {
         editingTaskList = new HashMap<>();
     }
 
-    public void update(JFrame frame){
+    public void update(JFrame frame) {
         frame.dispose();
         editingTaskList.values().remove(frame);
         mainFrame.update();

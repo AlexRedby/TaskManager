@@ -1,8 +1,8 @@
 package src.view;
 
 import src.controller.AlarmThread;
-import src.controller.Controller;
 import src.controller.TaskList;
+import src.model.Constants;
 import src.model.Task;
 
 import javax.swing.*;
@@ -10,7 +10,6 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
@@ -46,10 +45,10 @@ public class AlarmFrame extends JFrame {
         groupRadioButton();
         showTask();
 
-        this.addWindowListener(new WindowAdapter(){
+        this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-               parent.update((JFrame) e.getSource());
+                parent.update((JFrame) e.getSource());
             }
         });
 
@@ -58,19 +57,15 @@ public class AlarmFrame extends JFrame {
         while (buttons.hasMoreElements()) {
             AbstractButton b = buttons.nextElement();
             if (b != rbManually)
-                b.addActionListener(event -> {
-                    formattedTextField.setEnabled(false);
-                });
+                b.addActionListener(event -> formattedTextField.setEnabled(false));
             else
-                b.addActionListener(event -> {
-                    formattedTextField.setEnabled(true);
-                });
+                b.addActionListener(event -> formattedTextField.setEnabled(true));
         }
 
         //Устанавливаем MaskFormatter на FormattedTextField
         MaskFormatter mf = null;
         try {
-            mf = new MaskFormatter("##/##/####   ##:##");
+            mf = new MaskFormatter(Constants.DATE_TIME_MASK);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -90,19 +85,19 @@ public class AlarmFrame extends JFrame {
             Calendar newDate = Calendar.getInstance();
             int minutes = 0;
             if (rb5Minute.isSelected())
-                minutes = 5;
+                minutes = Constants.FIVE_MINUTES;
             else if (rb10Minute.isSelected())
-                minutes = 10;
+                minutes = Constants.TEN_MINUTES;
             else if (rb30Minute.isSelected())
-                minutes = 30;
+                minutes = Constants.HALF_AN_HOUR;
             else if (rbHour.isSelected())
-                minutes = 60;
+                minutes = Constants.HOUR;
             else if (rbDay.isSelected())
-                minutes = 1440;
+                minutes = Constants.DAY;
             else if (rbManually.isSelected()) {
                 try {
                     formattedTextField.commitEdit();
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy   HH:mm");
+                    SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_TIME_PATTERN);
                     sdf.setLenient(false);
                     Date date = sdf.parse((String) formattedTextField.getValue());
 
@@ -131,8 +126,8 @@ public class AlarmFrame extends JFrame {
         setTitle("AlarmFrame");
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int sizeWidth = 300;
-        int sizeHeight = 400;
+        int sizeWidth = Constants.ALARM_FRAME_WIDTH;
+        int sizeHeight = Constants.ALARM_FRAME_HEIGHT;
         int locationX = (screenSize.width - sizeWidth) / 2;
         int locationY = (screenSize.height - sizeHeight) / 2;
         setBounds(locationX, locationY, sizeWidth, sizeHeight);
@@ -154,7 +149,7 @@ public class AlarmFrame extends JFrame {
     private void showTask() {
         Calendar dateTime = task.getDateTime();
         Formatter dataTimeString = new Formatter();
-        dataTimeString.format("%td/%tm/%tY   %tH:%tM", dateTime, dateTime, dateTime, dateTime, dateTime);
+        dataTimeString.format(Constants.DATE_TIME_FORMAT, dateTime, dateTime, dateTime, dateTime, dateTime);
 
         String text = "<html>"
                 + task.getName() + "<br>"

@@ -75,8 +75,8 @@ public class Task implements Serializable, Comparable<Task> {
         if (!active) str = "✓";
         else str = "   ";
 
-        Formatter dataTimeString = new Formatter();
-        dataTimeString.format("%td/%tm/%tY   %tH:%tM", dateTime, dateTime, dateTime, dateTime, dateTime);
+        Formatter dateTimeString = new Formatter();
+        dateTimeString.format(Constants.DATE_TIME_FORMAT, dateTime, dateTime, dateTime, dateTime, dateTime);
 
         return str
                 + "  "
@@ -86,7 +86,7 @@ public class Task implements Serializable, Comparable<Task> {
                 + " (c) "
                 + contacts
                 + "]             "
-                + dataTimeString.toString();
+                + dateTimeString.toString();
 
     }
 
@@ -99,7 +99,7 @@ public class Task implements Serializable, Comparable<Task> {
 
         if (name != null ? !name.equals(task.name) : task.name != null) return false;
         if (info != null ? !info.equals(task.info) : task.info != null) return false;
-        return  (dateTime != null ? dateTime.equals(task.dateTime) : task.dateTime == null);
+        return (dateTime != null ? dateTime.equals(task.dateTime) : task.dateTime == null);
     }
 
     @Override
