@@ -47,11 +47,7 @@ public class MainFrame extends JFrame {
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
                 if (n == 0) {
-                    try {
-                        Controller.writeTaskList(taskList);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    Controller.writeTaskList(taskList);
                 }
                 System.exit(0);
             }

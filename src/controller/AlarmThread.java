@@ -19,9 +19,7 @@ public class AlarmThread extends TimerTask {
     }
 
     public void update(JFrame frame) {
-        frame.dispose();
         editingTaskList.values().remove(frame);
-        mainFrame.update();
     }
 
     @Override
@@ -33,7 +31,7 @@ public class AlarmThread extends TimerTask {
                 JFrame foundFrame = editingTaskList.get(currentTask);
 
                 if (foundFrame == null || !foundFrame.isVisible()) {
-                    JFrame frame = new AlarmFrame(currentTask, taskList, this);
+                    JFrame frame = new AlarmFrame(currentTask, taskList, this, mainFrame);
                     editingTaskList.put(currentTask, frame);
                 }
             }

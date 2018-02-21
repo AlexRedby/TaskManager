@@ -9,12 +9,10 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        TaskList taskList = null;
-        try {
-            taskList = Controller.readTaskList();
-        } catch (IOException e) {
+        TaskList taskList = Controller.readTaskList();
+        if (taskList == null)
             taskList = new TaskList();
-        }
+
         JFrame frame = new MainFrame(taskList);
     }
 }

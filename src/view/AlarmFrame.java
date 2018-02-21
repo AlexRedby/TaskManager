@@ -22,6 +22,7 @@ public class AlarmFrame extends JFrame {
     private Task task;
     private TaskList taskList;
     private AlarmThread parent;
+    private MainFrame mainFrame;
 
     private JPanel panelMain;
     private JButton btCompleteTask;
@@ -38,10 +39,11 @@ public class AlarmFrame extends JFrame {
     private JLabel lTaskInfo;
     private JFormattedTextField formattedTextField;
 
-    public AlarmFrame(Task task, TaskList taskList, AlarmThread parent) {
+    public AlarmFrame(Task task, TaskList taskList, AlarmThread parent, MainFrame mainFrame) {
         this.task = task;
         this.taskList = taskList;
         this.parent = parent;
+        this.mainFrame = mainFrame;
         groupRadioButton();
         showTask();
 
@@ -49,6 +51,7 @@ public class AlarmFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 parent.update(AlarmFrame.this);
+                dispose();
             }
         });
 
@@ -76,7 +79,10 @@ public class AlarmFrame extends JFrame {
         //Завершаем Task
         btCompleteTask.addActionListener(event -> {
             taskList.complete(task);
-            parent.update(this);
+            parent.update(AlarmFrame.this);
+            mainFrame.update();
+            dispose();
+            //parent.update(this);
         });
 
         //Откладываем Task
@@ -119,7 +125,10 @@ public class AlarmFrame extends JFrame {
                 newDate.add(Calendar.MINUTE, minutes);
                 newDate.set(Calendar.SECOND, 0);
                 taskList.postpone(task, newDate);
-                parent.update(this);
+                parent.update(AlarmFrame.this);
+                mainFrame.update();
+                dispose();
+                //parent.update(this);
             }
         });
 
