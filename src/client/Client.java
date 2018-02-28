@@ -6,6 +6,7 @@ import src.model.Task;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Client{
@@ -19,19 +20,7 @@ public class Client{
             DataInputStream serverReader = new DataInputStream(socket.getInputStream());
             DataOutputStream serverWriter = new DataOutputStream(socket.getOutputStream());
 
-            (new ObjectOutputStream(serverWriter)).writeObject("Svetlana");
-            serverWriter.flush();
-
-            String json;
-            ArrayList<Task> tl = new ArrayList<>();
-            int count = serverReader.readInt();
-            for (int i = 0; i< count; i++){
-                json = (String)(new ObjectInputStream(serverReader)).readObject();
-                tl.add(new Gson().fromJson(json, Task.class));
-            }
-            System.out.println("Клиент приянл таски");
-
-
+            List<Task> taskList = getTasks(serverWriter, serverReader);
             System.out.println("Client: Отсоединяемся от сервера и закрываем Streams");
 
             serverReader.close();
@@ -43,6 +32,27 @@ public class Client{
             System.out.print(e.getMessage());
         }
         System.out.println("Client: FIN!");
+    }
 
+    private static List<Task> getTasks(DataOutputStream serverWriter, DataInputStream serverReader){
+        try {
+            (new ObjectOutputStream(serverWriter)).writeObject("Svetlana");
+            serverWriter.flush();
+
+            String json;
+            List<Task> tl = new ArrayList<>();
+            int count = serverReader.readInt();
+            for (int i = 0; i < count; i++) {
+                json = (String) (new ObjectInputStream(serverReader)).readObject();
+                tl.add(new Gson().fromJson(json, Task.class));
+            }
+            System.out.println("Клиент приянл таски");
+            return tl;
+        }
+            catch(Exception e) {
+                System.out.println("Client: Возникла ошибка: ");
+                System.out.print(e.getMessage());
+                return null;
+        }
     }
 }

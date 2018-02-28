@@ -1,4 +1,4 @@
-package src.controller;
+package src.server.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

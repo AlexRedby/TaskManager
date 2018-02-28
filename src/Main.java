@@ -1,11 +1,10 @@
 package src;
 
-import src.controller.Controller;
-import src.controller.TaskList;
-import src.view.MainFrame;
+import src.server.controller.Controller;
+import src.server.controller.TaskList;
+import src.client.view.MainFrame;
 
 import javax.swing.*;
-import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {

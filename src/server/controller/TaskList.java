@@ -1,4 +1,4 @@
-package src.controller;
+package src.server.controller;
 
 import src.model.Task;
 

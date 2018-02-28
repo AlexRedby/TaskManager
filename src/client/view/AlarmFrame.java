@@ -1,7 +1,7 @@
-package src.view;
+package src.client.view;
 
-import src.controller.AlarmThread;
-import src.controller.TaskList;
+import src.client.controller.AlarmThread;
+import src.server.controller.TaskList;
 import src.model.Constants;
 import src.model.Task;
 

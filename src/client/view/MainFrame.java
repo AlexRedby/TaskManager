@@ -1,8 +1,8 @@
-package src.view;
+package src.client.view;
 
-import src.controller.AlarmThread;
-import src.controller.Controller;
-import src.controller.TaskList;
+import src.client.controller.AlarmThread;
+import src.server.controller.Controller;
+import src.server.controller.TaskList;
 import src.model.Constants;
 import src.model.Task;
 
@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.IOException;
 import java.util.Timer;
 
 public class MainFrame extends JFrame {

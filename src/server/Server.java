@@ -1,8 +1,8 @@
 package src.server;
 
 import com.google.gson.*;
-import src.controller.Controller;
-import src.controller.TaskList;
+import src.server.controller.Controller;
+import src.server.controller.TaskList;
 import src.model.Task;
 
 import java.io.*;

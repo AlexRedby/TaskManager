@@ -1,6 +1,6 @@
-package src.view;
+package src.client.view;
 
-import src.controller.TaskList;
+import src.server.controller.TaskList;
 import src.model.Constants;
 import src.model.Task;
 
