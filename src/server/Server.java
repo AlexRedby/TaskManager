@@ -1,6 +1,7 @@
 package src.server;
 
 import com.google.gson.*;
+import src.model.packet.*;
 import src.server.controller.Controller;
 import src.server.controller.TaskList;
 import src.model.Task;
@@ -13,60 +14,43 @@ public class Server implements Runnable {
 
     private Socket socket;
 
-    private Server(Socket socket){
+    public Server(Socket socket){
         this.socket = socket;
     }
 
-    public static void main(String[] args)  {
-        System.out.println("Server: Start");
-        try (ServerSocket server = new ServerSocket(777)) {
-            System.out.println("Server: Серверный сокет с портом 777 создан.");
-            System.out.println("Server: Входим в бесконечный цикл ожидания...");
-            while (true) {
-                new Thread(new Server(server.accept())).start();
-            }
-        }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println("Server: FIN!");
-        }
-    }
-
-
     @Override
     public void run() {
-        try {
-            System.out.println("Client: Установили соединение с сервером с портом 777");
-            DataInputStream reader = new DataInputStream(socket.getInputStream());
-            DataOutputStream writer = new DataOutputStream(socket.getOutputStream());
+        while (!socket.isClosed()) {
+            try(DataInputStream reader = new DataInputStream(socket.getInputStream());
+                DataOutputStream writer = new DataOutputStream(socket.getOutputStream())){
 
-            String login = (String)(new ObjectInputStream(reader)).readObject();
-            System.out.println(login);
-            if (login.equals("Svetlana")){
-                TaskList taskList = Controller.readTaskList();
-                writer.writeInt(taskList.getTaskList().size());
-                System.out.println(taskList.getTaskList().size());
-                writer.flush();
-                System.out.println("Отправляем клиенту таски");
-                for (Task task : taskList.getTaskList()) {
-                    Gson gson = new Gson();
-                    String outputStr = gson.toJson(task);
-                    System.out.println(outputStr);
-                    (new ObjectOutputStream(writer)).writeObject(outputStr);
+                String jsonInput = reader.readUTF();
+                System.out.println("Server: Получили json.");
+
+                //Как быть с различными пакетами?(или сделать один общий?)(или посылать сначало Aсtion?)
+                PacketUser pu = new Gson().fromJson(jsonInput, PacketUser.class);
+                System.out.println("Server: Преоброзовали в PC.");
+
+                //В будущем заменить на switch
+                if(pu.getAction() == Action.LOGIN) {
+
+                    PacketServer ps = null;
+                    //Проверять существует ли файл с таким именем
+                    if(pu.getLogin().equals("Alex")) {
+                        ps = new PacketServer(State.OK);
+                    }
+                    //Создавать новый файл если нет такового
+                    else
+                        ps = new PacketServer(State.LOGIN_ERROR);
+
+                    String jsonOutput = new Gson().toJson(ps);
+                    writer.writeUTF(jsonOutput);
                     writer.flush();
                 }
 
+            } catch (Exception e) {
+                System.out.println("Server: Возникла ошибка: " + e.getMessage());
             }
-
-
-
-            System.out.println("Server: Работа с данным клиентом завершена(закрываем Streams and socket).");
-            reader.close();
-            writer.close();
-            socket.close();
-        }
-        catch (Exception e){
-            System.out.println("Server: Возникла ошибка: " + e.getMessage());
         }
     }
 

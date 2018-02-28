@@ -2,6 +2,7 @@ package src.client;
 
 import com.google.gson.Gson;
 import src.model.Task;
+import src.model.packet.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -11,6 +12,30 @@ import java.util.List;
 
 public class Client{
 
+    //Как закрывать socket?
+    private Socket socket;
+
+    public Client(String login) throws Exception {
+            socket = new Socket("localhost", 777);
+
+            try(DataOutputStream serverWriter = new DataOutputStream(socket.getOutputStream());
+                DataInputStream serverReader = new DataInputStream(socket.getInputStream())){
+
+                PacketUser pu = new PacketUser(Action.LOGIN, login);
+                String jsonOutput = new Gson().toJson(pu);
+
+                serverWriter.writeUTF(jsonOutput);
+                serverWriter.flush();
+
+                String jsonInput = serverReader.readUTF();
+                PacketServer answerFromServer = new Gson().fromJson(jsonInput, PacketServer.class);
+                if(answerFromServer.getState() != State.OK)
+                    throw new Exception("Не удалось залогиниться!");
+            }
+
+    }
+
+    //Убрать
     public static void main(String[] args) {
         System.out.println("Client: Start");
 
@@ -34,6 +59,7 @@ public class Client{
         System.out.println("Client: FIN!");
     }
 
+    //Переписать и сделать публичным
     private static List<Task> getTasks(DataOutputStream serverWriter, DataInputStream serverReader){
         try {
             (new ObjectOutputStream(serverWriter)).writeObject("Svetlana");
