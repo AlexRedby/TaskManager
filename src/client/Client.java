@@ -21,8 +21,7 @@ public class Client{
             try(DataOutputStream serverWriter = new DataOutputStream(socket.getOutputStream());
                 DataInputStream serverReader = new DataInputStream(socket.getInputStream())){
 
-                PacketUser pu = new PacketUser(Action.LOGIN, login);
-                String jsonOutput = new Gson().toJson(pu);
+                String jsonOutput = new Gson().toJson(Action.LOGIN);
 
                 serverWriter.writeUTF(jsonOutput);
                 serverWriter.flush();

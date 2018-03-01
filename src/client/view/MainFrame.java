@@ -46,7 +46,7 @@ public class MainFrame extends JFrame {
                                 JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
                 if (n == 0) {
-                    Controller.writeTaskList(taskList);
+                    Controller.writeTaskList(taskList, "Test.json");
                 }
                 System.exit(0);
             }
