@@ -30,17 +30,17 @@ public class Server implements Runnable {
     private TaskList taskList;
     private String fileName;
 
-    public Server(Socket socket){
+    private Server(Socket socket) {
         this.socket = socket;
         taskList = null;
     }
 
     @Override
     public void run() {
-        while (!socket.isClosed()) {
-            try(DataInputStream reader = new DataInputStream(socket.getInputStream());
-                DataOutputStream writer = new DataOutputStream(socket.getOutputStream())){
 
+        try (DataInputStream reader = new DataInputStream(socket.getInputStream());
+             DataOutputStream writer = new DataOutputStream(socket.getOutputStream())) {
+            while (!socket.isClosed()) {
                 String jsonAction = reader.readUTF();
                 System.out.println("Server: Получили json c Action.");
 
@@ -56,28 +56,27 @@ public class Server implements Runnable {
                         fileName = login + ".json";
 
                         //TODO: Если файл уже используется
-                        taskList = Controller.readTaskList(fileName);
-                        State answer = State.OK;
 
-                        //"Регистрация" - новый login -> новый TaskList
+                        taskList = Controller.readTaskList(fileName);
+
+//                        "Регистрация" - новый login -> новый TaskList
                         if (taskList == null) {
                             taskList = new TaskList();
                         }
-
+                        State answer = State.OK;
                         String jsonAnswer = new Gson().toJson(answer);
                         writer.writeUTF(jsonAnswer);
                         writer.flush();
                         break;
                     }
-                    //TODO: Нужно проверить(не уверен что будет работать)
-                    case ADD_OR_UPDATE_TASK: {
+
+                    case ADD_TASK: {
                         String jsonTask = reader.readUTF();
                         System.out.println("Server: Получили Task в виде строки.");
 
                         Task task = new Gson().fromJson(jsonTask, Task.class);
                         System.out.println("Server: Успешно преобразовали в Task.");
 
-                        taskList.deleteTask(task);
                         taskList.addTask(task);
 
                         State answer = State.OK;
@@ -85,6 +84,31 @@ public class Server implements Runnable {
                         String jsonAnswer = new Gson().toJson(answer);
                         writer.writeUTF(jsonAnswer);
                         writer.flush();
+                        System.out.println("Server: Добавил новый таск");
+                        break;
+                    }
+
+                    case UPDATE_TASK: {
+                        String jsonTask = reader.readUTF();
+                        System.out.println("Server: Получили Task на обновление в виде строки.");
+
+                        Task task = new Gson().fromJson(jsonTask, Task.class);
+                        System.out.println("Server: Успешно преобразовали в Task.");
+
+                        taskList.deleteTask(task);
+                        jsonTask = reader.readUTF();
+                        System.out.println("Server: Получили новый Task в виде строки.");
+
+                        task = new Gson().fromJson(jsonTask, Task.class);
+                        System.out.println("Server: Успешно преобразовали в Task.");
+                        taskList.addTask(task);
+
+                        State answer = State.OK;
+
+                        String jsonAnswer = new Gson().toJson(answer);
+                        writer.writeUTF(jsonAnswer);
+                        writer.flush();
+
                         break;
                     }
                     case DELETE_TASK: {
@@ -95,7 +119,7 @@ public class Server implements Runnable {
                         System.out.println("Server: Успешно преобразовали в Task.");
 
                         taskList.deleteTask(task);
-
+                        System.out.println("Server: Удалил таск");
                         State answer = State.OK;
 
                         String jsonAnswer = new Gson().toJson(answer);
@@ -106,31 +130,41 @@ public class Server implements Runnable {
                     case GET_ALL_TASKS: {
                         List<Task> tasks = taskList.getTaskList();
 
-                        State answer = null;
-                        String jsonTasks = null;
-                        if(!tasks.isEmpty()) {
-                            //Передаю массив, т.к. с списком не получилось
-                            jsonTasks = new Gson().toJson(tasks.toArray());
-
+                        State answer = State.NO_TASKS;
+                        String jsonTasks;
+                        if (!tasks.isEmpty()) {
                             answer = State.OK;
+                        } else {
+                            System.out.println("Server: Тасков нет, ничего не отправил");
                         }
-                        else
-                            answer = State.NO_TASKS;
 
                         String jsonAnswer = new Gson().toJson(answer);
                         writer.writeUTF(jsonAnswer);
                         writer.flush();
 
-                        if(answer == State.OK) {
-                            writer.writeUTF(jsonTasks);
+                        if (answer == State.OK) {
+                            writer.writeInt(tasks.size());
                             writer.flush();
+                            for (Task task : tasks) {
+                                jsonTasks = new Gson().toJson(task, Task.class);
+                                writer.writeUTF(jsonTasks);
+                                writer.flush();
+                            }
+                            System.out.println("Server: Таски отправились");
                         }
+                        break;
+                    }
+                    case EXIT: {
+                        Controller.writeTaskList(taskList, fileName);
+                        socket.close();
                     }
                 }
 
-            } catch (Exception e) {
-                System.out.println("Server: Возникла ошибка: " + e.getMessage());
             }
+            System.out.println("Server: Работа с клиентом " + fileName + " завершена");
+        } catch (Exception e) {
+            System.out.println("Server: Возникла ошибка: " + e.getMessage());
+
         }
     }
 

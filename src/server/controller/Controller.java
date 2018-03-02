@@ -25,8 +25,8 @@ public class Controller {
             return new Gson().fromJson(reader, TaskList.class);
         }
         catch (IOException e){
-            e.printStackTrace();
+//            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }

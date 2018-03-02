@@ -3,6 +3,7 @@ package src.client;
 import com.google.gson.Gson;
 import src.model.Task;
 import src.model.packet.*;
+import src.model.packet.Action;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,74 +11,119 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Client{
+public class Client {
+    // TODO: 02.03.2018 Нужно все манипуляции сделать функциями, чтобы вызывать их из фреймов (наверное??!)
 
-    //Как закрывать socket?
     private Socket socket;
 
     public Client(String login) throws Exception {
-            socket = new Socket("localhost", 777);
+        socket = new Socket("localhost", 777);
 
-            try(DataOutputStream serverWriter = new DataOutputStream(socket.getOutputStream());
-                DataInputStream serverReader = new DataInputStream(socket.getInputStream())){
+        try (DataOutputStream serverWriter = new DataOutputStream(socket.getOutputStream());
+             DataInputStream serverReader = new DataInputStream(socket.getInputStream())) {
+            //Логинимся
+            String jsonOutput = new Gson().toJson(Action.LOGIN);
 
-                String jsonOutput = new Gson().toJson(Action.LOGIN);
-
-                serverWriter.writeUTF(jsonOutput);
-                serverWriter.flush();
-
-                String jsonInput = serverReader.readUTF();
-                PacketServer answerFromServer = new Gson().fromJson(jsonInput, PacketServer.class);
-                if(answerFromServer.getState() != State.OK)
-                    throw new Exception("Не удалось залогиниться!");
-            }
-
-    }
-
-    //Убрать
-    public static void main(String[] args) {
-        System.out.println("Client: Start");
-
-        try (Socket socket = new Socket("localhost", 777)) {
-            System.out.println("Client: Установили соединение с сервером с портом 777");
-
-            DataInputStream serverReader = new DataInputStream(socket.getInputStream());
-            DataOutputStream serverWriter = new DataOutputStream(socket.getOutputStream());
-
-            List<Task> taskList = getTasks(serverWriter, serverReader);
-            System.out.println("Client: Отсоединяемся от сервера и закрываем Streams");
-
-            serverReader.close();
-            serverWriter.close();
-            socket.close();
-        }
-        catch(Exception e) {
-            System.out.println("Client: Возникла ошибка: ");
-            System.out.print(e.getMessage());
-        }
-        System.out.println("Client: FIN!");
-    }
-
-    //Переписать и сделать публичным
-    private static List<Task> getTasks(DataOutputStream serverWriter, DataInputStream serverReader){
-        try {
-            (new ObjectOutputStream(serverWriter)).writeObject("Svetlana");
+            serverWriter.writeUTF(jsonOutput);
             serverWriter.flush();
 
-            String json;
-            List<Task> tl = new ArrayList<>();
+            serverWriter.writeUTF(login);
+            serverWriter.flush();
+
+            String jsonInput = serverReader.readUTF();
+            State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+            if (answerFromServer != State.OK) {
+                throw new Exception("Client: Не удалось залогиниться!");
+            }
+            System.out.println("Client: Регистрация прошла, сервер ответил OK");
+
+
+            //Залогинились, теперь получаем таски
+            jsonOutput = new Gson().toJson(Action.GET_ALL_TASKS);
+            System.out.println("Client: Посылаем запрос на все таски");
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+            jsonInput = serverReader.readUTF();
+            answerFromServer = new Gson().fromJson(jsonInput, State.class);
+            if (answerFromServer == State.NO_TASKS) {
+
+                jsonOutput = new Gson().toJson(Action.EXIT);
+                System.out.println("Client: Сматываем удочки");
+                serverWriter.writeUTF(jsonOutput);
+                serverWriter.flush();
+                socket.close();
+                throw new Exception("Client: Тасков нет!!!");
+            }
+            // Если есть таски, принимаем их
+            List<Task> tasks = new ArrayList<>();
             int count = serverReader.readInt();
             for (int i = 0; i < count; i++) {
-                json = (String) (new ObjectInputStream(serverReader)).readObject();
-                tl.add(new Gson().fromJson(json, Task.class));
+                jsonInput = serverReader.readUTF();
+                tasks.add(new Gson().fromJson(jsonInput, Task.class));
             }
-            System.out.println("Клиент приянл таски");
-            return tl;
+            System.out.println("Client: Таски приняты");
+
+            //Давай попробуем добавить таску
+            jsonOutput = new Gson().toJson(Action.ADD_TASK);
+            System.out.println("Client: Посылаем запрос на добавление");
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+
+            jsonOutput = new Gson().toJson(new Task());
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+            jsonInput = serverReader.readUTF();
+            answerFromServer = new Gson().fromJson(jsonInput, State.class);
+            if (answerFromServer != State.OK) {
+                jsonOutput = new Gson().toJson(Action.EXIT);
+                System.out.println("Client: Сматываем удочки");
+                serverWriter.writeUTF(jsonOutput);
+                serverWriter.flush();
+                socket.close();
+                throw new Exception("Client: Таск не добавился!!!");
+            }
+            System.out.println("Client: Таск добавился");
+
+            //Теперь удалим!!
+            jsonOutput = new Gson().toJson(Action.DELETE_TASK);
+            System.out.println("Client: Посылаем запрос на удаление");
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+
+            jsonOutput = new Gson().toJson(tasks.get(1));
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+
+            jsonInput = serverReader.readUTF();
+            answerFromServer = new Gson().fromJson(jsonInput, State.class);
+            if (answerFromServer == State.OK) {
+                System.out.println("Client: Удалили таск" + tasks.get(1).toString());
+            }
+
+            //И обновим что нибудь
+            jsonOutput = new Gson().toJson(Action.UPDATE_TASK);
+            System.out.println("Client: Посылаем запрос на обновление таска");
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+
+            jsonOutput = new Gson().toJson(tasks.get(0));
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+            jsonOutput = new Gson().toJson(new Task());
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+
+            jsonInput = serverReader.readUTF();
+            answerFromServer = new Gson().fromJson(jsonInput, State.class);
+            if (answerFromServer == State.OK) {
+                System.out.println("Client: Заменили таск " + tasks.get(0).toString() + " на " + new Task().toString());
+            }
+
+            jsonOutput = new Gson().toJson(Action.EXIT);
+            System.out.println("Client: Сматываем удочки");
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
         }
-            catch(Exception e) {
-                System.out.println("Client: Возникла ошибка: ");
-                System.out.print(e.getMessage());
-                return null;
-        }
+        socket.close();
     }
 }

@@ -9,19 +9,18 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        /*TaskList taskList = Controller.readTaskList();
-        if (taskList == null)
-            taskList = new TaskList();
-
-        JFrame frame = new MainFrame(taskList);*/
         try {
             new Client("Alex");
-
-            System.out.println("Alex успешно залогинился!");
-
-            new Client("Sveta");
+            System.out.println("Alex успешно отработал!");
         } catch (Exception e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
+        try {
+            new Client("Sveta");
+            System.out.println("Sveta успешно отработал!");
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        }
+
     }
 }
