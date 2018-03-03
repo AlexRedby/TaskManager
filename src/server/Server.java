@@ -30,7 +30,7 @@ public class Server implements Runnable {
     private TaskList taskList;
     private String fileName;
 
-    private Server(Socket socket) {
+    public Server(Socket socket) {
         this.socket = socket;
         taskList = null;
     }
@@ -143,13 +143,13 @@ public class Server implements Runnable {
                         writer.flush();
 
                         if (answer == State.OK) {
-                            writer.writeInt(tasks.size());
+                            /*writer.writeInt(tasks.size());
                             writer.flush();
-                            for (Task task : tasks) {
-                                jsonTasks = new Gson().toJson(task, Task.class);
+                            for (Task task : tasks) {*/
+                                jsonTasks = new Gson().toJson(tasks.toArray(), Task[].class);
                                 writer.writeUTF(jsonTasks);
                                 writer.flush();
-                            }
+                            //}
                             System.out.println("Server: Таски отправились");
                         }
                         break;
@@ -157,6 +157,7 @@ public class Server implements Runnable {
                     case EXIT: {
                         Controller.writeTaskList(taskList, fileName);
                         socket.close();
+                        break;
                     }
                 }
 
