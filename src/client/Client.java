@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -18,6 +19,7 @@ public class Client implements Closeable{
     private Socket socket;
     private DataOutputStream serverWriter;
     private DataInputStream serverReader;
+    private String login;
 
     public Client(String login) throws Exception {
         socket = new Socket("localhost", 777);
@@ -25,6 +27,10 @@ public class Client implements Closeable{
         serverReader = new DataInputStream(socket.getInputStream());
 
         login(login);
+        this.login = login;
+    }
+    public String getLogin(){
+        return login;
     }
 
     public void login(String login) throws Exception {
@@ -67,6 +73,29 @@ public class Client implements Closeable{
         System.out.println("Client: Таск добавился");
     }
 
+    public void completeTask(Task task) throws Exception {
+        String jsonOutput = new Gson().toJson(Action.COMPLETE_TASK);
+        System.out.println("Client: Посылаем запрос на завершение");
+        serverWriter.writeUTF(jsonOutput);
+        serverWriter.flush();
+
+        jsonOutput = new Gson().toJson(task);
+        serverWriter.writeUTF(jsonOutput);
+        serverWriter.flush();
+
+        String jsonInput = serverReader.readUTF();
+        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+        if (answerFromServer != State.OK) {
+            jsonOutput = new Gson().toJson(Action.EXIT);
+            System.out.println("Client: Сматываем удочки");
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+            socket.close();
+            throw new Exception("Client: Таск не добавился!!!");
+        }
+        System.out.println("Client: Таск добавился");
+    }
+
     public void updateTask(Task oldTask, Task newTask) throws Exception {
         String jsonOutput = new Gson().toJson(Action.UPDATE_TASK);
         System.out.println("Client: Посылаем запрос на обновление таска");
@@ -87,6 +116,33 @@ public class Client implements Closeable{
         }
     }
 
+    public void postponeTask(Task task, Calendar newDateTime) throws Exception {
+        String jsonOutput = new Gson().toJson(Action.POSTPONE_TASK);
+        System.out.println("Client: Посылаем запрос на откладывание");
+        serverWriter.writeUTF(jsonOutput);
+        serverWriter.flush();
+
+        jsonOutput = new Gson().toJson(task);
+        serverWriter.writeUTF(jsonOutput);
+        serverWriter.flush();
+
+        jsonOutput = new Gson().toJson(newDateTime);
+        serverWriter.writeUTF(jsonOutput);
+        serverWriter.flush();
+
+        String jsonInput = serverReader.readUTF();
+        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+        if (answerFromServer != State.OK) {
+            jsonOutput = new Gson().toJson(Action.EXIT);
+            System.out.println("Client: Сматываем удочки");
+            serverWriter.writeUTF(jsonOutput);
+            serverWriter.flush();
+            socket.close();
+            throw new Exception("Client: Таск отложился!!!");
+        }
+        System.out.println("Client: Таск отложился");
+    }
+
     public void deleteTask(Task task) throws IOException{
         String jsonOutput = new Gson().toJson(Action.DELETE_TASK);
         System.out.println("Client: Посылаем запрос на удаление");
@@ -104,7 +160,6 @@ public class Client implements Closeable{
         }
     }
 
-
     public List<Task> getAllTasks() throws Exception {
         List<Task> tasks = null;
 
@@ -120,7 +175,11 @@ public class Client implements Closeable{
             Task[] arrayTasks = new Gson().fromJson(jsonInput, Task[].class);
 
             tasks = Arrays.asList(arrayTasks);
+            tasks = new ArrayList<>(tasks);
             System.out.println("Client: Таски приняты");
+        }
+        else {
+            tasks = new ArrayList<>();
         }
 
         return tasks;

@@ -1,6 +1,6 @@
 package src.client.view;
 
-import src.server.controller.TaskList;
+import src.client.controller.TaskList;
 import src.model.Constants;
 import src.model.Task;
 
@@ -37,12 +37,15 @@ public class AddTaskFrame extends JFrame {
     private TaskList taskList;
     private MainFrame mainFrame;
 
+    //Конструктор для новой задачи
     public AddTaskFrame(TaskList taskList, MainFrame mainFrame) {
         this.taskList = taskList;
         this.mainFrame = mainFrame;
 
         btCancel.addActionListener(event -> dispose());
-        btSaveTask.addActionListener(event -> addTask());
+        btSaveTask.addActionListener(event -> {
+            addTask();
+        });
         try {
             Calendar dateTime = Calendar.getInstance();
             dateTime.add(Calendar.MINUTE, Constants.FIVE_MINUTES);
@@ -65,6 +68,7 @@ public class AddTaskFrame extends JFrame {
         setVisible(true);
     }
 
+    //Конструктор для редактирования существующей задачи
     public AddTaskFrame(TaskList taskList, Task task, MainFrame mainFrame) {
         this.taskList = taskList;
         this.mainFrame = mainFrame;
@@ -75,8 +79,13 @@ public class AddTaskFrame extends JFrame {
 
         btCancel.addActionListener(event -> dispose());
         btSaveTask.addActionListener(event -> {
-            taskList.deleteTask(task);
-            addTask();
+            try {
+                taskList.deleteTask(task);
+                mainFrame.getClient().deleteTask(task);
+                addTask();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         try {
             formatDateTime(task.getDateTime());
@@ -113,8 +122,12 @@ public class AddTaskFrame extends JFrame {
             Task task = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
             //Если такой задачи не сущетвует, то добавляем
             if (!taskList.isExist(task)) {
-                taskList.addTask(task);
-
+                try{
+                    taskList.addTask(task);
+                    mainFrame.getClient().addTask(task);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 mainFrame.update();
                 dispose();
             }

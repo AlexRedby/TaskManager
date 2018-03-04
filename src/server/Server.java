@@ -7,9 +7,8 @@ import src.server.controller.TaskList;
 import src.model.Task;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 //Сначала серверу необходимо передать Action в виде строки(json).
@@ -75,7 +74,6 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task в виде строки.");
 
                         Task task = new Gson().fromJson(jsonTask, Task.class);
-                        System.out.println("Server: Успешно преобразовали в Task.");
 
                         taskList.addTask(task);
 
@@ -93,14 +91,14 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task на обновление в виде строки.");
 
                         Task task = new Gson().fromJson(jsonTask, Task.class);
-                        System.out.println("Server: Успешно преобразовали в Task.");
+//                        System.out.println("Server: Успешно преобразовали в Task.");
 
                         taskList.deleteTask(task);
                         jsonTask = reader.readUTF();
                         System.out.println("Server: Получили новый Task в виде строки.");
 
                         task = new Gson().fromJson(jsonTask, Task.class);
-                        System.out.println("Server: Успешно преобразовали в Task.");
+//                        System.out.println("Server: Успешно преобразовали в Task.");
                         taskList.addTask(task);
 
                         State answer = State.OK;
@@ -116,9 +114,8 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task в виде строки.");
 
                         Task task = new Gson().fromJson(jsonTask, Task.class);
-                        System.out.println("Server: Успешно преобразовали в Task.");
-
-                        taskList.deleteTask(task);
+                        int i = taskList.getTaskList().indexOf(task);
+                        taskList.deleteTask(taskList.getTaskList().get(i));
                         System.out.println("Server: Удалил таск");
                         State answer = State.OK;
 
@@ -143,19 +140,55 @@ public class Server implements Runnable {
                         writer.flush();
 
                         if (answer == State.OK) {
-                            /*writer.writeInt(tasks.size());
-                            writer.flush();
-                            for (Task task : tasks) {*/
                                 jsonTasks = new Gson().toJson(tasks.toArray(), Task[].class);
                                 writer.writeUTF(jsonTasks);
                                 writer.flush();
-                            //}
                             System.out.println("Server: Таски отправились");
                         }
                         break;
                     }
+
+                    case COMPLETE_TASK: {
+                        String jsonTask = reader.readUTF();
+                        System.out.println("Server: Получили Task в виде строки.");
+
+                        Task task = new Gson().fromJson(jsonTask, Task.class);
+                        int i = taskList.getTaskList().indexOf(task);
+                        taskList.complete(taskList.getTaskList().get(i));
+                        System.out.println("Server: Завершил таск");
+                        State answer = State.OK;
+
+                        String jsonAnswer = new Gson().toJson(answer);
+                        writer.writeUTF(jsonAnswer);
+                        writer.flush();
+                        break;
+                    }
+
+                    case POSTPONE_TASK: {
+                        String jsonTask = reader.readUTF();
+                        System.out.println("Server: Получили Task в виде строки.");
+
+                        Task task = new Gson().fromJson(jsonTask, Task.class);
+//                        System.out.println("Server: Успешно преобразовали в Task.");
+
+                        String jsonNewDateTime = reader.readUTF();
+                        System.out.println("Server: Получили Новое время для таска.");
+
+                        Calendar newDateTime = new Gson().fromJson(jsonNewDateTime, Calendar.class);
+                        int i = taskList.getTaskList().indexOf(task);
+                        taskList.postpone(taskList.getTaskList().get(i), newDateTime);
+                        System.out.println("Server:  Отложили таск");
+                        State answer = State.OK;
+
+                        String jsonAnswer = new Gson().toJson(answer);
+                        writer.writeUTF(jsonAnswer);
+                        writer.flush();
+                        break;
+                    }
+
                     case EXIT: {
                         Controller.writeTaskList(taskList, fileName);
+                        System.out.println("Server: Таски записаны в файл");
                         socket.close();
                         break;
                     }

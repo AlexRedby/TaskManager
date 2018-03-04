@@ -1,8 +1,8 @@
 package src.client.view;
 
+import src.client.Client;
 import src.client.controller.AlarmThread;
-import src.server.controller.Controller;
-import src.server.controller.TaskList;
+import src.client.controller.TaskList;
 import src.model.Constants;
 import src.model.Task;
 
@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.util.Timer;
 
 public class MainFrame extends JFrame {
@@ -25,29 +26,40 @@ public class MainFrame extends JFrame {
     private JScrollPane scrollPane;
 
     private TaskList taskList;
-
     private enum CurrentOutput {ACTIVE, NOT_ACTIVE, ALL}
-
     private CurrentOutput currentOutput;
+    private Client client;
 
-    public MainFrame(TaskList taskList) {
+    public MainFrame(Client client) {
         currentOutput = CurrentOutput.ALL;
-        this.taskList = taskList;
+        this.client = client;
+        try {
+            this.taskList = new TaskList(client.getAllTasks());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         startAlarm();
 
         //Действия по закрытию приложения
         //Сохранение
         this.addWindowListener(new WindowListener() {
             public void windowClosing(WindowEvent event) {
-                Object[] options = {"Да", "Нет!"};
-                int n = JOptionPane
-                        .showOptionDialog(event.getWindow(), "Сохранить всё?",
-                                "Сохранение", JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE, null, options,
-                                options[0]);
-                if (n == 0) {
-                    Controller.writeTaskList(taskList, "Test.json");
-                }
+//                Object[] options = {"Да", "Нет!"};
+//                int n = JOptionPane
+//                        .showOptionDialog(event.getWindow(), "Сохранить всё?",
+//                                "Сохранение", JOptionPane.YES_NO_OPTION,
+//                                JOptionPane.QUESTION_MESSAGE, null, options,
+//                                options[0]);
+//                if (n == 0) {
+//                    Controller.writeTaskList(taskList, "Test.json");
+                    try {
+                        client.close();
+                    }
+                    catch (IOException e){
+                        e.printStackTrace();
+                    }
+//                }
                 System.exit(0);
             }
 
@@ -117,7 +129,14 @@ public class MainFrame extends JFrame {
                             options[0]);
             if (n == 0) {
                 Task selectedTask = list1.getSelectedValue();
-                taskList.deleteTask(selectedTask);
+                try{
+                    client.deleteTask(selectedTask);
+                    taskList.deleteTask(selectedTask);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 update();
             }
         });
@@ -137,6 +156,10 @@ public class MainFrame extends JFrame {
 
         setVisible(true);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     private void startAlarm() {

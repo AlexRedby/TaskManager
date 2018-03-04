@@ -6,5 +6,7 @@ public enum Action {
     ADD_TASK,
     UPDATE_TASK,
     DELETE_TASK,
+    COMPLETE_TASK,
+    POSTPONE_TASK,
     EXIT
 }

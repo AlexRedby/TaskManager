@@ -1,7 +1,8 @@
 package src.client.view;
 
+import src.client.Client;
 import src.client.controller.AlarmThread;
-import src.server.controller.TaskList;
+import src.client.controller.TaskList;
 import src.model.Constants;
 import src.model.Task;
 
@@ -39,7 +40,7 @@ public class AlarmFrame extends JFrame {
     private JLabel lTaskInfo;
     private JFormattedTextField formattedTextField;
 
-    public AlarmFrame(Task task, TaskList taskList, AlarmThread parent, MainFrame mainFrame) {
+    public AlarmFrame(Task task, TaskList taskList, AlarmThread parent, MainFrame mainFrame, Client client) {
         this.task = task;
         this.taskList = taskList;
         this.parent = parent;
@@ -78,7 +79,14 @@ public class AlarmFrame extends JFrame {
 
         //Завершаем Task
         btCompleteTask.addActionListener(event -> {
-            taskList.complete(task);
+            try {
+                taskList.complete(task);
+                client.completeTask(task);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
             parent.update(AlarmFrame.this);
             mainFrame.update();
             dispose();
@@ -124,7 +132,13 @@ public class AlarmFrame extends JFrame {
             if (isCorrect) {
                 newDate.add(Calendar.MINUTE, minutes);
                 newDate.set(Calendar.SECOND, 0);
-                taskList.postpone(task, newDate);
+                try {
+                    client.postponeTask(task, newDate);
+                    taskList.postpone(task, newDate);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
                 parent.update(AlarmFrame.this);
                 mainFrame.update();
                 dispose();
