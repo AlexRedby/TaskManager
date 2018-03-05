@@ -140,9 +140,12 @@ public class Server implements Runnable {
                         writer.flush();
 
                         if (answer == State.OK) {
-                                jsonTasks = new Gson().toJson(tasks.toArray(), Task[].class);
-                                writer.writeUTF(jsonTasks);
-                                writer.flush();
+                                //jsonTasks = new Gson().toJson(tasks.toArray(), Task[].class);
+                                //writer.writeUTF(jsonTasks);
+                                //writer.flush();
+                            ObjectOutputStream oos = new ObjectOutputStream(writer);
+                            oos.writeObject(tasks);
+                            oos.flush();
                             System.out.println("Server: Таски отправились");
                         }
                         break;

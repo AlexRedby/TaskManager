@@ -11,6 +11,7 @@ public class StartServer {
         try (ServerSocket server = new ServerSocket(777)) {
             System.out.println("Server: Серверный сокет с портом 777 создан.");
             System.out.println("Server: Входим в бесконечный цикл ожидания...");
+
             while (true) {
                 new Thread(new Server(server.accept())).start();
             }

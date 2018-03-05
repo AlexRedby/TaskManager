@@ -29,6 +29,7 @@ public class Client implements Closeable{
         login(login);
         this.login = login;
     }
+
     public String getLogin(){
         return login;
     }
@@ -170,12 +171,13 @@ public class Client implements Closeable{
         String jsonInput = serverReader.readUTF();
         State answerFromServer = new Gson().fromJson(jsonInput, State.class);
         if (answerFromServer == State.OK) {
-            //Принемаем массив
+            /*//Принемаем массив
             jsonInput = serverReader.readUTF();
             Task[] arrayTasks = new Gson().fromJson(jsonInput, Task[].class);
 
             tasks = Arrays.asList(arrayTasks);
-            tasks = new ArrayList<>(tasks);
+            tasks = new ArrayList<>(tasks);*/
+            tasks = (ArrayList<Task>)(new ObjectInputStream(serverReader)).readObject();
             System.out.println("Client: Таски приняты");
         }
         else {
