@@ -44,7 +44,7 @@ public class AddTaskFrame extends JFrame {
 
         btCancel.addActionListener(event -> dispose());
         btSaveTask.addActionListener(event -> {
-            addTask();
+            addTask(null);
         });
         try {
             Calendar dateTime = Calendar.getInstance();
@@ -80,9 +80,7 @@ public class AddTaskFrame extends JFrame {
         btCancel.addActionListener(event -> dispose());
         btSaveTask.addActionListener(event -> {
             try {
-                taskList.deleteTask(task);
-                mainFrame.getClient().deleteTask(task);
-                addTask();
+                addTask(task);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -114,17 +112,22 @@ public class AddTaskFrame extends JFrame {
         rbNotActive.setSelected(!active);
     }
 
-    private void addTask() {
+    private void addTask(Task oldTask) {
         boolean active;
         active = rbActive.isSelected();
 
         try {
-            Task task = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
+            Task newTask = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
             //Если такой задачи не сущетвует, то добавляем
-            if (!taskList.isExist(task)) {
+            if (!taskList.isExist(newTask)) {
                 try{
-                    taskList.addTask(task);
-                    mainFrame.getClient().addTask(task);
+                    if(oldTask != null) {
+                        taskList.deleteTask(oldTask);
+                        mainFrame.getClient().deleteTask(oldTask);
+                    }
+
+                    taskList.addTask(newTask);
+                    mainFrame.getClient().addTask(newTask);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -136,8 +139,12 @@ public class AddTaskFrame extends JFrame {
                     "Такая задача уже существует. Измените название, описание или дату.");
         }
         //Если getDateTime() ввернёт ошибку
-        catch (DateTimeException | ParseException e) {
+        catch (ParseException e) {
             JOptionPane.showMessageDialog(this, "Введена некорректная дата",
+                    "Ошибка", JOptionPane.WARNING_MESSAGE);
+        }
+        catch (DateTimeException e){
+            JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Ошибка", JOptionPane.WARNING_MESSAGE);
         }
     }
