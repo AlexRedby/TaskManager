@@ -112,8 +112,6 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task в виде строки.");
 
                         Task task = new Gson().fromJson(jsonTask, Task.class);
-//                        int i = taskList.getTaskList().indexOf(task);
-//                        taskList.deleteTask(taskList.getTaskList().get(i));
                         taskList.deleteTask(task);
                         System.out.println("Server: Удалил таск");
 
@@ -135,9 +133,6 @@ public class Server implements Runnable {
                         sendAnswer(answer, writer);
 
                         if (answer == State.OK) {
-                                //jsonTasks = new Gson().toJson(tasks.toArray(), Task[].class);
-                                //writer.writeUTF(jsonTasks);
-                                //writer.flush();
                             ObjectOutputStream oos = new ObjectOutputStream(writer);
                             oos.writeObject(tasks);
                             oos.flush();
@@ -151,8 +146,7 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task в виде строки.");
 
                         Task task = new Gson().fromJson(jsonTask, Task.class);
-                        int i = taskList.getTaskList().indexOf(task);
-                        taskList.complete(taskList.getTaskList().get(i));
+                        taskList.complete(task);
                         System.out.println("Server: Завершил таск");
 
                         sendAnswer(State.OK, writer);
@@ -171,8 +165,7 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Новое время для таска.");
 
                         Calendar newDateTime = new Gson().fromJson(jsonNewDateTime, Calendar.class);
-                        int i = taskList.getTaskList().indexOf(task);
-                        taskList.postpone(taskList.getTaskList().get(i), newDateTime);
+                        taskList.postpone(task, newDateTime);
                         System.out.println("Server:  Отложили таск");
 
                         sendAnswer(State.OK, writer);
