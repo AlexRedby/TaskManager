@@ -2,6 +2,7 @@ package src.common.model.packet;
 
 public enum Action {
     LOGIN,
+    REGISTRATION,
     GET_ALL_TASKS,
     ADD_TASK,
     UPDATE_TASK,

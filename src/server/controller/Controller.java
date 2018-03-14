@@ -46,7 +46,7 @@ public class Controller {
         }
     }
 
-    public static Map readUsers() {
+    public static HashMap readUsers() {
         try (FileReader reader = new FileReader("users.json")) {
             return new Gson().fromJson(reader, HashMap.class);
         }

@@ -23,5 +23,5 @@ public class Constants {
     public static final int MAIN_FRAME_HEIGHT = 400;
 
     public static final int LOGIN_FRAME_WIDTH = 250;
-    public static final int LOGIN_FRAME_HEIGHT = 150;
+    public static final int LOGIN_FRAME_HEIGHT = 180;
 }

@@ -16,12 +16,13 @@ public class LoginFrame extends JFrame {
     private JPanel panelMain;
 
     private JLabel lableLogin;
+    private JLabel lbPassword;
     private JTextField tfLogin;
     private JButton btEnter;
     private JPasswordField pfPassword;
-    private JLabel lbPassword;
+    private JButton btRegistration;
 
-    public LoginFrame(){
+    public LoginFrame() {
         btEnter.addActionListener(event -> {
             String login = tfLogin.getText();
             if (login.isEmpty())
@@ -30,17 +31,38 @@ public class LoginFrame extends JFrame {
             else {
                 try {
                     String password = new String(pfPassword.getPassword());
-                    MainFrame mainFrame = new MainFrame(new Client(login, password));
+                    MainFrame mainFrame = new MainFrame(new Client(login, password, false));
                     this.dispose();
-                } catch (ConnectException e){
+                } catch (ConnectException e) {
                     JOptionPane.showMessageDialog(this, "Сервер не был найден... " +
-                                    "Повторите попытку позже.", "Ошибка", JOptionPane.ERROR_MESSAGE);
-                }catch (Exception e) {
+                            "Повторите попытку позже.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, e.getMessage(),
                             "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
+        btRegistration.addActionListener(event -> {
+            String login = tfLogin.getText();
+            if (login.isEmpty())
+                JOptionPane.showMessageDialog(this, "Пожалуйста, введите сначала логин",
+                        "Ошибка", JOptionPane.WARNING_MESSAGE);
+            else {
+                try {
+                    String password = new String(pfPassword.getPassword());
+                    MainFrame mainFrame = new MainFrame(new Client(login, password, true));
+                    this.dispose();
+                } catch (ConnectException e) {
+                    JOptionPane.showMessageDialog(this, "Сервер не был найден... " +
+                            "Повторите попытку позже.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, e.getMessage(),
+                            "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
 
         //Ставим фильтор, чтобы можно было вводить только буквенные или цифровое символ или знак подчёркивания
         PlainDocument doc = (PlainDocument) tfLogin.getDocument();
@@ -54,6 +76,7 @@ public class LoginFrame extends JFrame {
         int locationY = (screenSize.height - sizeHeight) / 2;
         setBounds(locationX, locationY, sizeWidth, sizeHeight);
 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(panelMain);
         setTitle("LoginFrame");
         setVisible(true);

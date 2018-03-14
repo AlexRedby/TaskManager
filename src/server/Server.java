@@ -1,6 +1,5 @@
 package src.server;
 
-import com.google.gson.*;
 import src.common.model.packet.*;
 import src.server.controller.Controller;
 import src.common.controller.TaskList;
@@ -27,14 +26,13 @@ public class Server implements Runnable {
     private Socket socket;
     private TaskList taskList;
     private String fileName;
-    private Map users = new HashMap<String, String>();
 
     public Server(Socket socket) {
         this.socket = socket;
         taskList = null;
     }
 
-    private void sendAnswer(State answer, ObjectOutputStream writer) throws IOException{
+    private void sendAnswer(State answer, ObjectOutputStream writer) throws IOException {
         writer.writeObject(answer);
         writer.flush();
     }
@@ -46,34 +44,52 @@ public class Server implements Runnable {
              ObjectOutputStream writer = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()))) {
             while (!socket.isClosed()) {
                 Action neededAction = (Action) reader.readObject();
-                System.out.println("Server: Получили Action.");
+                System.out.println("Server: Получили Action " + neededAction.toString());
 
                 switch (neededAction) {
                     case LOGIN: {
                         //Читаем Login
                         String login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
+                        //Читаем пароль
                         String password = (String) reader.readObject();
                         System.out.println("Server: Получили пароль.");
-                        fileName = login + ".json";
-                        taskList = Controller.readTaskList(fileName);
 
-                        users = Controller.readUsers();
+                        //Если в списке юзеров нет полученного логина или пароль не совпадает возвращается ERROR
+                        HashMap users = Controller.readUsers();
                         if (users.containsKey(login)) {
                             if (users.get(login).equals(password)) {
-                                sendAnswer(State.OK, writer);
                                 fileName = login + ".json";
                                 taskList = Controller.readTaskList(fileName);
-                            }
-                            else {
+                                sendAnswer(State.OK, writer);
+                                System.out.println("Server: Пользователь " + login + " вошел");
+                            } else {
                                 sendAnswer(State.PASSWORD_ERROR, writer);
+                                System.out.println("Server: Получили не верный пароль.");
                             }
                             break;
                         } else {
                             sendAnswer(State.LOGIN_ERROR, writer);
+                            System.out.println("Server: Получили не верный логин.");
                             break;
                         }
                     }
+                    case REGISTRATION:
+                        //Читаем Login
+                        String login = (String) reader.readObject();
+                        System.out.println("Server: Получили login.");
+                        //Читаем пароль
+                        String password = (String) reader.readObject();
+                        System.out.println("Server: Получили пароль.");
+                        HashMap users = Controller.readUsers();
+                        users.put(login, password);
+                        Controller.writeUsers(users);
+                        fileName = login + ".json";
+                        taskList = new TaskList();
+                        Controller.writeTaskList(taskList, fileName);
+                        sendAnswer(State.OK, writer);
+                        System.out.println("Server: Зарегестрировали нового пользователя " + login);
+                        break;
 
                     case ADD_TASK: {
                         Task task = (Task) reader.readObject();
