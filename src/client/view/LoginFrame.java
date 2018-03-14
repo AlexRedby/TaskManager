@@ -1,7 +1,7 @@
 package src.client.view;
 
 import src.client.Client;
-import src.model.Constants;
+import src.common.model.Constants;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;

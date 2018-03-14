@@ -1,6 +1,6 @@
-package src.server.controller;
+package src.common.controller;
 
-import src.model.Task;
+import src.common.model.Task;
 
 import java.io.Serializable;
 import java.util.ArrayList;

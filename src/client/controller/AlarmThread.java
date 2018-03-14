@@ -1,10 +1,9 @@
 package src.client.controller;
 
-import src.client.Client;
 import src.client.view.AlarmFrame;
 import src.client.view.MainFrame;
-import src.model.Task;
-import src.client.controller.TaskList;
+import src.common.model.Task;
+import src.common.controller.TaskList;
 
 import javax.swing.*;
 import java.util.*;

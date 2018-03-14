@@ -1,8 +1,8 @@
 package src.client.view;
 
-import src.client.controller.TaskList;
-import src.model.Constants;
-import src.model.Task;
+import src.common.controller.TaskList;
+import src.common.model.Constants;
+import src.common.model.Task;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;

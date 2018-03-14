@@ -1,10 +1,10 @@
 package src.server;
 
 import com.google.gson.*;
-import src.model.packet.*;
+import src.common.model.packet.*;
 import src.server.controller.Controller;
-import src.server.controller.TaskList;
-import src.model.Task;
+import src.common.controller.TaskList;
+import src.common.model.Task;
 
 import java.io.*;
 import java.net.Socket;
@@ -112,8 +112,9 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task в виде строки.");
 
                         Task task = new Gson().fromJson(jsonTask, Task.class);
-                        int i = taskList.getTaskList().indexOf(task);
-                        taskList.deleteTask(taskList.getTaskList().get(i));
+//                        int i = taskList.getTaskList().indexOf(task);
+//                        taskList.deleteTask(taskList.getTaskList().get(i));
+                        taskList.deleteTask(task);
                         System.out.println("Server: Удалил таск");
 
                         sendAnswer(State.OK, writer);

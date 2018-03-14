@@ -1,4 +1,4 @@
-package src.model.packet;
+package src.common.model.packet;
 
 public enum Action {
     LOGIN,

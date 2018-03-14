@@ -1,14 +1,13 @@
 package src.client;
 
 import com.google.gson.Gson;
-import src.model.Task;
-import src.model.packet.*;
-import src.model.packet.Action;
+import src.common.model.Task;
+import src.common.model.packet.*;
+import src.common.model.packet.Action;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 

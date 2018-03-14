@@ -1,4 +1,4 @@
-package src.model;
+package src.common.model;
 
 public class Constants {
     //public static final String FILE_NAME = "TaskList.json";
