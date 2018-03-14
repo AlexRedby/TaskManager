@@ -34,6 +34,12 @@ public class Server implements Runnable {
         taskList = null;
     }
 
+    private void sendAnswer(State answer, DataOutputStream writer) throws IOException{
+        String jsonAnswer = new Gson().toJson(answer);
+        writer.writeUTF(jsonAnswer);
+        writer.flush();
+    }
+
     @Override
     public void run() {
 
@@ -62,10 +68,9 @@ public class Server implements Runnable {
                         if (taskList == null) {
                             taskList = new TaskList();
                         }
-                        State answer = State.OK;
-                        String jsonAnswer = new Gson().toJson(answer);
-                        writer.writeUTF(jsonAnswer);
-                        writer.flush();
+
+                        sendAnswer(State.OK, writer);
+
                         break;
                     }
 
@@ -77,11 +82,8 @@ public class Server implements Runnable {
 
                         taskList.addTask(task);
 
-                        State answer = State.OK;
+                        sendAnswer(State.OK, writer);
 
-                        String jsonAnswer = new Gson().toJson(answer);
-                        writer.writeUTF(jsonAnswer);
-                        writer.flush();
                         System.out.println("Server: Добавил новый таск");
                         break;
                     }
@@ -101,11 +103,7 @@ public class Server implements Runnable {
 //                        System.out.println("Server: Успешно преобразовали в Task.");
                         taskList.addTask(task);
 
-                        State answer = State.OK;
-
-                        String jsonAnswer = new Gson().toJson(answer);
-                        writer.writeUTF(jsonAnswer);
-                        writer.flush();
+                        sendAnswer(State.OK, writer);
 
                         break;
                     }
@@ -117,11 +115,9 @@ public class Server implements Runnable {
                         int i = taskList.getTaskList().indexOf(task);
                         taskList.deleteTask(taskList.getTaskList().get(i));
                         System.out.println("Server: Удалил таск");
-                        State answer = State.OK;
 
-                        String jsonAnswer = new Gson().toJson(answer);
-                        writer.writeUTF(jsonAnswer);
-                        writer.flush();
+                        sendAnswer(State.OK, writer);
+
                         break;
                     }
                     case GET_ALL_TASKS: {
@@ -135,9 +131,7 @@ public class Server implements Runnable {
                             System.out.println("Server: Тасков нет, ничего не отправил");
                         }
 
-                        String jsonAnswer = new Gson().toJson(answer);
-                        writer.writeUTF(jsonAnswer);
-                        writer.flush();
+                        sendAnswer(answer, writer);
 
                         if (answer == State.OK) {
                                 //jsonTasks = new Gson().toJson(tasks.toArray(), Task[].class);
@@ -159,11 +153,9 @@ public class Server implements Runnable {
                         int i = taskList.getTaskList().indexOf(task);
                         taskList.complete(taskList.getTaskList().get(i));
                         System.out.println("Server: Завершил таск");
-                        State answer = State.OK;
 
-                        String jsonAnswer = new Gson().toJson(answer);
-                        writer.writeUTF(jsonAnswer);
-                        writer.flush();
+                        sendAnswer(State.OK, writer);
+
                         break;
                     }
 
@@ -181,11 +173,9 @@ public class Server implements Runnable {
                         int i = taskList.getTaskList().indexOf(task);
                         taskList.postpone(taskList.getTaskList().get(i), newDateTime);
                         System.out.println("Server:  Отложили таск");
-                        State answer = State.OK;
 
-                        String jsonAnswer = new Gson().toJson(answer);
-                        writer.writeUTF(jsonAnswer);
-                        writer.flush();
+                        sendAnswer(State.OK, writer);
+
                         break;
                     }
 
