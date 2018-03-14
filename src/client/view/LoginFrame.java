@@ -18,6 +18,8 @@ public class LoginFrame extends JFrame {
     private JLabel lableLogin;
     private JTextField tfLogin;
     private JButton btEnter;
+    private JPasswordField pfPassword;
+    private JLabel lbPassword;
 
     public LoginFrame(){
         btEnter.addActionListener(event -> {
@@ -27,13 +29,14 @@ public class LoginFrame extends JFrame {
                         "Ошибка", JOptionPane.WARNING_MESSAGE);
             else {
                 try {
-                    MainFrame mainFrame = new MainFrame(new Client(login));
+                    String password = new String(pfPassword.getPassword());
+                    MainFrame mainFrame = new MainFrame(new Client(login, password));
                     this.dispose();
                 } catch (ConnectException e){
                     JOptionPane.showMessageDialog(this, "Сервер не был найден... " +
                                     "Повторите попытку позже.", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, e.toString(),
+                    JOptionPane.showMessageDialog(this, e.getMessage(),
                             "Ошибка", JOptionPane.ERROR_MESSAGE);
                 }
             }

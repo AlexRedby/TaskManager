@@ -8,8 +8,7 @@ import src.common.model.Task;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 //Сначала серверу необходимо передать Action в виде строки(json).
 //Уже написанны: LOGIN,
@@ -28,6 +27,7 @@ public class Server implements Runnable {
     private Socket socket;
     private TaskList taskList;
     private String fileName;
+    private Map users = new HashMap<String, String>();
 
     public Server(Socket socket) {
         this.socket = socket;
@@ -53,21 +53,26 @@ public class Server implements Runnable {
                         //Читаем Login
                         String login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
-
+                        String password = (String) reader.readObject();
+                        System.out.println("Server: Получили пароль.");
                         fileName = login + ".json";
-
-                        //TODO: Если файл уже используется
-
                         taskList = Controller.readTaskList(fileName);
 
-//                        "Регистрация" - новый login -> новый TaskList
-                        if (taskList == null) {
-                            taskList = new TaskList();
+                        users = Controller.readUsers();
+                        if (users.containsKey(login)) {
+                            if (users.get(login).equals(password)) {
+                                sendAnswer(State.OK, writer);
+                                fileName = login + ".json";
+                                taskList = Controller.readTaskList(fileName);
+                            }
+                            else {
+                                sendAnswer(State.PASSWORD_ERROR, writer);
+                            }
+                            break;
+                        } else {
+                            sendAnswer(State.LOGIN_ERROR, writer);
+                            break;
                         }
-
-                        sendAnswer(State.OK, writer);
-
-                        break;
                     }
 
                     case ADD_TASK: {

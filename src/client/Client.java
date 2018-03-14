@@ -20,12 +20,12 @@ public class Client implements Closeable{
     private ObjectInputStream serverReader;
     private String login;
 
-    public Client(String login) throws Exception {
+    public Client(String login, String password) throws Exception {
         socket = new Socket("localhost", 777);
         serverWriter = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()));
         serverReader = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
 
-        login(login);
+        login(login, password);
         this.login = login;
     }
 
@@ -47,11 +47,17 @@ public class Client implements Closeable{
         return  (State) serverReader.readObject();
     }
 
-    public void login(String login) throws Exception {
+    public void login(String login, String password) throws Exception {
 
-        State answerFromServer = sendRequest(Action.LOGIN, login);
+        State answerFromServer = sendRequest(Action.LOGIN, login, password);
         if (answerFromServer != State.OK) {
-            throw new Exception("Client: Не удалось залогиниться!");
+            if (answerFromServer == State.LOGIN_ERROR){
+                throw new Exception("Не верный логин!");
+            }
+            else {
+                throw new Exception("Не верный пароль!");
+            }
+
         }
         System.out.println("Client: Регистрация прошла, сервер ответил OK");
     }
