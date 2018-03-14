@@ -34,28 +34,24 @@ public class Server implements Runnable {
         taskList = null;
     }
 
-    private void sendAnswer(State answer, DataOutputStream writer) throws IOException{
-        String jsonAnswer = new Gson().toJson(answer);
-        writer.writeUTF(jsonAnswer);
+    private void sendAnswer(State answer, ObjectOutputStream writer) throws IOException{
+        writer.writeObject(answer);
         writer.flush();
     }
 
     @Override
     public void run() {
 
-        try (DataInputStream reader = new DataInputStream(socket.getInputStream());
-             DataOutputStream writer = new DataOutputStream(socket.getOutputStream())) {
+        try (ObjectInputStream reader = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
+             ObjectOutputStream writer = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()))) {
             while (!socket.isClosed()) {
-                String jsonAction = reader.readUTF();
-                System.out.println("Server: Получили json c Action.");
-
-                Action neededAction = new Gson().fromJson(jsonAction, Action.class);
-                System.out.println("Server: Успешно преобразовали в Action.");
+                Action neededAction = (Action) reader.readObject();
+                System.out.println("Server: Получили Action.");
 
                 switch (neededAction) {
                     case LOGIN: {
                         //Читаем Login
-                        String login = reader.readUTF();
+                        String login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
 
                         fileName = login + ".json";
@@ -75,55 +71,43 @@ public class Server implements Runnable {
                     }
 
                     case ADD_TASK: {
-                        String jsonTask = reader.readUTF();
+                        Task task = (Task) reader.readObject();
                         System.out.println("Server: Получили Task в виде строки.");
 
-                        Task task = new Gson().fromJson(jsonTask, Task.class);
-
                         taskList.addTask(task);
+                        System.out.println("Server: Добавил новый таск");
 
                         sendAnswer(State.OK, writer);
-
-                        System.out.println("Server: Добавил новый таск");
                         break;
                     }
 
                     case UPDATE_TASK: {
-                        String jsonTask = reader.readUTF();
-                        System.out.println("Server: Получили Task на обновление в виде строки.");
-
-                        Task task = new Gson().fromJson(jsonTask, Task.class);
-//                        System.out.println("Server: Успешно преобразовали в Task.");
-
+                        Task task = (Task) reader.readObject();
+                        System.out.println("Server: Получили старый Task.");
                         taskList.deleteTask(task);
-                        jsonTask = reader.readUTF();
-                        System.out.println("Server: Получили новый Task в виде строки.");
+                        System.out.println("Server: Удалили старый Task.");
 
-                        task = new Gson().fromJson(jsonTask, Task.class);
-//                        System.out.println("Server: Успешно преобразовали в Task.");
+                        task = (Task) reader.readObject();
+                        System.out.println("Server: Получили новый Task.");
                         taskList.addTask(task);
+                        System.out.println("Server: Добавили новый Task.");
 
                         sendAnswer(State.OK, writer);
-
                         break;
                     }
                     case DELETE_TASK: {
-                        String jsonTask = reader.readUTF();
-                        System.out.println("Server: Получили Task в виде строки.");
-
-                        Task task = new Gson().fromJson(jsonTask, Task.class);
+                        Task task = (Task) reader.readObject();
+                        System.out.println("Server: Получили Task.");
                         taskList.deleteTask(task);
-                        System.out.println("Server: Удалил таск");
+                        System.out.println("Server: Удалил Task.");
 
                         sendAnswer(State.OK, writer);
-
                         break;
                     }
                     case GET_ALL_TASKS: {
                         List<Task> tasks = taskList.getTaskList();
 
                         State answer = State.NO_TASKS;
-                        String jsonTasks;
                         if (!tasks.isEmpty()) {
                             answer = State.OK;
                         } else {
@@ -133,43 +117,34 @@ public class Server implements Runnable {
                         sendAnswer(answer, writer);
 
                         if (answer == State.OK) {
-                            ObjectOutputStream oos = new ObjectOutputStream(writer);
-                            oos.writeObject(tasks);
-                            oos.flush();
+                            writer.writeObject(tasks);
+                            writer.flush();
                             System.out.println("Server: Таски отправились");
                         }
                         break;
                     }
 
                     case COMPLETE_TASK: {
-                        String jsonTask = reader.readUTF();
-                        System.out.println("Server: Получили Task в виде строки.");
-
-                        Task task = new Gson().fromJson(jsonTask, Task.class);
+                        Task task = (Task) reader.readObject();
+                        System.out.println("Server: Получили Task.");
                         taskList.complete(task);
-                        System.out.println("Server: Завершил таск");
+                        System.out.println("Server: Завершил Task.");
 
                         sendAnswer(State.OK, writer);
-
                         break;
                     }
 
                     case POSTPONE_TASK: {
-                        String jsonTask = reader.readUTF();
-                        System.out.println("Server: Получили Task в виде строки.");
+                        Task task = (Task) reader.readObject();
+                        System.out.println("Server: Получили Task.");
 
-                        Task task = new Gson().fromJson(jsonTask, Task.class);
-//                        System.out.println("Server: Успешно преобразовали в Task.");
-
-                        String jsonNewDateTime = reader.readUTF();
+                        Calendar newDateTime = (Calendar) reader.readObject();
                         System.out.println("Server: Получили Новое время для таска.");
 
-                        Calendar newDateTime = new Gson().fromJson(jsonNewDateTime, Calendar.class);
                         taskList.postpone(task, newDateTime);
-                        System.out.println("Server:  Отложили таск");
+                        System.out.println("Server: Отложили таск");
 
                         sendAnswer(State.OK, writer);
-
                         break;
                     }
 

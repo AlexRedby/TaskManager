@@ -16,14 +16,14 @@ public class Client implements Closeable{
     // TODO: Продумать как обрабатывать ошибки
 
     private Socket socket;
-    private DataOutputStream serverWriter;
-    private DataInputStream serverReader;
+    private ObjectOutputStream serverWriter;
+    private ObjectInputStream serverReader;
     private String login;
 
     public Client(String login) throws Exception {
         socket = new Socket("localhost", 777);
-        serverWriter = new DataOutputStream(socket.getOutputStream());
-        serverReader = new DataInputStream(socket.getInputStream());
+        serverWriter = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()));
+        serverReader = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
 
         login(login);
         this.login = login;
@@ -33,17 +33,23 @@ public class Client implements Closeable{
         return login;
     }
 
+    //Отпрравляет action(действие) серверу, которое он хочет выполнить и необходимые данные, если нужно
+    //Возвращает результат(state) работы сервера
+    private State sendRequest(Action action, Object ... objects) throws IOException, ClassNotFoundException{
+        serverWriter.writeObject(action);
+        serverWriter.flush();
+
+        for (Object obj : objects){
+            serverWriter.writeObject(obj);
+            serverWriter.flush();
+        }
+
+        return  (State) serverReader.readObject();
+    }
+
     public void login(String login) throws Exception {
-        String jsonOutput = new Gson().toJson(Action.LOGIN);
 
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        serverWriter.writeUTF(login);
-        serverWriter.flush();
-
-        String jsonInput = serverReader.readUTF();
-        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+        State answerFromServer = sendRequest(Action.LOGIN, login);
         if (answerFromServer != State.OK) {
             throw new Exception("Client: Не удалось залогиниться!");
         }
@@ -51,132 +57,63 @@ public class Client implements Closeable{
     }
 
     public void addTask(Task task) throws Exception {
-        String jsonOutput = new Gson().toJson(Action.ADD_TASK);
         System.out.println("Client: Посылаем запрос на добавление");
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        jsonOutput = new Gson().toJson(task);
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        String jsonInput = serverReader.readUTF();
-        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+        State answerFromServer = sendRequest(Action.ADD_TASK, task);
         if (answerFromServer != State.OK) {
-            jsonOutput = new Gson().toJson(Action.EXIT);
-            System.out.println("Client: Сматываем удочки");
-            serverWriter.writeUTF(jsonOutput);
-            serverWriter.flush();
-            socket.close();
+            close();
             throw new Exception("Client: Таск не добавился!!!");
         }
         System.out.println("Client: Таск добавился");
     }
 
     public void completeTask(Task task) throws Exception {
-        String jsonOutput = new Gson().toJson(Action.COMPLETE_TASK);
         System.out.println("Client: Посылаем запрос на завершение");
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
 
-        jsonOutput = new Gson().toJson(task);
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        String jsonInput = serverReader.readUTF();
-        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+        State answerFromServer = sendRequest(Action.COMPLETE_TASK, task);
         if (answerFromServer != State.OK) {
-            jsonOutput = new Gson().toJson(Action.EXIT);
-            System.out.println("Client: Сматываем удочки");
-            serverWriter.writeUTF(jsonOutput);
-            serverWriter.flush();
-            socket.close();
-            throw new Exception("Client: Таск не добавился!!!");
+            close();
+            throw new Exception("Client: Не удалось завершить задачу!!!");
         }
-        System.out.println("Client: Таск добавился");
+        System.out.println("Client: Таск был отмечен как завершённый");
     }
 
     public void updateTask(Task oldTask, Task newTask) throws Exception {
-        String jsonOutput = new Gson().toJson(Action.UPDATE_TASK);
         System.out.println("Client: Посылаем запрос на обновление таска");
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        jsonOutput = new Gson().toJson(oldTask);
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-        jsonOutput = new Gson().toJson(newTask);
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        String jsonInput = serverReader.readUTF();
-        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
-        if (answerFromServer == State.OK) {
-            System.out.println("Client: Заменили таск " + oldTask + " на " + newTask);
+        State answerFromServer = sendRequest(Action.UPDATE_TASK, oldTask, newTask);
+        if (answerFromServer != State.OK) {
+            close();
+            throw new Exception("Client: Не удалось обновить таск!!!");
         }
+        System.out.println("Client: Заменили таск " + oldTask + " на " + newTask);
     }
 
     public void postponeTask(Task task, Calendar newDateTime) throws Exception {
-        String jsonOutput = new Gson().toJson(Action.POSTPONE_TASK);
         System.out.println("Client: Посылаем запрос на откладывание");
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        jsonOutput = new Gson().toJson(task);
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        jsonOutput = new Gson().toJson(newDateTime);
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        String jsonInput = serverReader.readUTF();
-        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+        State answerFromServer = sendRequest(Action.POSTPONE_TASK, task, newDateTime);
         if (answerFromServer != State.OK) {
-            jsonOutput = new Gson().toJson(Action.EXIT);
-            System.out.println("Client: Сматываем удочки");
-            serverWriter.writeUTF(jsonOutput);
-            serverWriter.flush();
-            socket.close();
-            throw new Exception("Client: Таск отложился!!!");
+            close();
+            throw new Exception("Client: Таск не отложился!!!");
         }
         System.out.println("Client: Таск отложился");
     }
 
-    public void deleteTask(Task task) throws IOException{
-        String jsonOutput = new Gson().toJson(Action.DELETE_TASK);
+    public void deleteTask(Task task) throws Exception{
         System.out.println("Client: Посылаем запрос на удаление");
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        jsonOutput = new Gson().toJson(task);
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-
-        String jsonInput = serverReader.readUTF();
-        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
-        if (answerFromServer == State.OK) {
-            System.out.println("Client: Удалили таск " + task.toString());
+        State answerFromServer = sendRequest(Action.DELETE_TASK, task);
+        if (answerFromServer != State.OK) {
+            close();
+            throw new Exception("Client: Таск не удалился!!!");
         }
+        System.out.println("Client: Удалили таск " + task.toString());
     }
 
     public List<Task> getAllTasks() throws Exception {
         List<Task> tasks = null;
 
-        String jsonOutput = new Gson().toJson(Action.GET_ALL_TASKS);
         System.out.println("Client: Посылаем запрос на все таски");
-        serverWriter.writeUTF(jsonOutput);
-        serverWriter.flush();
-        String jsonInput = serverReader.readUTF();
-        State answerFromServer = new Gson().fromJson(jsonInput, State.class);
+        State answerFromServer = sendRequest(Action.GET_ALL_TASKS);
         if (answerFromServer == State.OK) {
-            /*//Принемаем массив
-            jsonInput = serverReader.readUTF();
-            Task[] arrayTasks = new Gson().fromJson(jsonInput, Task[].class);
-
-            tasks = Arrays.asList(arrayTasks);
-            tasks = new ArrayList<>(tasks);*/
-            tasks = (ArrayList<Task>)(new ObjectInputStream(serverReader)).readObject();
+            tasks = (ArrayList<Task>)serverReader.readObject();
             System.out.println("Client: Таски приняты");
         }
         else {
@@ -188,9 +125,8 @@ public class Client implements Closeable{
 
     @Override
     public void close() throws IOException {
-        String jsonOutput = new Gson().toJson(Action.EXIT);
         System.out.println("Client: Сматываем удочки");
-        serverWriter.writeUTF(jsonOutput);
+        serverWriter.writeObject(Action.EXIT);
         serverWriter.flush();
 
         serverReader.close();
