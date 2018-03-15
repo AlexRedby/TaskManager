@@ -1,31 +1,31 @@
 {
   "taskList": [
     {
-      "name": "2",
-      "info": "2",
-      "dateTime": {
-        "year": 2018,
-        "month": 2,
-        "dayOfMonth": 6,
-        "hourOfDay": 13,
-        "minute": 55,
-        "second": 0
-      },
-      "contacts": "2",
-      "active": false
-    },
-    {
       "name": "1",
       "info": "1",
       "dateTime": {
         "year": 2018,
         "month": 2,
         "dayOfMonth": 15,
-        "hourOfDay": 1,
-        "minute": 11,
+        "hourOfDay": 15,
+        "minute": 38,
         "second": 0
       },
-      "contacts": "1",
+      "contacts": "",
+      "active": true
+    },
+    {
+      "name": "2",
+      "info": "2",
+      "dateTime": {
+        "year": 2018,
+        "month": 2,
+        "dayOfMonth": 15,
+        "hourOfDay": 15,
+        "minute": 38,
+        "second": 0
+      },
+      "contacts": "",
       "active": true
     }
   ]

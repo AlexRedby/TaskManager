@@ -5,6 +5,9 @@ import src.server.controller.Controller;
 import src.common.controller.TaskList;
 import src.common.model.Task;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
@@ -62,8 +65,21 @@ public class Server implements Runnable {
                             if (activeUsers.contains(login)) {
                                 sendAnswer(State.LOGIN_USED, writer);
                                 System.out.println("Server: Логин(" + login + ") уже используется кем-то.");
+                                break;
                             }
-                            if (users.get(login).equals(password)) {
+
+                            // Используем шифрование
+                            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+                            // Добавляем к паролю соль (пусть будет логин) и зашифровываем
+                            byte[] encriptPass = sha1.digest((login + password).getBytes());
+                            // Переводим в 16-ричный вид
+                            StringBuilder sb = new StringBuilder();
+                            for (byte b: encriptPass){
+                                sb.append(String.format("%02X", b));
+                            }
+                            String encriptPassStr = sb.toString();
+
+                            if (users.get(login).equals(encriptPassStr)) {
                                 fileName = login + ".json";
                                 this.login = login;
                                 taskList = Controller.readTaskList(fileName);
@@ -74,12 +90,12 @@ public class Server implements Runnable {
                                 System.out.println("Server: Пользователь " + login + " вошел");
                             } else {
                                 sendAnswer(State.PASSWORD_ERROR, writer);
-                                System.out.println("Server: Получили не верный пароль.");
+                                System.out.println("Server: Получили неверный пароль.");
                             }
                             break;
                         } else {
                             sendAnswer(State.LOGIN_ERROR, writer);
-                            System.out.println("Server: Получили не верный логин.");
+                            System.out.println("Server: Получили неверный логин.");
                             break;
                         }
                     }
@@ -93,7 +109,18 @@ public class Server implements Runnable {
                         HashMap users = Controller.readUsers();
 
                         if (!users.containsKey(login)) {
-                            users.put(login, password);
+                            // Шифруем пароль чтобы записать в базу
+                            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+                            // Не забываем соль
+                            byte[] encriptPass = sha1.digest((login + password).getBytes());
+                            // Переводим в 16-ричный вид
+                            StringBuilder sb = new StringBuilder();
+                            for (byte b: encriptPass){
+                                sb.append(String.format("%02X", b));
+                            }
+                            String encriptPassStr = sb.toString();
+                            //Заносим в базу логин и пароль
+                            users.put(login, encriptPassStr);
                             Controller.writeUsers(users);
                             fileName = login + ".json";
                             this.login = login;
