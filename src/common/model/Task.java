@@ -1,8 +1,7 @@
-package src.model;
+package src.common.model;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Formatter;
 
 public class Task implements Serializable, Comparable<Task> {

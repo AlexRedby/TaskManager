@@ -1,8 +1,8 @@
-package src.view;
+package src.client.view;
 
-import src.controller.TaskList;
-import src.model.Constants;
-import src.model.Task;
+import src.common.controller.TaskList;
+import src.common.model.Constants;
+import src.common.model.Task;
 
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
@@ -37,12 +37,15 @@ public class AddTaskFrame extends JFrame {
     private TaskList taskList;
     private MainFrame mainFrame;
 
+    //Конструктор для новой задачи
     public AddTaskFrame(TaskList taskList, MainFrame mainFrame) {
         this.taskList = taskList;
         this.mainFrame = mainFrame;
 
         btCancel.addActionListener(event -> dispose());
-        btSaveTask.addActionListener(event -> addTask());
+        btSaveTask.addActionListener(event -> {
+            addTask(null);
+        });
         try {
             Calendar dateTime = Calendar.getInstance();
             dateTime.add(Calendar.MINUTE, Constants.FIVE_MINUTES);
@@ -65,6 +68,7 @@ public class AddTaskFrame extends JFrame {
         setVisible(true);
     }
 
+    //Конструктор для редактирования существующей задачи
     public AddTaskFrame(TaskList taskList, Task task, MainFrame mainFrame) {
         this.taskList = taskList;
         this.mainFrame = mainFrame;
@@ -75,8 +79,11 @@ public class AddTaskFrame extends JFrame {
 
         btCancel.addActionListener(event -> dispose());
         btSaveTask.addActionListener(event -> {
-            taskList.deleteTask(task);
-            addTask();
+            try {
+                addTask(task);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         try {
             formatDateTime(task.getDateTime());
@@ -105,16 +112,25 @@ public class AddTaskFrame extends JFrame {
         rbNotActive.setSelected(!active);
     }
 
-    private void addTask() {
+    private void addTask(Task oldTask) {
         boolean active;
         active = rbActive.isSelected();
 
         try {
-            Task task = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
+            Task newTask = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
             //Если такой задачи не сущетвует, то добавляем
-            if (!taskList.isExist(task)) {
-                taskList.addTask(task);
+            if (!taskList.isExist(newTask)) {
+                try{
+                    if(oldTask != null) {
+                        taskList.deleteTask(oldTask);
+                        mainFrame.getClient().deleteTask(oldTask);
+                    }
 
+                    taskList.addTask(newTask);
+                    mainFrame.getClient().addTask(newTask);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 mainFrame.update();
                 dispose();
             }
@@ -123,8 +139,12 @@ public class AddTaskFrame extends JFrame {
                     "Такая задача уже существует. Измените название, описание или дату.");
         }
         //Если getDateTime() ввернёт ошибку
-        catch (DateTimeException | ParseException e) {
+        catch (ParseException e) {
             JOptionPane.showMessageDialog(this, "Введена некорректная дата",
+                    "Ошибка", JOptionPane.WARNING_MESSAGE);
+        }
+        catch (DateTimeException e){
+            JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Ошибка", JOptionPane.WARNING_MESSAGE);
         }
     }

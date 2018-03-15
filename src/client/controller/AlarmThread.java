@@ -1,8 +1,9 @@
-package src.controller;
+package src.client.controller;
 
-import src.model.Task;
-import src.view.AlarmFrame;
-import src.view.MainFrame;
+import src.client.view.AlarmFrame;
+import src.client.view.MainFrame;
+import src.common.model.Task;
+import src.common.controller.TaskList;
 
 import javax.swing.*;
 import java.util.*;
@@ -31,7 +32,7 @@ public class AlarmThread extends TimerTask {
                 JFrame foundFrame = editingTaskList.get(currentTask);
 
                 if (foundFrame == null || !foundFrame.isVisible()) {
-                    JFrame frame = new AlarmFrame(currentTask, taskList, this, mainFrame);
+                    JFrame frame = new AlarmFrame(currentTask, taskList, this,  mainFrame, mainFrame.getClient());
                     editingTaskList.put(currentTask, frame);
                 }
             }

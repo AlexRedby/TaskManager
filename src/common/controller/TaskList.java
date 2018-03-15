@@ -1,6 +1,6 @@
-package src.controller;
+package src.common.controller;
 
-import src.model.Task;
+import src.common.model.Task;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +13,9 @@ public class TaskList implements Serializable {
 
     public TaskList() {
         this.taskList = new ArrayList<>();
+    }
+    public TaskList(List<Task> taskList) {
+        this.taskList = taskList ;
     }
 
     public List<Task> getTaskList() {
