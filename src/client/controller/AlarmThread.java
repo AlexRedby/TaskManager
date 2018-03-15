@@ -32,7 +32,7 @@ public class AlarmThread extends TimerTask {
                 JFrame foundFrame = editingTaskList.get(currentTask);
 
                 if (foundFrame == null || !foundFrame.isVisible()) {
-                    JFrame frame = new AlarmFrame(currentTask, taskList, this,  mainFrame, mainFrame.getClient());
+                    JFrame frame = new AlarmFrame(currentTask, taskList, this, mainFrame, mainFrame.getClient());
                     editingTaskList.put(currentTask, frame);
                 }
             }

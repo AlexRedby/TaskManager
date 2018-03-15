@@ -5,11 +5,11 @@ import src.server.controller.Controller;
 import src.common.controller.TaskList;
 import src.common.model.Task;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 import java.io.*;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 //Сначала серверу необходимо передать Action в виде строки(json).
@@ -40,6 +40,20 @@ public class Server implements Runnable {
         writer.flush();
     }
 
+    //Шифрует пароль
+    private String encrypt(String password, String login) throws NoSuchAlgorithmException {
+        // Используем шифрование
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        // Добавляем к паролю соль (пусть будет логин) и зашифровываем
+        byte[] encryptPass = sha1.digest((login + password).getBytes());
+        // Переводим в 16-ричный вид
+        StringBuilder sb = new StringBuilder();
+        for (byte b : encryptPass) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
+    }
+
     @Override
     public void run() {
 
@@ -68,18 +82,9 @@ public class Server implements Runnable {
                                 break;
                             }
 
-                            // Используем шифрование
-                            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-                            // Добавляем к паролю соль (пусть будет логин) и зашифровываем
-                            byte[] encriptPass = sha1.digest((login + password).getBytes());
-                            // Переводим в 16-ричный вид
-                            StringBuilder sb = new StringBuilder();
-                            for (byte b: encriptPass){
-                                sb.append(String.format("%02X", b));
-                            }
-                            String encriptPassStr = sb.toString();
+                            String encryptPassStr = encrypt(password, login);
 
-                            if (users.get(login).equals(encriptPassStr)) {
+                            if (users.get(login).equals(encryptPassStr)) {
                                 fileName = login + ".json";
                                 this.login = login;
                                 taskList = Controller.readTaskList(fileName);
@@ -109,18 +114,10 @@ public class Server implements Runnable {
                         HashMap users = Controller.readUsers();
 
                         if (!users.containsKey(login)) {
-                            // Шифруем пароль чтобы записать в базу
-                            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-                            // Не забываем соль
-                            byte[] encriptPass = sha1.digest((login + password).getBytes());
-                            // Переводим в 16-ричный вид
-                            StringBuilder sb = new StringBuilder();
-                            for (byte b: encriptPass){
-                                sb.append(String.format("%02X", b));
-                            }
-                            String encriptPassStr = sb.toString();
+                            String encryptPassStr = encrypt(password, login);
+
                             //Заносим в базу логин и пароль
-                            users.put(login, encriptPassStr);
+                            users.put(login, encryptPassStr);
                             Controller.writeUsers(users);
                             fileName = login + ".json";
                             this.login = login;

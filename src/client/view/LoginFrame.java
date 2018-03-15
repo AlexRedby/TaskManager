@@ -55,7 +55,7 @@ public class LoginFrame extends JFrame {
                     "Ошибка", JOptionPane.WARNING_MESSAGE);
         } else {
             try {
-                MainFrame mainFrame = new MainFrame(new Client(login, password, newUser));
+                new MainFrame(new Client(login, password, newUser));
                 this.dispose();
             } catch (ConnectException e) {
                 JOptionPane.showMessageDialog(this, "Сервер не был найден... " +

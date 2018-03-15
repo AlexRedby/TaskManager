@@ -82,8 +82,7 @@ public class AlarmFrame extends JFrame {
             try {
                 taskList.complete(task);
                 client.completeTask(task);
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -135,8 +134,7 @@ public class AlarmFrame extends JFrame {
                 try {
                     client.postponeTask(task, newDate);
                     taskList.postpone(task, newDate);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 parent.update(AlarmFrame.this);

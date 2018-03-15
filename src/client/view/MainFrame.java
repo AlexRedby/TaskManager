@@ -26,7 +26,9 @@ public class MainFrame extends JFrame {
     private JScrollPane scrollPane;
 
     private TaskList taskList;
+
     private enum CurrentOutput {ACTIVE, NOT_ACTIVE, ALL}
+
     private CurrentOutput currentOutput;
     private Client client;
 
@@ -35,8 +37,7 @@ public class MainFrame extends JFrame {
         this.client = client;
         try {
             this.taskList = new TaskList(client.getAllTasks());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         startAlarm();
@@ -45,21 +46,11 @@ public class MainFrame extends JFrame {
         //Сохранение
         this.addWindowListener(new WindowListener() {
             public void windowClosing(WindowEvent event) {
-//                Object[] options = {"Да", "Нет!"};
-//                int n = JOptionPane
-//                        .showOptionDialog(event.getWindow(), "Сохранить всё?",
-//                                "Сохранение", JOptionPane.YES_NO_OPTION,
-//                                JOptionPane.QUESTION_MESSAGE, null, options,
-//                                options[0]);
-//                if (n == 0) {
-//                    Controller.writeTaskList(taskList, "Test.json");
-                    try {
-                        client.close();
-                    }
-                    catch (IOException e){
-                        e.printStackTrace();
-                    }
-//                }
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 System.exit(0);
             }
 
@@ -129,11 +120,10 @@ public class MainFrame extends JFrame {
                             options[0]);
             if (n == 0) {
                 Task selectedTask = list1.getSelectedValue();
-                try{
+                try {
                     client.deleteTask(selectedTask);
                     taskList.deleteTask(selectedTask);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 

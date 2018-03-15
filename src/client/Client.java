@@ -1,6 +1,5 @@
 package src.client;
 
-import com.google.gson.Gson;
 import src.common.model.Task;
 import src.common.model.packet.*;
 import src.common.model.packet.Action;
@@ -10,7 +9,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 
 public class Client implements Closeable {
 

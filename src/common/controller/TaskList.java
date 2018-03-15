@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-
 public class TaskList implements Serializable {
     private List<Task> taskList;
 
     public TaskList() {
         this.taskList = new ArrayList<>();
     }
+
     public TaskList(List<Task> taskList) {
-        this.taskList = taskList ;
+        this.taskList = taskList;
     }
 
     public List<Task> getTaskList() {

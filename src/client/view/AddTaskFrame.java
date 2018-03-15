@@ -15,7 +15,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 
-
 public class AddTaskFrame extends JFrame {
     private JPanel panel1;
     private JButton btCancel;
@@ -120,15 +119,15 @@ public class AddTaskFrame extends JFrame {
             Task newTask = new Task(tfName.getText(), taInfo.getText(), getDateTime(), tfContacts.getText(), active);
             //Если такой задачи не сущетвует, то добавляем
             if (!taskList.isExist(newTask)) {
-                try{
-                    if(oldTask != null) {
+                try {
+                    if (oldTask != null) {
                         taskList.deleteTask(oldTask);
                         mainFrame.getClient().deleteTask(oldTask);
                     }
 
                     taskList.addTask(newTask);
                     mainFrame.getClient().addTask(newTask);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 mainFrame.update();
@@ -142,8 +141,7 @@ public class AddTaskFrame extends JFrame {
         catch (ParseException e) {
             JOptionPane.showMessageDialog(this, "Введена некорректная дата",
                     "Ошибка", JOptionPane.WARNING_MESSAGE);
-        }
-        catch (DateTimeException e){
+        } catch (DateTimeException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Ошибка", JOptionPane.WARNING_MESSAGE);
         }
