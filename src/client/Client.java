@@ -13,7 +13,6 @@ import java.util.List;
 
 
 public class Client implements Closeable {
-    // TODO: Продумать как обрабатывать ошибки
 
     private Socket socket;
     private ObjectOutputStream serverWriter;
@@ -53,14 +52,18 @@ public class Client implements Closeable {
     public void login(String login, String password) throws Exception {
 
         State answerFromServer = sendRequest(Action.LOGIN, login, password);
-        if (answerFromServer != State.OK) {
-            if (answerFromServer == State.LOGIN_ERROR) {
+        switch (answerFromServer) {
+            case LOGIN_ERROR:
                 throw new Exception("Неверный логин!");
-            } else {
+            case PASSWORD_ERROR:
                 throw new Exception("Неверный пароль!");
-            }
+            case LOGIN_USED:
+                throw new Exception("Уже кто-то зашёл в систему под данным логином."
+                        + "\nПовторите попытку позже.");
+            case OK:
+                System.out.println("Client: Успешно вошли, сервер ответил OK");
+                break;
         }
-        System.out.println("Client: Успешно вошли, сервер ответил OK");
     }
 
     public void register(String login, String password) throws Exception {

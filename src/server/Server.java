@@ -10,25 +10,25 @@ import java.net.Socket;
 import java.util.*;
 
 //Сначала серверу необходимо передать Action в виде строки(json).
-//Уже написанны: LOGIN,
-//               ADD_OR_UPDATE_TASK,
-//               DELETE_TASK,
-//               GET_ALL_TASK
-//После, если необходимо, передать в виде строки необходимую информацию(Task сериализовать(json))
+//
+//После, если необходимо, передать в виде строки необходимую информацию
 //
 //Ответ сервера:
 //Сервер всегда возвращает State, говоря о том, как завершилась его работа
 //
-//Если клиент запросил GET_ALL_TASK и есть хотя бы 1 Task, то после State, сервер вышлет МАСССИВ Task'ов
+//Если клиент запросил GET_ALL_TASK и есть хотя бы 1 Task, то после State, сервер вышлет списков Task'ов
 //Если же ни одного Task'а ещё нет, то State будет = NO_TASKS и после него больше ничего не последует
 public class Server implements Runnable {
 
     private Socket socket;
     private TaskList taskList;
     private String fileName;
+    private String login;
+    private ActiveUsers activeUsers;
 
-    public Server(Socket socket) {
+    public Server(Socket socket, ActiveUsers activeUsers) {
         this.socket = socket;
+        this.activeUsers = activeUsers;
         taskList = null;
     }
 
@@ -58,10 +58,19 @@ public class Server implements Runnable {
                         //Если в списке юзеров нет полученного логина или пароль не совпадает возвращается ERROR
                         HashMap users = Controller.readUsers();
                         if (users.containsKey(login)) {
+                            //Проверка на использование данного логина в данный момент
+                            if (activeUsers.contains(login)) {
+                                sendAnswer(State.LOGIN_USED, writer);
+                                System.out.println("Server: Логин(" + login + ") уже используется кем-то.");
+                            }
                             if (users.get(login).equals(password)) {
                                 fileName = login + ".json";
+                                this.login = login;
                                 taskList = Controller.readTaskList(fileName);
                                 sendAnswer(State.OK, writer);
+
+                                activeUsers.add(login);
+
                                 System.out.println("Server: Пользователь " + login + " вошел");
                             } else {
                                 sendAnswer(State.PASSWORD_ERROR, writer);
@@ -74,7 +83,7 @@ public class Server implements Runnable {
                             break;
                         }
                     }
-                    case REGISTRATION:
+                    case REGISTRATION: {
                         //Читаем Login
                         String login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
@@ -83,21 +92,25 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили пароль.");
                         HashMap users = Controller.readUsers();
 
-                        if(!users.containsKey(login)) {
+                        if (!users.containsKey(login)) {
                             users.put(login, password);
                             Controller.writeUsers(users);
                             fileName = login + ".json";
+                            this.login = login;
                             taskList = new TaskList();
                             Controller.writeTaskList(taskList, fileName);
                             sendAnswer(State.OK, writer);
+
+                            activeUsers.add(login);
+
                             System.out.println("Server: Зарегестрировали нового пользователя " + login);
-                        }
-                        else{
+                        } else {
                             sendAnswer(State.LOGIN_ERROR, writer);
                             System.out.println("Server: Не удалось зарестрировать " + login
                                     + ", т.к. он уже есть в системе");
                         }
                         break;
+                    }
 
                     case ADD_TASK: {
                         Task task = (Task) reader.readObject();
@@ -179,6 +192,7 @@ public class Server implements Runnable {
 
                     case EXIT: {
                         Controller.writeTaskList(taskList, fileName);
+                        activeUsers.remove(login);
                         System.out.println("Server: Таски записаны в файл");
                         socket.close();
                         break;

@@ -12,8 +12,12 @@ public class StartServer {
             System.out.println("Server: Серверный сокет с портом 777 создан.");
             System.out.println("Server: Входим в бесконечный цикл ожидания...");
 
+            //Для всех запущенных серверов один объект,
+            //чтобы знали какой пользователь сейчас в сети, а какой нет
+            ActiveUsers activeUsers = new ActiveUsers();
+
             while (true) {
-                new Thread(new Server(server.accept())).start();
+                new Thread(new Server(server.accept(), activeUsers)).start();
             }
         }
         catch (Exception e) {
