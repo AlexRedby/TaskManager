@@ -82,13 +82,21 @@ public class Server implements Runnable {
                         String password = (String) reader.readObject();
                         System.out.println("Server: Получили пароль.");
                         HashMap users = Controller.readUsers();
-                        users.put(login, password);
-                        Controller.writeUsers(users);
-                        fileName = login + ".json";
-                        taskList = new TaskList();
-                        Controller.writeTaskList(taskList, fileName);
-                        sendAnswer(State.OK, writer);
-                        System.out.println("Server: Зарегестрировали нового пользователя " + login);
+
+                        if(!users.containsKey(login)) {
+                            users.put(login, password);
+                            Controller.writeUsers(users);
+                            fileName = login + ".json";
+                            taskList = new TaskList();
+                            Controller.writeTaskList(taskList, fileName);
+                            sendAnswer(State.OK, writer);
+                            System.out.println("Server: Зарегестрировали нового пользователя " + login);
+                        }
+                        else{
+                            sendAnswer(State.LOGIN_ERROR, writer);
+                            System.out.println("Server: Не удалось зарестрировать " + login
+                                    + ", т.к. он уже есть в системе");
+                        }
                         break;
 
                     case ADD_TASK: {

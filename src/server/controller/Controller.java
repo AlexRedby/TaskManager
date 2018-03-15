@@ -4,6 +4,7 @@ package src.server.controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import src.common.controller.TaskList;
+import src.common.model.Constants;
 
 import java.io.*;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class Controller {
     }
 
     public static void writeUsers(Map users) {
-        try (FileWriter fileWriter = new FileWriter("users.json")) {
+        try (FileWriter fileWriter = new FileWriter(Constants.USERS_FILE_NAME)) {
             Gson gson = new GsonBuilder()
                     .setPrettyPrinting()
                     .create();
@@ -47,7 +48,7 @@ public class Controller {
     }
 
     public static HashMap readUsers() {
-        try (FileReader reader = new FileReader("users.json")) {
+        try (FileReader reader = new FileReader(Constants.USERS_FILE_NAME)) {
             return new Gson().fromJson(reader, HashMap.class);
         }
         catch (IOException e){

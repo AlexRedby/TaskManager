@@ -55,9 +55,9 @@ public class Client implements Closeable {
         State answerFromServer = sendRequest(Action.LOGIN, login, password);
         if (answerFromServer != State.OK) {
             if (answerFromServer == State.LOGIN_ERROR) {
-                throw new Exception("Не верный логин!");
+                throw new Exception("Неверный логин!");
             } else {
-                throw new Exception("Не верный пароль!");
+                throw new Exception("Неверный пароль!");
             }
         }
         System.out.println("Client: Успешно вошли, сервер ответил OK");
@@ -65,8 +65,8 @@ public class Client implements Closeable {
 
     public void register(String login, String password) throws Exception {
         State answerFromServer = sendRequest(Action.REGISTRATION, login, password);
-        if (answerFromServer != State.OK) {
-            throw new Exception("Client: Ошибка!");
+        if (answerFromServer == State.LOGIN_ERROR) {
+            throw new Exception("Логин уже занят. Придумайте новый.");
         }
         System.out.println("Client: Пользователь зарегистрирован, сервер ответил OK");
     }
