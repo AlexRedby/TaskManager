@@ -1,5 +1,9 @@
 package src.server;
 
+import src.common.model.Constants;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 
 public class StartServer {
@@ -7,21 +11,34 @@ public class StartServer {
     //Запуск сервера осуществляется тут
     //Создаёт экземпляры серверов для клиентов(многопоточность)
     public static void main(String[] args) {
-        System.out.println("Server: Start");
-        try (ServerSocket server = new ServerSocket(777)) {
-            System.out.println("Server: Серверный сокет с портом 777 создан.");
-            System.out.println("Server: Входим в бесконечный цикл ожидания...");
+        System.out.println("ServerStart: Start");
+        try (ServerSocket server = new ServerSocket(Constants.SERVER_PORT);
+             BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in))) {
 
-            //Для всех запущенных серверов один объект,
-            //чтобы знали какой пользователь сейчас в сети, а какой нет
-            ActiveUsers activeUsers = new ActiveUsers();
+            System.out.println("ServerStart: Серверный сокет создан.");
+            System.out.println("ServerStart: Входим в цикл ожидания запроса(выход - quit)...");
 
-            while (true) {
-                new Thread(new Server(server.accept(), activeUsers)).start();
+            while (!server.isClosed()) {
+
+                if(consoleInput.ready()){
+                    System.out.println("ServerStart: Получил сообщение из консоли. Посмотрим что в нём...");
+
+                    if(consoleInput.readLine().equalsIgnoreCase("quit")){
+                        System.out.println("ServerStart: Получили команду на завершение работы...");
+                        server.close();
+                        break;
+                    }
+                }
+
+                new Thread(new Server(server.accept())).start();
+                System.out.println("ServerStart: Создали новый сервер...");
             }
+
+            System.out.println("ServerStart: Сервер завершил свою работу...");
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            System.out.println("Server: FIN!");
+            System.out.println("ServerStart: FIN!");
         }
     }
 }

@@ -3,6 +3,7 @@ package src.common.model;
 public class Constants {
     //Server
     public static final String USERS_FILE_NAME = "users.json";
+    public static final int SERVER_PORT = 777;
 
     //Client
     public static final int FIVE_MINUTES = 5;

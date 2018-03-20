@@ -29,10 +29,10 @@ public class Server implements Runnable {
     private String login;
     private ActiveUsers activeUsers;
 
-    public Server(Socket socket, ActiveUsers activeUsers) {
+    public Server(Socket socket) {
         this.socket = socket;
-        this.activeUsers = activeUsers;
-        taskList = null;
+        this.activeUsers = ActiveUsers.getInstance();
+        taskList = new TaskList();
     }
 
     private void sendAnswer(State answer, ObjectOutputStream writer) throws IOException {

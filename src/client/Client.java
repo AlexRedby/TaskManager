@@ -1,5 +1,6 @@
 package src.client;
 
+import src.common.model.Constants;
 import src.common.model.Task;
 import src.common.model.packet.*;
 import src.common.model.packet.Action;
@@ -18,7 +19,7 @@ public class Client implements Closeable {
     private String login;
 
     public Client(String login, String password, boolean newUser) throws Exception {
-        socket = new Socket("localhost", 777);
+        socket = new Socket("localhost", Constants.SERVER_PORT);
         serverWriter = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()));
         serverReader = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
         this.login = login;

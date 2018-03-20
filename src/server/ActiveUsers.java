@@ -3,12 +3,23 @@ package src.server;
 import java.util.ArrayList;
 import java.util.List;
 
+//Класс Singleton
 public class ActiveUsers {
     List<String> activeUsers;
 
-    public ActiveUsers() {
+    //----------------------------------------------------------------------
+    private ActiveUsers() {
         activeUsers = new ArrayList<>();
     }
+
+    public static class SingletonHolder {
+        public static final ActiveUsers HOLDER_INSTANCE = new ActiveUsers();
+    }
+
+    public static ActiveUsers getInstance() {
+        return SingletonHolder.HOLDER_INSTANCE;
+    }
+    //-----------------------------------------------------------------------
 
     public boolean contains(String login) {
         return activeUsers.contains(login);
