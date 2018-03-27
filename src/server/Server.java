@@ -142,7 +142,7 @@ public class Server implements Runnable {
 
                     case ADD_TASK: {
                         Task task = (Task) reader.readObject();
-                        System.out.println("Server: Получили Task в виде строки.");
+                        System.out.println("Server: Получили Task");
 
                         taskList.addTask(task);
                         System.out.println("Server: Добавил новый таск");
@@ -153,14 +153,9 @@ public class Server implements Runnable {
 
                     case UPDATE_TASK: {
                         Task task = (Task) reader.readObject();
-                        System.out.println("Server: Получили старый Task.");
-                        taskList.deleteTask(task);
-                        System.out.println("Server: Удалили старый Task.");
-
-                        task = (Task) reader.readObject();
                         System.out.println("Server: Получили новый Task.");
-                        taskList.addTask(task);
-                        System.out.println("Server: Добавили новый Task.");
+                        taskList.updateTask(task);
+                        System.out.println("Server: заменили старый Task на новый.");
 
                         sendAnswer(State.OK, writer);
                         break;
@@ -231,6 +226,13 @@ public class Server implements Runnable {
             System.out.println("Server: Работа с клиентом " + login + " завершена");
         } catch (Exception e) {
             System.out.println("Server: Возникла ошибка: " + e.getMessage());
+            try(ObjectOutputStream writer = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()))){
+                sendAnswer(State.ERROR, writer);
+            }
+            catch (IOException ex){
+                System.out.println("Server: Не удалось отправить сообщение об ошибке на клиент");
+            }
+
 
         }
     }

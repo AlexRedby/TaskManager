@@ -1,6 +1,8 @@
 package src.server;
 
+import src.common.controller.IdManager;
 import src.common.model.Constants;
+import src.server.controller.Controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -27,10 +29,10 @@ public class StartServer {
 
             while (!server.isClosed()) {
 
-                if(consoleInput.ready()){
+                if (consoleInput.ready()) {
                     System.out.println("ServerStart: Получил сообщение из консоли. Посмотрим что в нём...");
 
-                    if(consoleInput.readLine().equalsIgnoreCase("quit")){
+                    if (consoleInput.readLine().equalsIgnoreCase("quit")) {
                         System.out.println("ServerStart: Получили команду на завершение работы...");
                         server.close();
                         break;
@@ -39,11 +41,13 @@ public class StartServer {
                 // Отправляем поток в пул
                 threadPool.submit(new Thread(new Server(server.accept())));
                 System.out.println("ServerStart: Создали новый сервер...");
+
             }
 
             System.out.println("ServerStart: Сервер завершил свою работу...");
 
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println(e.getMessage());
             System.out.println("ServerStart: FIN!");
         }

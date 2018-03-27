@@ -5,6 +5,7 @@ import src.common.model.Task;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 
 public class TaskList implements Serializable {
@@ -55,8 +56,24 @@ public class TaskList implements Serializable {
     }
 
     private void editTask(Task task, Calendar dateTime, boolean active) {
+        taskList.remove(task);
         task.setDateTime(dateTime);
         task.setActive(active);
+        taskList.add(task);
+    }
+
+    public void updateTask(Task task){
+        for (Task currTask: taskList){
+            if (currTask.getId() == task.getId()){
+               currTask.setName(task.getName());
+               currTask.setActive(task.isActive());
+               currTask.setDateTime(task.getDateTime());
+               currTask.setContacts(task.getContacts());
+               currTask.setInfo(task.getInfo());
+               return;
+            }
+        }
+        addTask(task);
     }
 
     public boolean isExist(Task task) {

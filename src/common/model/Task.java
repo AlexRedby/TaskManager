@@ -1,10 +1,13 @@
 package src.common.model;
 
+import src.common.controller.IdManager;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Formatter;
 
 public class Task implements Serializable, Comparable<Task> {
+    private int id;
     private String name;
     private String info;
     private Calendar dateTime;
@@ -12,6 +15,7 @@ public class Task implements Serializable, Comparable<Task> {
     private boolean active;
 
     public Task() {
+        id = 0;
         name = "";
         info = "";
         dateTime = Calendar.getInstance();
@@ -20,11 +24,20 @@ public class Task implements Serializable, Comparable<Task> {
     }
 
     public Task(String name, String info, Calendar dateTime, String contacts, Boolean active) {
+        this.id = IdManager.getId();
         this.name = name;
         this.info = info;
         this.dateTime = dateTime;
         this.contacts = contacts;
         this.active = active;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {

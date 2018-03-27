@@ -94,14 +94,14 @@ public class Client implements Closeable {
         System.out.println("Client: Таск был отмечен как завершённый");
     }
 
-    public void updateTask(Task oldTask, Task newTask) throws Exception {
+    public void updateTask(Task newTask) throws Exception {
         System.out.println("Client: Посылаем запрос на обновление таска");
-        State answerFromServer = sendRequest(Action.UPDATE_TASK, oldTask, newTask);
+        State answerFromServer = sendRequest(Action.UPDATE_TASK, newTask);
         if (answerFromServer != State.OK) {
             close();
             throw new Exception("Client: Не удалось обновить таск!!!");
         }
-        System.out.println("Client: Заменили таск " + oldTask + " на " + newTask);
+        System.out.println("Client: Заменили таск на " + newTask);
     }
 
     public void postponeTask(Task task, Calendar newDateTime) throws Exception {

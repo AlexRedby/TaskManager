@@ -121,12 +121,16 @@ public class AddTaskFrame extends JFrame {
             if (!taskList.isExist(newTask)) {
                 try {
                     if (oldTask != null) {
-                        taskList.deleteTask(oldTask);
-                        mainFrame.getClient().deleteTask(oldTask);
-                    }
+                        newTask.setId(oldTask.getId());
+                        mainFrame.getClient().updateTask(newTask);
+                        taskList.updateTask(newTask);
 
-                    taskList.addTask(newTask);
-                    mainFrame.getClient().addTask(newTask);
+                    }
+                    else {
+                        mainFrame.getClient().addTask(newTask);
+                        taskList.addTask(newTask);
+
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
