@@ -27,6 +27,20 @@
       },
       "contacts": "",
       "active": true
+    },
+    {
+      "name": "1",
+      "info": "1",
+      "dateTime": {
+        "year": 2018,
+        "month": 2,
+        "dayOfMonth": 27,
+        "hourOfDay": 11,
+        "minute": 38,
+        "second": 0
+      },
+      "contacts": "1",
+      "active": false
     }
   ]
 }

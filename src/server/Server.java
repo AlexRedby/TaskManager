@@ -66,7 +66,7 @@ public class Server implements Runnable {
                 switch (neededAction) {
                     case LOGIN: {
                         //Читаем Login
-                        String login = (String) reader.readObject();
+                        login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
                         //Читаем пароль
                         String password = (String) reader.readObject();
@@ -79,6 +79,7 @@ public class Server implements Runnable {
                             if (activeUsers.contains(login)) {
                                 sendAnswer(State.LOGIN_USED, writer);
                                 System.out.println("Server: Логин(" + login + ") уже используется кем-то.");
+                                socket.close();
                                 break;
                             }
 
@@ -96,17 +97,19 @@ public class Server implements Runnable {
                             } else {
                                 sendAnswer(State.PASSWORD_ERROR, writer);
                                 System.out.println("Server: Получили неверный пароль.");
+                                socket.close();
                             }
                             break;
                         } else {
                             sendAnswer(State.LOGIN_ERROR, writer);
                             System.out.println("Server: Получили неверный логин.");
+                            socket.close();
                             break;
                         }
                     }
                     case REGISTRATION: {
                         //Читаем Login
-                        String login = (String) reader.readObject();
+                        login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
                         //Читаем пароль
                         String password = (String) reader.readObject();
@@ -132,6 +135,7 @@ public class Server implements Runnable {
                             sendAnswer(State.LOGIN_ERROR, writer);
                             System.out.println("Server: Не удалось зарестрировать " + login
                                     + ", т.к. он уже есть в системе");
+                            socket.close();
                         }
                         break;
                     }
@@ -224,7 +228,7 @@ public class Server implements Runnable {
                 }
 
             }
-            System.out.println("Server: Работа с клиентом " + fileName + " завершена");
+            System.out.println("Server: Работа с клиентом " + login + " завершена");
         } catch (Exception e) {
             System.out.println("Server: Возникла ошибка: " + e.getMessage());
 

@@ -12,8 +12,8 @@ public class ActiveUsers {
         activeUsers = new ArrayList<>();
     }
 
-    public static class SingletonHolder {
-        public static final ActiveUsers HOLDER_INSTANCE = new ActiveUsers();
+    private static class SingletonHolder {
+        private static final ActiveUsers HOLDER_INSTANCE = new ActiveUsers();
     }
 
     public static ActiveUsers getInstance() {

@@ -5,6 +5,8 @@ import src.common.model.Constants;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class StartServer {
 
@@ -18,6 +20,11 @@ public class StartServer {
             System.out.println("ServerStart: Серверный сокет создан.");
             System.out.println("ServerStart: Входим в цикл ожидания запроса(выход - quit)...");
 
+            // Создаем пул для потоков сервера
+            // Пул при необходимости создает новые потоки,
+            // но будет использовать ранее созданные потоки, когда они будут доступны
+            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+
             while (!server.isClosed()) {
 
                 if(consoleInput.ready()){
@@ -29,8 +36,8 @@ public class StartServer {
                         break;
                     }
                 }
-
-                new Thread(new Server(server.accept())).start();
+                // Отправляем поток в пул
+                threadPool.submit(new Thread(new Server(server.accept())));
                 System.out.println("ServerStart: Создали новый сервер...");
             }
 
