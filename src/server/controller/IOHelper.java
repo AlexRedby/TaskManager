@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Controller {
+public class IOHelper {
 
     public static void writeTaskList(TaskList taskList, String fileName) {
         try (FileWriter fileWriter = new FileWriter(fileName)) {

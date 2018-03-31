@@ -1,7 +1,7 @@
 package src.server;
 
 import src.common.model.packet.*;
-import src.server.controller.Controller;
+import src.server.controller.IOHelper;
 import src.common.controller.TaskList;
 import src.common.model.Task;
 
@@ -73,7 +73,7 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили пароль.");
 
                         //Если в списке юзеров нет полученного логина или пароль не совпадает возвращается ERROR
-                        HashMap users = Controller.readUsers();
+                        HashMap users = IOHelper.readUsers();
                         if (users.containsKey(login)) {
                             //Проверка на использование данного логина в данный момент
                             if (activeUsers.contains(login)) {
@@ -88,7 +88,7 @@ public class Server implements Runnable {
                             if (users.get(login).equals(encryptPassStr)) {
                                 fileName = login + ".json";
                                 this.login = login;
-                                taskList = Controller.readTaskList(fileName);
+                                taskList = IOHelper.readTaskList(fileName);
                                 sendAnswer(State.OK, writer);
 
                                 activeUsers.add(login);
@@ -114,18 +114,18 @@ public class Server implements Runnable {
                         //Читаем пароль
                         String password = (String) reader.readObject();
                         System.out.println("Server: Получили пароль.");
-                        HashMap users = Controller.readUsers();
+                        HashMap users = IOHelper.readUsers();
 
                         if (!users.containsKey(login)) {
                             String encryptPassStr = encrypt(password, login);
 
                             //Заносим в базу логин и пароль
                             users.put(login, encryptPassStr);
-                            Controller.writeUsers(users);
+                            IOHelper.writeUsers(users);
                             fileName = login + ".json";
                             this.login = login;
                             taskList = new TaskList();
-                            Controller.writeTaskList(taskList, fileName);
+                            IOHelper.writeTaskList(taskList, fileName);
                             sendAnswer(State.OK, writer);
 
                             activeUsers.add(login);
@@ -214,7 +214,7 @@ public class Server implements Runnable {
                     }
 
                     case EXIT: {
-                        Controller.writeTaskList(taskList, fileName);
+                        IOHelper.writeTaskList(taskList, fileName);
                         activeUsers.remove(login);
                         System.out.println("Server: Таски записаны в файл");
                         socket.close();
@@ -226,14 +226,13 @@ public class Server implements Runnable {
             System.out.println("Server: Работа с клиентом " + login + " завершена");
         } catch (Exception e) {
             System.out.println("Server: Возникла ошибка: " + e.getMessage());
+            activeUsers.remove(login);
             try(ObjectOutputStream writer = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()))){
                 sendAnswer(State.ERROR, writer);
             }
             catch (IOException ex){
                 System.out.println("Server: Не удалось отправить сообщение об ошибке на клиент");
             }
-
-
         }
     }
 

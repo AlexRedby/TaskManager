@@ -1,12 +1,11 @@
 package src.server;
 
-import src.common.controller.IdManager;
 import src.common.model.Constants;
-import src.server.controller.Controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -27,6 +26,8 @@ public class StartServer {
             // но будет использовать ранее созданные потоки, когда они будут доступны
             ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
+            server.setSoTimeout(1000);
+
             while (!server.isClosed()) {
 
                 if (consoleInput.ready()) {
@@ -35,15 +36,19 @@ public class StartServer {
                     if (consoleInput.readLine().equalsIgnoreCase("quit")) {
                         System.out.println("ServerStart: Получили команду на завершение работы...");
                         server.close();
+                        threadPool.shutdown();
                         break;
                     }
                 }
-                // Отправляем поток в пул
-                threadPool.submit(new Thread(new Server(server.accept())));
-                System.out.println("ServerStart: Создали новый сервер...");
 
+                try {
+                    // Отправляем поток в пул
+                    threadPool.submit(new Thread(new Server(server.accept())));
+                    System.out.println("ServerStart: Создали новый сервер...");
+                }
+                catch (SocketTimeoutException ex){
+                }
             }
-
             System.out.println("ServerStart: Сервер завершил свою работу...");
 
         } catch (Exception e) {

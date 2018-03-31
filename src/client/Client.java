@@ -7,6 +7,7 @@ import src.common.model.packet.Action;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -22,6 +23,8 @@ public class Client implements Closeable {
         socket = new Socket("localhost", Constants.SERVER_PORT);
         serverWriter = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()));
         serverReader = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
+        //Ждём ответа от сервера 5 секунд
+        socket.setSoTimeout(5000);
         this.login = login;
         if (newUser) {
             register(login, password);
@@ -45,7 +48,13 @@ public class Client implements Closeable {
             serverWriter.flush();
         }
 
-        return (State) serverReader.readObject();
+        try {
+            return (State) serverReader.readObject();
+        }
+        catch (SocketTimeoutException ex){
+            close();
+            throw new SocketTimeoutException("Не получили ответ от сервера!");
+        }
     }
 
     public void login(String login, String password) throws Exception {
@@ -132,8 +141,12 @@ public class Client implements Closeable {
         if (answerFromServer == State.OK) {
             tasks = (ArrayList<Task>) serverReader.readObject();
             System.out.println("Client: Таски приняты");
-        } else {
+        } else if(answerFromServer == State.NO_TASKS){
             tasks = new ArrayList<>();
+        }
+        else {
+            close();
+            throw new Exception("Client: Ошибка на сервере!");
         }
 
         return tasks;

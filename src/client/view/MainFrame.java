@@ -1,5 +1,6 @@
 package src.client.view;
 
+import com.sun.org.apache.xml.internal.resolver.readers.ExtendedXMLCatalogReader;
 import src.client.Client;
 import src.client.controller.AlarmThread;
 import src.common.controller.TaskList;
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Timer;
 
 public class MainFrame extends JFrame {
@@ -37,9 +39,13 @@ public class MainFrame extends JFrame {
         this.client = client;
         try {
             this.taskList = new TaskList(client.getAllTasks());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(),
+                    "Ошибка", JOptionPane.ERROR_MESSAGE);
+            dispose();
+            return;
         }
+
         startAlarm();
 
         //Действия по закрытию приложения
@@ -123,8 +129,10 @@ public class MainFrame extends JFrame {
                 try {
                     client.deleteTask(selectedTask);
                     taskList.deleteTask(selectedTask);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage(),
+                            "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    dispose();
                 }
 
                 update();

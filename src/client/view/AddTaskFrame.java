@@ -80,8 +80,11 @@ public class AddTaskFrame extends JFrame {
         btSaveTask.addActionListener(event -> {
             try {
                 addTask(task);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(),
+                        "Ошибка", JOptionPane.ERROR_MESSAGE);
+                mainFrame.dispose();
+                dispose();
             }
         });
         try {
