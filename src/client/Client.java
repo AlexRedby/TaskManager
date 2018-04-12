@@ -58,6 +58,12 @@ public class Client implements Closeable {
     }
 
     public void login(String login, String password) throws Exception {
+        if(login.equals("")){
+            throw new Exception("Не введен логин!");
+        }
+        if (password.equals("")){
+            throw new Exception("Не введен пароль!");
+        }
 
         State answerFromServer = sendRequest(Action.LOGIN, login, password);
         switch (answerFromServer) {
