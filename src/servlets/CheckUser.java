@@ -2,6 +2,7 @@ package src.servlets;
 
 
 import src.client.Client;
+import src.common.controller.TaskList;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,26 +17,20 @@ public class CheckUser extends Dispatcher {
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ServletContext ctx = getServletContext();
-        if (request.getParameter("log_in")!=null) {
-            try {
-                Client client = new Client(request.getParameter("login"), request.getParameter("password"), false);
-                ctx.setAttribute("user", client);
-                this.forward("/success.jsp", request, response);
-            } catch (Exception e) {
-                ctx.setAttribute("error", e.getMessage());
-                this.forward("/err.jsp", request, response);
-            }
+        boolean newUser = true;
+        if (request.getParameter("log_in") != null) {
+            newUser = false;
         }
-        else if (request.getParameter("register")!=null){
-            try {
-                Client client = new Client(request.getParameter("login"), request.getParameter("password"), true);
-                ctx.setAttribute("user", client);
-                this.forward("/success.jsp", request, response);
-            } catch (Exception e) {
-                ctx.setAttribute("error", e.getMessage());
-                this.forward("/err.jsp", request, response);
-            }
+        ctx.setAttribute("newUser", newUser);
+        try {
+            Client client = new Client(request.getParameter("login"), request.getParameter("password"), newUser);
+            ctx.setAttribute("user", client);
+            ctx.setAttribute("taskList", new TaskList(client.getAllTasks()));
+            this.forward("/success.jsp", request, response);
+        } catch (Exception e) {
+            ctx.setAttribute("error", e.getMessage());
+            this.forward("/err.jsp", request, response);
         }
-
     }
+
 }

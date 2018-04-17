@@ -60,6 +60,12 @@ public class Task implements Serializable, Comparable<Task> {
         return dateTime;
     }
 
+    public String getFormattedDateTime(){
+        Formatter dateTimeString = new Formatter();
+        dateTimeString.format(Constants.DATE_TIME_FORMAT, dateTime, dateTime, dateTime, dateTime, dateTime);
+        return dateTimeString.toString();
+    }
+
     public void setDateTime(Calendar dateTime) {
         this.dateTime = dateTime;
     }

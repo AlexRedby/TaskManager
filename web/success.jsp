@@ -6,10 +6,12 @@
     <title>Успех</title>
 </head>
 <body>
-Вход выполнен
-<jsp:useBean id="user" type="src.client.Client" scope="application"/>
-<br>Пользователь: <%= user.getLogin()%><br>
-<%user.close();%>
-
+<form name="getTasks" action="GetTasks" method="post">
+    Вход выполнен
+    <jsp:useBean id="user" type="src.client.Client" scope="application"/>
+    <br>Пользователь: <%= user.getLogin()%><br>
+    <%--<%user.close();%>--%>
+    <button>Перейти к задачам</button>
+</form>
 </body>
 </html>

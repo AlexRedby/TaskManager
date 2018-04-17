@@ -1,6 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="src.client.Client" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -23,15 +22,6 @@
             </fieldset>
             <p><input type="submit" value="Войти" name="log_in" /></p>
             <p><input type="submit" value="Регистрация" name="register" /></p>
-
-            <c:if test="${!empty param.login}" var="val" scope="request">
-                <b>Не введен логин!!</b><br>
-                <c:if test="${!empty param.password}" var="val" scope="request">
-                    <b>Не введен пароль!!</b><br>
-                </c:if>
-            </c:if>
-
         </form>
-
     </body>
 </html>

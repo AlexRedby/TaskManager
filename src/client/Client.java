@@ -81,6 +81,12 @@ public class Client implements Closeable {
     }
 
     public void register(String login, String password) throws Exception {
+        if(login.equals("")){
+            throw new Exception("Не введен логин!");
+        }
+        if (password.equals("")){
+            throw new Exception("Не введен пароль!");
+        }
         State answerFromServer = sendRequest(Action.REGISTRATION, login, password);
         if (answerFromServer == State.LOGIN_ERROR) {
             throw new Exception("Логин уже занят. Придумайте новый.");

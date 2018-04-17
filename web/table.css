@@ -1,0 +1,16 @@
+table {
+    border: 1px double #fff;
+
+}
+TD, TH {
+    padding: 5px; /* Поля вокруг текста */
+    border: 1px solid #000; /* Рамка вокруг ячеек */
+}
+
+.hat{
+    font-weight: bold;
+}
+
+.odd{
+    background: rgb(95%, 95%, 95%);
+}

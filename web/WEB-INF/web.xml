@@ -23,9 +23,18 @@
         <servlet-class>src.servlets.CheckUser</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>GetTasks</servlet-name>
+        <servlet-class>src.servlets.GetTasks</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>CheckUser</servlet-name>
         <url-pattern>/CheckUser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetTasks</servlet-name>
+        <url-pattern>/GetTasks</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WSServlet</servlet-name>
