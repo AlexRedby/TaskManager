@@ -20,16 +20,21 @@ public class CheckUser extends Dispatcher {
         boolean newUser = true;
         if (request.getParameter("log_in") != null) {
             newUser = false;
+            ctx.setAttribute("newUser", newUser);
         }
-        ctx.setAttribute("newUser", newUser);
+        if (request.getParameter("register") != null){
+            newUser = true;
+            ctx.setAttribute("newUser", newUser);
+        }
+
         try {
             Client client = new Client(request.getParameter("login"), request.getParameter("password"), newUser);
             ctx.setAttribute("user", client);
             ctx.setAttribute("taskList", new TaskList(client.getAllTasks()));
-            this.forward("/success.jsp", request, response);
+            this.forward("/GetTasks", request, response);
         } catch (Exception e) {
             ctx.setAttribute("error", e.getMessage());
-            this.forward("/err.jsp", request, response);
+            this.forward("/index.jsp", request, response);
         }
     }
 
