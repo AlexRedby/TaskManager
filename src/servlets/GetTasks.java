@@ -35,7 +35,7 @@ public class GetTasks extends Dispatcher {
                         break;
                     }
                 }
-                this.forward("/TaskListPage.jsp&", request, response);
+                this.forward("/TaskListPage.jsp", request, response);
             }
         }catch (Exception e){
             e.printStackTrace();

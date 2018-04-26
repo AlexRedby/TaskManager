@@ -12,14 +12,17 @@
     <body>
     <c:if test="${newUser==false}" var="val" scope="request">
         <b>Вход не выполнен!!!!</b><br>
+        <%request.removeAttribute("newUser");%>
     </c:if>
     <c:if test="${newUser==true}" var="val" scope="request">
         <b>Регистрация не выполнена!!!!</b><br>
+        <%request.removeAttribute("newUser");%>
     </c:if>
 
     <p style="color: red;">${error}</p>
+    <%request.removeAttribute("error");%>
 
-        <form name="loginform" action="CheckUser" method="post">
+        <form name="loginform" action="CheckUser" method="post" class="center">
             <fieldset>
                 <legend>Login page</legend>
 
@@ -32,10 +35,6 @@
             <p><input type="submit" value="Войти" name="log_in" /></p>
             <p><input type="submit" value="Регистрация" name="register" /></p>
         </form>
-
-
-
-
 
     </body>
 </html>

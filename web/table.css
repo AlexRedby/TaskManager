@@ -7,10 +7,28 @@ TD, TH {
     border: 1px solid #000; /* Рамка вокруг ячеек */
 }
 
-.hat{
+tr:focus {
+    background: rgb(70%, 70%, 70%);
+}
+
+.title{
     font-weight: bold;
 }
 
-.odd{
-    background: rgb(95%, 95%, 95%);
+.notActive{
+    background: rgb(95%, 95%, 90%);
+}
+
+.center{
+    margin: 0 auto;
+    width:500px;
+}
+
+.exit{
+    margin: 0 0 0 auto;
+    width:100px;
+}
+
+.inline{
+    display: inline;
 }

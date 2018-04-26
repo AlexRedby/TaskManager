@@ -20,11 +20,11 @@ public class CheckUser extends Dispatcher {
         boolean newUser = true;
         if (request.getParameter("log_in") != null) {
             newUser = false;
-            ctx.setAttribute("newUser", newUser);
+            request.setAttribute("newUser", newUser);
         }
         if (request.getParameter("register") != null){
             newUser = true;
-            ctx.setAttribute("newUser", newUser);
+            request.setAttribute("newUser", newUser);
         }
 
         try {
@@ -33,7 +33,7 @@ public class CheckUser extends Dispatcher {
             ctx.setAttribute("taskList", new TaskList(client.getAllTasks()));
             this.forward("/GetTasks", request, response);
         } catch (Exception e) {
-            ctx.setAttribute("error", e.getMessage());
+            request.setAttribute("error", e.getMessage());
             this.forward("/index.jsp", request, response);
         }
     }
