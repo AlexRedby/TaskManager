@@ -17,14 +17,13 @@
                 <td>Контакты</td>
                 <td>Дата и время</td>
             </tr>
-            <jsp:useBean id="tasks" type="java.util.List<src.common.controller.TaskList>" scope="application"/>
-
             <c:forEach items="${tasks}" var="task">
-                <tr id = "tr"  onfocus = "focusMethod()" onblur="blurMethod()" tabindex=${task.getId()} >
 
-                <c:if test="${task.isActive()==false}" var="val" scope="request">
+                <tr id = "${task.getId()}"  onfocus = "focusMethod()" onblur="setTimeout(blurMethod, 100)" tabindex=${task.getId()} >
+
+                <c:if test="${!task.isActive()}" var="val" scope="request">
                     <script>
-                        tr.classList.add("notActive")
+                        document.getElementById(${task.getId()}).classList.add("notActive");
                     </script>
                 </c:if>
                 <td>${task.getId()}</td>
@@ -44,20 +43,33 @@
             <button value="na" name="active" >Показать не активные</button>
         </form>
         <br>
+
         <form name="addTask" action="AddTaskPage.jsp" target="_blank" class="inline">
             <button value="add" name="add">Добавить</button>
         </form>
-        <button disabled value="del" name="del">Удалить</button>
-        <button disabled value="edit" name="edit">Изменить</button><br>
 
+        <form name="delTask" action="GetTasks" class="inline">
+            <button disabled name="del" onclick="getFocusedTaskId()">Удалить</button>
+        </form>
+        <form name="editTask" action="GetTasks" class="inline">
+            <button disabled name="edit">Изменить</button><br>
+        </form>
         <script>
+            var activeElement;
             function focusMethod() {
                 document.getElementsByName("del")[0].disabled = false;
                 document.getElementsByName("edit")[0].disabled = false;
+                activeElement = document.activeElement.getAttribute("id");
             }
             function blurMethod() {
                 document.getElementsByName("del")[0].disabled = true;
                 document.getElementsByName("edit")[0].disabled = true;
+                activeElement = "";
+            }
+
+            function getFocusedTaskId() {
+                document.getElementsByName("edit")[0].value = activeElement;
+                document.getElementsByName("del")[0].value = activeElement;
             }
         </script>
         <br>
