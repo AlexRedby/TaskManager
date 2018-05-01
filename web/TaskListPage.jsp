@@ -61,10 +61,10 @@
             }
         </script>
         <br>
-        <jsp:useBean id="user" type="src.client.Client" scope="application"/>
-        <form action="index.jsp" class="exit">
-            <button value="exit" name="edit" onclick="${user.close()} " >Выйти</button>
+        <form action="CloseClient" class="exit">
+            <button value="exit" name="edit">Выйти</button>
         </form>
+
 
     </div>
 </body>

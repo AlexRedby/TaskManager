@@ -22,6 +22,10 @@
         <servlet-name>CheckUser</servlet-name>
         <servlet-class>src.servlets.CheckUser</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CloseClient</servlet-name>
+        <servlet-class>src.servlets.CloseClient</servlet-class>
+    </servlet>
 
     <servlet>
         <servlet-name>GetTasks</servlet-name>
@@ -37,7 +41,12 @@
         <url-pattern>/GetTasks</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>CloseClient</servlet-name>
+        <url-pattern>/CloseClient</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>WSServlet</servlet-name>
         <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
+
 </web-app>
