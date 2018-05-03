@@ -1,9 +1,6 @@
 package src.server.db;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -35,21 +32,21 @@ public class OracleUtils {
         return connection;
     }
 
-    public static Date getDate(Calendar c){
-        return new Date(c.getTimeInMillis());
-    }
-
-    public static Calendar getCalendar(Date d){
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(d.getTime());
-        return c;
-    }
-
     public static int getInt(boolean b){
         return b ? 1 : 0;
     }
 
     public static boolean getBoolean(int i){
         return i != 0;
+    }
+
+    public static Timestamp getTimestamp(Calendar c) {
+        return new Timestamp(c.getTimeInMillis());
+    }
+
+    public static Calendar getCalendar(Timestamp d){
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(d.getTime());
+        return c;
     }
 }

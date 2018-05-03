@@ -1,13 +1,11 @@
 package src.servlets;
 
-
 import src.client.Client;
 import src.common.controller.TaskList;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
-
 
 public class CheckUser extends Dispatcher {
     public String getServletInfo() {

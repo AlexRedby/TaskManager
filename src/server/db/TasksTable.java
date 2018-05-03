@@ -3,10 +3,7 @@ package src.server.db;
 import src.common.model.Task;
 import src.common.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -27,7 +24,7 @@ public class TasksTable {
         PreparedStatement pstm = connection.prepareStatement(sql);
         pstm.setString(1, task.getName());
         pstm.setString(2, task.getInfo());
-        pstm.setDate(3, OracleUtils.getDate(task.getDateTime()));
+        pstm.setTimestamp(3, OracleUtils.getTimestamp(task.getDateTime()));
         pstm.setInt(4, user.getId());
 
         ResultSet rs = pstm.executeQuery();
@@ -57,7 +54,7 @@ public class TasksTable {
             currentTask.setId(rs.getInt("task_id"));
             currentTask.setName(rs.getString("name"));
             currentTask.setInfo(rs.getString("info"));
-            currentTask.setDateTime(OracleUtils.getCalendar(rs.getDate("date_time")));
+            currentTask.setDateTime(OracleUtils.getCalendar(rs.getTimestamp("date_time")));
             currentTask.setContacts(rs.getString("contacts"));
             currentTask.setActive(OracleUtils.getBoolean(rs.getInt("active")));
 
@@ -74,7 +71,7 @@ public class TasksTable {
 
         pstm.setString(1, task.getName());
         pstm.setString(2, task.getInfo());
-        pstm.setDate(3, OracleUtils.getDate(task.getDateTime()));
+        pstm.setTimestamp(3, OracleUtils.getTimestamp(task.getDateTime()));
         pstm.setString(4, task.getContacts());
         pstm.setInt(5, OracleUtils.getInt(task.isActive()));
         pstm.setInt(6, user.getId());
@@ -105,7 +102,7 @@ public class TasksTable {
         //SET
         pstm.setString(1, task.getName());
         pstm.setString(2, task.getInfo());
-        pstm.setDate(3, OracleUtils.getDate(task.getDateTime()));
+        pstm.setTimestamp(3, OracleUtils.getTimestamp(task.getDateTime()));
         pstm.setString(4, task.getContacts());
         pstm.setInt(5, OracleUtils.getInt(task.isActive()));
 
