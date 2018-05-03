@@ -39,8 +39,8 @@ public class SaveTask extends Dispatcher {
         if (request.getParameter("active").equals("a")){
             active = true;
         }
-        // todo: Подумать над синхронизацией ID
-        Task task = new Task( 0, name, info, cal, contacts, active);
+
+        Task task = new Task( name, info, cal, contacts, active);
         Client client = (Client) ctx.getAttribute("user");
         try {
             String s =  request.getParameter("save");

@@ -214,8 +214,9 @@ public class Server implements Runnable {
 
                         taskList.addTask(task);
                         System.out.println("Server: Добавил новый таск");
-
                         sendAnswer(State.OK, writer);
+                        writer.writeObject(task.getId());
+                        writer.flush();
                         break;
                     }
 

@@ -24,21 +24,14 @@ public class Task implements Serializable, Comparable<Task> {
     }
 
     public Task(String name, String info, Calendar dateTime, String contacts, Boolean active) {
-        this.id = IdManager.getId();
+        this.id = 0; //IdManager.getId();
         this.name = name;
         this.info = info;
         this.dateTime = dateTime;
         this.contacts = contacts;
         this.active = active;
     }
-    public Task(int id, String name, String info, Calendar dateTime, String contacts, Boolean active) {
-        this.id = id;
-        this.name = name;
-        this.info = info;
-        this.dateTime = dateTime;
-        this.contacts = contacts;
-        this.active = active;
-    }
+
 
     public void setId(int id) {
         this.id = id;

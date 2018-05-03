@@ -101,6 +101,8 @@ public class Client implements Closeable {
             close();
             throw new Exception("Client: Таск не добавился!!!");
         }
+        int id = (int) serverReader.readObject();
+        task.setId(id);
         System.out.println("Client: Таск добавился");
     }
 
