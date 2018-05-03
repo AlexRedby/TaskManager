@@ -26,14 +26,15 @@
                         document.getElementById(${task.getId()}).classList.add("notActive");
                     </script>
                 </c:if>
+
                 <td>${task.getId()}</td>
                 <td>${task.getName()}</td>
                 <td>${task.getInfo()}</td>
                 <td>${task.getContacts()}</td>
                 <td>${task.getFormattedDateTime()}</td>
+
             </tr>
             </c:forEach>
-
         </table>
         <br>
 
@@ -44,13 +45,14 @@
         </form>
         <br>
 
-        <form name="addTask" action="EditTask" target="_blank" class="inline" method="post">
+        <form name="addTask" action="EditTask" class="inline" method="post">
             <button value="add" name="add">Добавить</button>
         </form>
 
         <form name="delTask" action="EditTask" class="inline">
             <button disabled name="del" onclick="getFocusedTaskId()">Удалить</button>
         </form>
+
         <form name="editTask" action="EditTask" class="inline">
             <button disabled name="edit" onclick="getFocusedTaskId()">Изменить</button><br>
         </form>
@@ -62,6 +64,7 @@
                 document.getElementsByName("edit")[0].disabled = false;
                 activeElement = document.activeElement.getAttribute("id");
             }
+            // TODO: Сделать, чтобы кнопки "Удалить" И "Изменить" были не активны, если не выделена ни одна задача
             // function blurMethod() {
             //     document.getElementsByName("del")[0].disabled = true;
             //     document.getElementsByName("edit")[0].disabled = true;

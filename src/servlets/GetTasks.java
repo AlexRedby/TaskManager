@@ -1,5 +1,6 @@
 package src.servlets;
 
+import src.client.Client;
 import src.common.controller.TaskList;
 
 import javax.servlet.ServletContext;
@@ -18,8 +19,10 @@ public class GetTasks extends Dispatcher {
             throws ServletException, IOException {
         ServletContext ctx = getServletContext();
         TaskList taskList = (TaskList) ctx.getAttribute("taskList");
+
         try {
-            String s = request.getParameter("active");
+//            Client client = (Client) ctx.getAttribute("user");
+//            TaskList taskList = new TaskList(client.getAllTasks());
             if (request.getParameter("active") == null){
                 ctx.setAttribute("tasks", taskList.getTaskList());
                 this.forward("/TaskListPage.jsp", request, response);
@@ -40,8 +43,5 @@ public class GetTasks extends Dispatcher {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-
-
     }
 }

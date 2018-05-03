@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="center">
-            <form name="addform" method="post" action="AddTaskPage.jsp">
+            <form name="addForm" action="SaveTask">
                 <fieldset class="fildsetAdd">
                     <legend>Add task page</legend>
 
@@ -44,22 +44,26 @@
 
 
                     <label for="contacts">Контакты:</label>
-                    <input type="text" id="contacts" value="${oldTask.getContacts()}" size="20" class="filds"/><br>
+                    <input type="text" id="contacts" name="contacts" value="${oldTask.getContacts()}" size="20" class="filds"/><br>
 
 
                     <label>Активность:</label>
 
-                        <input type="radio" id = "active" name="active" checked/><label for="active">активная</label>
-                        <input type="radio" id = "notActive" name="active"/><label for="notActive">не активная</label>
+                        <input type="radio" id = "active" name="active" value="a" checked/><label for="active">активная</label>
+                        <input type="radio" id = "notActive" name="active" value="na"/><label for="notActive">не активная</label>
                     <script>
                         document.getElementById("active").checked = ${oldTask.isActive()};
                         document.getElementById("notActive").checked = ${!oldTask.isActive()};
                     </script>
-                    <%request.removeAttribute("oldTask");%>
+
 
                 </fieldset>
 
                 <button name="save">Сохранить</button>
+                <script>
+                    document.getElementsByName("save")[0].value = ${oldTask.getId()};
+                </script>
+                <%request.removeAttribute("oldTask");%>
             </form>
         </div>
 </body>

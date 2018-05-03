@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class EditTask extends Dispatcher {
     public String getServletInfo() {
-        return "Add, edit oe delete task servlet";
+        return "Add, edit or delete task servlet";
     }
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -43,6 +43,7 @@ public class EditTask extends Dispatcher {
                     catch (Exception e){
                         e.printStackTrace();
                     }
+                    break;
                 }
             }
             response.sendRedirect("GetTasks");

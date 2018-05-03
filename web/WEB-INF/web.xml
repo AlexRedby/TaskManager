@@ -30,6 +30,10 @@
         <servlet-name>EditTask</servlet-name>
         <servlet-class>src.servlets.EditTask</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SaveTask</servlet-name>
+        <servlet-class>src.servlets.SaveTask</servlet-class>
+    </servlet>
 
     <servlet>
         <servlet-name>GetTasks</servlet-name>
@@ -51,6 +55,10 @@
     <servlet-mapping>
         <servlet-name>EditTask</servlet-name>
         <url-pattern>/EditTask</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SaveTask</servlet-name>
+        <url-pattern>/SaveTask</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WSServlet</servlet-name>
