@@ -19,7 +19,7 @@
             </tr>
             <c:forEach items="${tasks}" var="task">
 
-                <tr id = "${task.getId()}"  onfocus = "focusMethod()" onblur="setTimeout(blurMethod, 100)" tabindex=${task.getId()} >
+                <tr id = "${task.getId()}"  onfocus = "focusMethod()" tabindex=${task.getId()} >
 
                 <c:if test="${!task.isActive()}" var="val" scope="request">
                     <script>
@@ -44,16 +44,17 @@
         </form>
         <br>
 
-        <form name="addTask" action="AddTaskPage.jsp" target="_blank" class="inline">
+        <form name="addTask" action="EditTask" target="_blank" class="inline" method="post">
             <button value="add" name="add">Добавить</button>
         </form>
 
-        <form name="delTask" action="GetTasks" class="inline">
+        <form name="delTask" action="EditTask" class="inline">
             <button disabled name="del" onclick="getFocusedTaskId()">Удалить</button>
         </form>
-        <form name="editTask" action="GetTasks" class="inline">
-            <button disabled name="edit">Изменить</button><br>
+        <form name="editTask" action="EditTask" class="inline">
+            <button disabled name="edit" onclick="getFocusedTaskId()">Изменить</button><br>
         </form>
+
         <script>
             var activeElement;
             function focusMethod() {
@@ -61,11 +62,10 @@
                 document.getElementsByName("edit")[0].disabled = false;
                 activeElement = document.activeElement.getAttribute("id");
             }
-            function blurMethod() {
-                document.getElementsByName("del")[0].disabled = true;
-                document.getElementsByName("edit")[0].disabled = true;
-                activeElement = "";
-            }
+            // function blurMethod() {
+            //     document.getElementsByName("del")[0].disabled = true;
+            //     document.getElementsByName("edit")[0].disabled = true;
+            // }
 
             function getFocusedTaskId() {
                 document.getElementsByName("edit")[0].value = activeElement;

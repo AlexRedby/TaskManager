@@ -26,6 +26,10 @@
         <servlet-name>CloseClient</servlet-name>
         <servlet-class>src.servlets.CloseClient</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EditTask</servlet-name>
+        <servlet-class>src.servlets.EditTask</servlet-class>
+    </servlet>
 
     <servlet>
         <servlet-name>GetTasks</servlet-name>
@@ -43,6 +47,10 @@
     <servlet-mapping>
         <servlet-name>CloseClient</servlet-name>
         <url-pattern>/CloseClient</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditTask</servlet-name>
+        <url-pattern>/EditTask</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>WSServlet</servlet-name>
