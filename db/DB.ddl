@@ -58,3 +58,38 @@ BEGIN
     END IF;
 END;
 /
+
+CREATE OR REPLACE FUNCTION ADD_TASK(
+  name_      IN VARCHAR2,
+  info_      IN VARCHAR2,
+  date_time_ IN TIMESTAMP,
+  contacts_  IN VARCHAR2,
+  active_    IN NUMBER,
+  owner_     IN NUMBER) RETURN NUMBER
+IS
+  ID NUMBER;
+BEGIN
+  INSERT INTO TASKS(name, info, date_time, contacts, active, owner)
+    VALUES(name_, info_, date_time_, contacts_, active_, owner_);
+
+  SELECT task_id INTO ID
+    FROM TASKS
+    WHERE name = name_ AND owner = owner_ AND info = info_ AND date_time = date_time_;
+
+  RETURN ID;
+END;
+/
+
+CREATE OR REPLACE FUNCTION ADD_USER(
+  name_     IN VARCHAR2,
+  password_ IN VARCHAR2) RETURN NUMBER
+IS
+  ID NUMBER;
+BEGIN
+  INSERT INTO USERS(name, password) VALUES(name_, password_);
+
+  SELECT user_id INTO ID FROM USERS WHERE name = name_ AND password = password_;
+
+  RETURN ID;
+END;
+/

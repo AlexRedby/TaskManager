@@ -1,7 +1,5 @@
 package src.common.model;
 
-import src.common.controller.IdManager;
-
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Formatter;

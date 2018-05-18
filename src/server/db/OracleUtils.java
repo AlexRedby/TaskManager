@@ -1,35 +1,28 @@
 package src.server.db;
 
+import oracle.jdbc.pool.OracleDataSource;
+
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.Locale;
 
 public class OracleUtils {
-    public static Connection getOracleConnection()
-            throws SQLException, ClassNotFoundException {
+    private static DataSource dataSource;
 
-        //TO-DO: Изменить параметры соединения на свои.
-        String hostName = "localhost";
-        String sid = "XE";
-        String userName = "TMUser";
-        String password = "1234";
+    public static Connection getConnection() throws SQLException {
+        if(dataSource == null){
+            Locale.setDefault(Locale.ENGLISH);
 
-        return getOracleConnection(hostName, sid, userName, password);
-    }
+            OracleDataSource ds = new OracleDataSource();
+            ds.setURL("jdbc:oracle:thin:@//localhost:1521/XE");
+            ds.setUser("TMUser");
+            ds.setPassword("1234");
 
-    public static Connection getOracleConnection(String hostName, String sid,
-                                                 String userName, String password)
-            throws SQLException, ClassNotFoundException {
+            dataSource = ds;
+        }
 
-        //Без этого не работает
-        Locale.setDefault(Locale.ENGLISH);
-
-        // jdbc:oracle:thin:@localhost:1521:XE
-        String connectionURL = "jdbc:oracle:thin:@" + hostName + ":1521:" + sid;
-
-        Connection connection = DriverManager.getConnection(connectionURL,
-                userName, password);
-        return connection;
+        return dataSource.getConnection();
     }
 
     public static int getInt(boolean b){

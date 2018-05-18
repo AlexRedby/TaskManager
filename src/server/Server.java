@@ -28,10 +28,8 @@ public class Server implements Runnable {
 
     private Socket socket;
     private TaskList taskList;
-    //private String fileName;
-    private String login; //-> private User user;
+    private User user;
     private ActiveUsers activeUsers;
-    private TasksTable tasksDB;
 
     public Server(Socket socket) {
         this.socket = socket;
@@ -73,16 +71,13 @@ public class Server implements Runnable {
                         //TO-DO: Шифрование сделать в клиенте?
 
                         //Читаем Login
-                        login = (String) reader.readObject();
+                        String login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
                         //Читаем пароль
                         String password = (String) reader.readObject();
                         System.out.println("Server: Получили пароль.");
 
-                        UsersTable ut = new UsersTable();
-
-
-                        if(ut.haveLogin(login)){
+                        if(UsersTable.haveLogin(login)){
                             //Проверка на использование данного логина в данный момент
                             if (activeUsers.contains(login)) {
                                 sendAnswer(State.LOGIN_USED, writer);
@@ -91,15 +86,13 @@ public class Server implements Runnable {
                                 break;
                             }
 
+                            //Шифруем пароль
                             String encryptPassStr = encrypt(password, login);
-                            User user = new User(login, encryptPassStr);
+                            user = new User(login, encryptPassStr);
 
-                            User tempUser = ut.get(user);
-                            if (tempUser != null) {
-
-                                tasksDB = new TasksTable(tempUser);
-
-                                taskList = new TaskList(tasksDB.getAll());
+                            user = UsersTable.get(user);
+                            if (user != null) {
+                                taskList = new TaskList(TasksTable.getAll(user));
 
                                 sendAnswer(State.OK, writer);
 
@@ -116,58 +109,24 @@ public class Server implements Runnable {
                             System.out.println("Server: Получили неверный логин.");
                             socket.close();
                         }
-                        //Если в списке юзеров нет полученного логина или пароль не совпадает возвращается ERROR
-                        /*HashMap users = IOHelper.readUsers();
-                        if (users.containsKey(login)) {
-                            //Проверка на использование данного логина в данный момент
-                            if (activeUsers.contains(login)) {
-                                sendAnswer(State.LOGIN_USED, writer);
-                                System.out.println("Server: Логин(" + login + ") уже используется кем-то.");
-                                socket.close();
-                                break;
-                            }
-
-                            String encryptPassStr = encrypt(password, login);
-
-                            if (users.get(login).equals(encryptPassStr)) {
-                                fileName = login + ".json";
-                                this.login = login;
-                                taskList = IOHelper.readTaskList(fileName);
-                                sendAnswer(State.OK, writer);
-
-                                activeUsers.add(login);
-
-                                System.out.println("Server: Пользователь " + login + " вошел");
-                            } else {
-                                sendAnswer(State.PASSWORD_ERROR, writer);
-                                System.out.println("Server: Получили неверный пароль.");
-                                socket.close();
-                            }
-                        } else {
-                            sendAnswer(State.LOGIN_ERROR, writer);
-                            System.out.println("Server: Получили неверный логин.");
-                            socket.close();
-                        }*/
                         break;
                     }
                     case REGISTRATION: {
                         //Читаем Login
-                        login = (String) reader.readObject();
+                        String login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
                         //Читаем пароль
                         String password = (String) reader.readObject();
                         System.out.println("Server: Получили пароль.");
 
-                        UsersTable ut = new UsersTable();
-                        if(!ut.haveLogin(login)){
+                        if(!UsersTable.haveLogin(login)){
                             taskList = new TaskList();
 
                             String encryptPassStr = encrypt(password, login);
-                            User user = new User(login, encryptPassStr);
+                            user = new User(login, encryptPassStr);
 
-                            int id = ut.add(user);
+                            int id = UsersTable.add(user);
                             user.setId(id);
-                            tasksDB = new TasksTable(user);
 
                             sendAnswer(State.OK, writer);
 
@@ -180,29 +139,6 @@ public class Server implements Runnable {
                                     + ", т.к. он уже есть в системе");
                             socket.close();
                         }
-
-                        /*HashMap users = IOHelper.readUsers();
-                        if (!users.containsKey(login)) {
-                            String encryptPassStr = encrypt(password, login);
-
-                            //Заносим в базу логин и пароль
-                            users.put(login, encryptPassStr);
-                            IOHelper.writeUsers(users);
-                            fileName = login + ".json";
-                            this.login = login;
-                            taskList = new TaskList();
-                            IOHelper.writeTaskList(taskList, fileName);
-                            sendAnswer(State.OK, writer);
-
-                            activeUsers.add(login);
-
-                            System.out.println("Server: Зарегестрировали нового пользователя " + login);
-                        } else {
-                            sendAnswer(State.LOGIN_ERROR, writer);
-                            System.out.println("Server: Не удалось зарестрировать " + login
-                                    + ", т.к. он уже есть в системе");
-                            socket.close();
-                        }*/
                         break;
                     }
 
@@ -210,7 +146,7 @@ public class Server implements Runnable {
                         Task task = (Task) reader.readObject();
                         System.out.println("Server: Получили Task");
 
-                        task.setId(tasksDB.add(task));
+                        task.setId(TasksTable.add(task,user));
 
                         taskList.addTask(task);
                         System.out.println("Server: Добавил новый таск");
@@ -224,7 +160,7 @@ public class Server implements Runnable {
                         Task task = (Task) reader.readObject();
                         System.out.println("Server: Получили новый Task.");
 
-                        tasksDB.update(task);
+                        TasksTable.update(task);
 
                         taskList.updateTask(task);
                         System.out.println("Server: заменили старый Task на новый.");
@@ -236,7 +172,7 @@ public class Server implements Runnable {
                         Task task = (Task) reader.readObject();
                         System.out.println("Server: Получили Task.");
 
-                        tasksDB.delete(task);
+                        TasksTable.delete(task);
 
                         taskList.deleteTask(task);
                         System.out.println("Server: Удалил Task.");
@@ -268,7 +204,7 @@ public class Server implements Runnable {
                         Task task = (Task) reader.readObject();
                         System.out.println("Server: Получили Task.");
 
-                        tasksDB.complete(task);
+                        TasksTable.complete(task);
 
                         taskList.complete(task);
                         System.out.println("Server: Завершил Task.");
@@ -284,7 +220,7 @@ public class Server implements Runnable {
                         Calendar newDateTime = (Calendar) reader.readObject();
                         System.out.println("Server: Получили Новое время для таска.");
 
-                        tasksDB.postpone(task, newDateTime);
+                        TasksTable.postpone(task, newDateTime);
 
                         taskList.postpone(task, newDateTime);
                         System.out.println("Server: Отложили таск");
@@ -295,7 +231,7 @@ public class Server implements Runnable {
 
                     case EXIT: {
                         //IOHelper.writeTaskList(taskList, fileName);
-                        activeUsers.remove(login);
+                        activeUsers.remove(user.getName());
                         System.out.println("Server: Таски записаны в файл");
                         socket.close();
                         break;
@@ -303,10 +239,10 @@ public class Server implements Runnable {
                 }
 
             }
-            System.out.println("Server: Работа с клиентом " + login + " завершена");
+            System.out.println("Server: Работа с клиентом " + user.getName() + " завершена");
         } catch (Exception e) {
             System.out.println("Server: Возникла ошибка: " + e.getMessage());
-            activeUsers.remove(login);
+            activeUsers.remove(user.getName());
             try(ObjectOutputStream writer = new ObjectOutputStream(new DataOutputStream(socket.getOutputStream()))){
                 sendAnswer(State.ERROR, writer);
             }

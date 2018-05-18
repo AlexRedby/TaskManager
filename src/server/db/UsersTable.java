@@ -2,62 +2,77 @@ package src.server.db;
 
 import src.common.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class UsersTable {
-    private Connection connection;
 
-    public UsersTable() throws SQLException, ClassNotFoundException {
-        connection = OracleUtils.getOracleConnection();
-    }
+    private static final String SQL_CHECK_LOGIN = "Select * from USERS where name = ?";
+    private static final String SQL_CHECK_USER = "Select * from USERS where name = ? AND password = ? ";
+    private static final String CALL_ADD_USER_FUNCTION = "{ ? = call ADD_USER(?, ?) }";
 
-    public boolean haveLogin(String login) throws SQLException {
-        String sql = "Select * from USERS where name = ?";
+    public static boolean haveLogin(String login) throws SQLException {
+        try(Connection connection = OracleUtils.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(SQL_CHECK_LOGIN);
+            pstm.setString(1, login);
 
-        PreparedStatement pstm = connection.prepareStatement(sql);
-        pstm.setString(1, login);
+            ResultSet rs = pstm.executeQuery();
 
-        ResultSet rs = pstm.executeQuery();
+            boolean result = false;
+            if (rs.next())
+                result = true;
 
-        if (rs.next())
-            return true;
-        return false;
-    }
+            //Закрывем всё
+            rs.close();
+            pstm.close();
 
-    public User get(User user) throws SQLException{
-        String sql = "Select * from USERS where name = ? AND password = ? ";
-
-        PreparedStatement pstm = connection.prepareStatement(sql);
-        pstm.setString(1, user.getName());
-        pstm.setString(2, user.getPassword());
-
-        ResultSet rs = pstm.executeQuery();
-
-        if (rs.next()) {
-            //String password = rs.getString("Password");
-            int id = rs.getInt("user_id");
-            user.setId(id);
-            return user;
+            return result;
         }
-        return null;
+    }
+
+    public static User get(User user) throws SQLException{
+        try(Connection connection = OracleUtils.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(SQL_CHECK_USER);
+
+            pstm.setString(1, user.getName());
+            pstm.setString(2, user.getPassword());
+
+            ResultSet rs = pstm.executeQuery();
+
+            User resultUser = null;
+            if (rs.next()) {
+                int id = rs.getInt("user_id");
+                user.setId(id);
+                resultUser = user;
+            }
+
+            //Закрывем всё
+            rs.close();
+            pstm.close();
+
+            return resultUser;
+        }
     }
 
     //Возвращает id
-    public int add(User user) throws SQLException{
-        String sql = "Insert into Users(name, password) values (?,?)";
+    public static int add(User user) throws SQLException{
+        try(Connection connection = OracleUtils.getConnection()) {
+            CallableStatement cstm = connection.prepareCall(CALL_ADD_USER_FUNCTION);
 
-        PreparedStatement pstm = connection.prepareStatement(sql);
+            //Возвращаемое значение функцией
+            cstm.registerOutParameter(1, Types.INTEGER);
 
-        pstm.setString(1, user.getName());
-        pstm.setString(2, user.getPassword());
+            cstm.setString(2, user.getName());
+            cstm.setString(3, user.getPassword());
 
-        pstm.executeUpdate();
+            cstm.executeUpdate();
 
-        //Похоже на костыль...
-        user = get(user);
-        return user.getId();
+            //Получаем id добавленной задачи
+            int id = cstm.getInt(1);
+
+            //Закрываем всё
+            cstm.close();
+
+            return id;
+        }
     }
 }
