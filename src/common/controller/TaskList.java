@@ -79,4 +79,20 @@ public class TaskList implements Serializable {
     public boolean isExist(Task task) {
         return taskList.contains(task);
     }
+
+    public Task getNearestTask(){
+        List<Task> tasks = getTaskList(true);
+
+        if(!tasks.isEmpty()) {
+            Task nearestTask = tasks.get(0);
+
+            for (Task currentTask : tasks) {
+                if (currentTask.compareTo(nearestTask) < 0)
+                    nearestTask = currentTask;
+            }
+
+            return nearestTask;
+        }
+        return null;
+    }
 }

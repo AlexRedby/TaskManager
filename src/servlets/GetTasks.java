@@ -23,6 +23,9 @@ public class GetTasks extends Dispatcher {
         try {
 //            Client client = (Client) ctx.getAttribute("user");
 //            TaskList taskList = new TaskList(client.getAllTasks());
+
+            ctx.setAttribute("nearestTask", taskList.getNearestTask());
+
             if (request.getParameter("active") == null){
                 ctx.setAttribute("tasks", taskList.getTaskList());
                 this.forward("/TaskListPage.jsp", request, response);

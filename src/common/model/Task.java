@@ -22,7 +22,7 @@ public class Task implements Serializable, Comparable<Task> {
     }
 
     public Task(String name, String info, Calendar dateTime, String contacts, Boolean active) {
-        this.id = 0; //IdManager.getId();
+        this.id = 0;
         this.name = name;
         this.info = info;
         this.dateTime = dateTime;

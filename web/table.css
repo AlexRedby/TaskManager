@@ -32,3 +32,31 @@ tr:focus {
 .inline{
     display: inline;
 }
+
+.popup{
+    max-width: 320px;
+    max-height: 200px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    position: absolute;
+    background: white;
+    margin: auto;
+    display: block;
+}
+
+.dark-back{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 8;
+    background: rgba(0, 0, 0, 0.75);
+    display: none;
+}
+
+.active{
+    display: block;
+}

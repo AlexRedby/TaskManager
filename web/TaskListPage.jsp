@@ -1,10 +1,65 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page
+        contentType="text/html;charset=UTF-8"
+        language="java"
+%>
+
 <link rel="table" type="text/css" href="st.css"/>
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="table.css"/>
     <title>Ваши задачи</title>
+    <script src="http://code.jquery.com/jquery-2.0.2.min.js">
+    </script>
+    <script>
+        var activeElement;
+        function focusMethod() {
+            document.getElementsByName("del")[0].disabled = false;
+            document.getElementsByName("edit")[0].disabled = false;
+            activeElement = document.activeElement.getAttribute("id");
+        }
+        // TODO: Сделать, чтобы кнопки "Удалить" И "Изменить" были не активны, если не выделена ни одна задача
+        // function blurMethod() {
+        //     document.getElementsByName("del")[0].disabled = true;
+        //     document.getElementsByName("edit")[0].disabled = true;
+        // }
+
+        function getFocusedTaskId() {
+            document.getElementsByName("edit")[0].value = activeElement;
+            document.getElementsByName("del")[0].value = activeElement;
+        }
+
+        function findNearestTask(){
+            var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};
+
+            var ms = new Date();
+            var currentMilliseconds = ms.getTime();
+
+            var n = taskMilliseconds - currentMilliseconds;
+            if(n > 0){
+                setTimeout(popup,n);
+            }
+            else {
+                popup();
+            }
+        }
+
+        function popup(){
+            $(".dark-back").addClass('active');
+            $(".popup").addClass('active');
+        }
+
+        function begin(){
+            //По клику на затемнённый фон, он и popup снова скрываются
+            $(".dark-back").click(function () {
+                $(".popup").removeClass('active');
+                $(".dark-back").removeClass('active');
+            });
+
+            findNearestTask();
+        }
+
+    </script>
 </head>
 
 <body>
@@ -57,24 +112,6 @@
             <button disabled name="edit" onclick="getFocusedTaskId()">Изменить</button><br>
         </form>
 
-        <script>
-            var activeElement;
-            function focusMethod() {
-                document.getElementsByName("del")[0].disabled = false;
-                document.getElementsByName("edit")[0].disabled = false;
-                activeElement = document.activeElement.getAttribute("id");
-            }
-            // TODO: Сделать, чтобы кнопки "Удалить" И "Изменить" были не активны, если не выделена ни одна задача
-            // function blurMethod() {
-            //     document.getElementsByName("del")[0].disabled = true;
-            //     document.getElementsByName("edit")[0].disabled = true;
-            // }
-
-            function getFocusedTaskId() {
-                document.getElementsByName("edit")[0].value = activeElement;
-                document.getElementsByName("del")[0].value = activeElement;
-            }
-        </script>
         <br>
         <form action="CloseClient" class="exit">
             <button value="exit" name="edit">Выйти</button>
@@ -82,5 +119,17 @@
 
 
     </div>
+
+    <!-- PopUp Window -->
+    <div class = "popup">
+        Я формочка, которая откладывает или завершает задачу - ${nearestTask}
+    </div>
+
+    <!-- Затемнённый фон -->
+    <div class = "dark-back"></div>
+
+    <!-- Запускаем скрипт -->
+    <script> begin(); </script>
+
 </body>
 </html>
