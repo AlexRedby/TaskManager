@@ -29,7 +29,7 @@
             document.getElementsByName("del")[0].value = activeElement;
         }
 
-        function findNearestTask(){
+        function makeCountdown(){
             var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};
 
             var ms = new Date();
@@ -56,7 +56,7 @@
                 $(".dark-back").removeClass('active');
             });
 
-            findNearestTask();
+            makeCountdown();
         }
 
     </script>
@@ -65,16 +65,16 @@
 <body>
     <div class="center">
         <table>
-            <tr class= "title">
-                <td>ID</td>
-                <td>Название</td>
-                <td>Информация</td>
-                <td>Контакты</td>
-                <td>Дата и время</td>
+            <tr class= "title main">
+                <td class="main">ID</td>
+                <td class="main">Название</td>
+                <td class="main">Информация</td>
+                <td class="main">Контакты</td>
+                <td class="main">Дата и время</td>
             </tr>
             <c:forEach items="${tasks}" var="task">
 
-                <tr id = "${task.getId()}"  onfocus = "focusMethod()" tabindex=${task.getId()} >
+                <tr class="main" id = "${task.getId()}"  onfocus = "focusMethod()" tabindex=${task.getId()} >
 
                 <c:if test="${!task.isActive()}" var="val" scope="request">
                     <script>
@@ -82,11 +82,11 @@
                     </script>
                 </c:if>
 
-                <td>${task.getId()}</td>
-                <td>${task.getName()}</td>
-                <td>${task.getInfo()}</td>
-                <td>${task.getContacts()}</td>
-                <td>${task.getFormattedDateTime()}</td>
+                <td class="main">${task.getId()}</td>
+                <td class="main">${task.getName()}</td>
+                <td class="main">${task.getInfo()}</td>
+                <td class="main">${task.getContacts()}</td>
+                <td class="main">${task.getFormattedDateTime()}</td>
 
             </tr>
             </c:forEach>
@@ -122,7 +122,42 @@
 
     <!-- PopUp Window -->
     <div class = "popup">
-        Я формочка, которая откладывает или завершает задачу - ${nearestTask}
+        <div align="center"><h2>Задача наступила!</h2></div>
+        <b>${nearestTask.getName()}</b><br><br>
+        ${nearestTask.getInfo()}<br>
+        ${nearestTask.getFormattedDateTime()}<br><br>
+        <fieldset>
+            <legend>Отложить на:</legend>
+
+            <table>
+                <tr class="two"><td class="two">
+                    <input type="radio" id = "5Minute" name="postponeValue" value="5min" checked/>
+                    <label for="5Minute">5 Минут</label>
+                </td><td>
+                    <input type="radio" id = "10Minute" name="postponeValue" value="10min"/>
+                    <label for="10Minute">10 Минут</label>
+                </td></tr>
+                <tr><td>
+                    <input type="radio" id = "30Minute" name="postponeValue" value="30min"/>
+                    <label for="30Minute">30 Минут</label>
+                </td><td>
+                    <input type="radio" id = "1Hour" name="postponeValue" value="hour"/>
+                    <label for="1Hour">Час</label>
+                </td></tr>
+                <tr><td>
+                    <input type="radio" id = "1Day" name="postponeValue" value="day"/>
+                    <label for="1Day">День</label>
+                </td></tr>
+            </table>
+            <br>
+            <div align="center">
+                <button value="postpone" name="postpone">Отложить</button>
+            </div>
+        </fieldset>
+        <br>
+        <div align="center">
+            <button value="complete" name="complete">Завершить</button>
+        </div>
     </div>
 
     <!-- Затемнённый фон -->
