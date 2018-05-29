@@ -9,8 +9,7 @@
 <head>
     <link rel="stylesheet" type="text/css" href="table.css"/>
     <title>Ваши задачи</title>
-    <script src="http://code.jquery.com/jquery-2.0.2.min.js">
-    </script>
+    <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
     <script>
         var activeElement;
         function focusMethod() {
@@ -20,8 +19,8 @@
         }
         // TODO: Сделать, чтобы кнопки "Удалить" И "Изменить" были не активны, если не выделена ни одна задача
         // function blurMethod() {
-        //     document.getElementsByName("del")[0].disabled = true;
-        //     document.getElementsByName("edit")[0].disabled = true;
+        //      document.getElementsByName("del")[0].disabled = true;
+        //      document.getElementsByName("edit")[0].disabled = true;
         // }
 
         function getFocusedTaskId() {
@@ -30,10 +29,11 @@
         }
 
         function makeCountdown(){
-            var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};
+            <%--Календарь возвращает на час больше... Не понимаю с чем это связано--%>
+            <%--Продолжения костыля в EditTask в блоке postpone--%>
+            var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()} - 1*60*60*1000;
 
-            var ms = new Date();
-            var currentMilliseconds = ms.getTime();
+            var currentMilliseconds = new Date().getTime();
 
             var n = taskMilliseconds - currentMilliseconds;
             if(n > 0){
@@ -57,6 +57,24 @@
             });
 
             makeCountdown();
+        }
+
+        function showTime()
+        {
+            var dat = new Date();
+            var H = '' + dat.getHours();
+            H = H.length<2 ? '0' + H:H;
+            var M = '' + dat.getMinutes();
+            M = M.length<2 ? '0' + M:M;
+            var S = '' + dat.getSeconds();
+            S =S.length<2 ? '0' + S:S;
+            var miliS = '' + dat.getTime();
+            var javaMiliS = '' + <%=java.util.Calendar.getInstance().getTimeInMillis()%>;
+            var clock = H + ':' + M + ':' + S + '  ' + miliS + '  ' + javaMiliS;
+            document
+                .getElementById('time_div')
+                .innerHTML=clock;
+            setTimeout(showTime,1000);  // перерисовать 1 раз в сек.
         }
 
     </script>
@@ -122,6 +140,7 @@
 
     <!-- PopUp Window -->
     <div class = "popup">
+        <form action="EditTask">
         <div align="center"><h2>Задача наступила!</h2></div>
         <b>${nearestTask.getName()}</b><br><br>
         ${nearestTask.getInfo()}<br>
@@ -130,22 +149,22 @@
             <legend>Отложить на:</legend>
 
             <table>
-                <tr class="two"><td class="two">
-                    <input type="radio" id = "5Minute" name="postponeValue" value="5min" checked/>
+                <tr><td>
+                    <input type="radio" id="5Minute" name="postponeValue" value="5" checked/>
                     <label for="5Minute">5 Минут</label>
                 </td><td>
-                    <input type="radio" id = "10Minute" name="postponeValue" value="10min"/>
+                    <input type="radio" id="10Minute" name="postponeValue" value="10"/>
                     <label for="10Minute">10 Минут</label>
                 </td></tr>
                 <tr><td>
-                    <input type="radio" id = "30Minute" name="postponeValue" value="30min"/>
+                    <input type="radio" id="30Minute" name="postponeValue" value="30"/>
                     <label for="30Minute">30 Минут</label>
                 </td><td>
-                    <input type="radio" id = "1Hour" name="postponeValue" value="hour"/>
+                    <input type="radio" id="1Hour" name="postponeValue" value="60"/>
                     <label for="1Hour">Час</label>
                 </td></tr>
                 <tr><td>
-                    <input type="radio" id = "1Day" name="postponeValue" value="day"/>
+                    <input type="radio" id="1Day" name="postponeValue" value="1440"/>
                     <label for="1Day">День</label>
                 </td></tr>
             </table>
@@ -158,13 +177,19 @@
         <div align="center">
             <button value="complete" name="complete">Завершить</button>
         </div>
+        </form>
     </div>
 
     <!-- Затемнённый фон -->
     <div class = "dark-back"></div>
 
+    <div id="time_div" style="font-size:20px; font-weight:600; width:90px; margin-left:50%"></div>
+
     <!-- Запускаем скрипт -->
-    <script> begin(); </script>
+    <script>
+        showTime();
+        begin();
+    </script>
 
 </body>
 </html>
