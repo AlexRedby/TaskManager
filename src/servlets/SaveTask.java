@@ -21,6 +21,8 @@ public class SaveTask extends Dispatcher {
 
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Поддержка русских букв
+        request.setCharacterEncoding("UTF-8");
         ServletContext ctx = getServletContext();
         TaskList taskList = (TaskList) ctx.getAttribute("taskList");
         String name = request.getParameter("name");
@@ -30,33 +32,30 @@ public class SaveTask extends Dispatcher {
         formatter.setLenient(false);
         try {
             cal.setTime(formatter.parse(request.getParameter("date")));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         String contacts = request.getParameter("contacts");
         boolean active = false;
-        if (request.getParameter("active").equals("a")){
+        if (request.getParameter("active").equals("a")) {
             active = true;
         }
 
-        Task task = new Task( name, info, cal, contacts, active);
+        Task task = new Task(name, info, cal, contacts, active);
         Client client = (Client) ctx.getAttribute("user");
         try {
-            String s =  request.getParameter("save");
-            if ( request.getParameter("save").equals("")){
+            String s = request.getParameter("save");
+            if (request.getParameter("save").equals("")) {
                 client.addTask(task);
                 taskList.addTask(task);
-            }
-            else {
+            } else {
                 task.setId(Integer.parseInt(request.getParameter("save")));
                 client.updateTask(task);
                 taskList.updateTask(task);
 
             }
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //todo: Сделать обработку исключений
             e.printStackTrace();
         }

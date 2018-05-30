@@ -27,11 +27,18 @@ public class EditTask extends Dispatcher {
             TaskList taskList = (TaskList) ctx.getAttribute("taskList");
             for (Task task : taskList.getTaskList()) {
                 if (Integer.toString(task.getId()).equals(request.getParameter("edit"))) {
+
+                    //Опять разница в час
+                    Calendar c = task.getDateTime();
+                    c.add(Calendar.HOUR, -1);
+                    task.setDateTime(c);
+                    //------------------
+
                     request.setAttribute("oldTask", task);
+                    break;
                 }
             }
             this.forward("/AddTaskPage.jsp", request, response);
-
         }
         if (request.getParameter("del") != null) {
             TaskList taskList = (TaskList) ctx.getAttribute("taskList");

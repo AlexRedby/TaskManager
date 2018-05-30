@@ -22,15 +22,19 @@
 
 
                     <label for="dateTime">Дата и время:</label>
-                    <input class="inline, filds" name="date" type="datetime-local" id="dateTime" ><br>
+                    <input class="inline filds" name="date" type="datetime-local" id="dateTime" ><br>
                     <script>
+                        var currentDate = new Date();
                         var date = new Date(${oldTask.getDateTime().getTimeInMillis()});
+
+                        if(date < currentDate)
+                            date = currentDate;
 
                         var day = date.getDate();
                         var month = date.getMonth() + 1;
                         var year = date.getFullYear();
                         var hour = date.getHours();
-                        var min = date.getMinutes()+5;
+                        var min = date.getMinutes() + 5;
 
                         if (month < 10) month = "0" + month;
                         if (day < 10) day = "0" + day;
