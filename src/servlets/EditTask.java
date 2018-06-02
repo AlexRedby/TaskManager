@@ -22,16 +22,16 @@ public class EditTask extends Dispatcher {
         ServletContext ctx = getServletContext();
         if (request.getParameter("add") != null) {
             this.forward("/AddTaskPage.jsp", request, response);
-        }
+    }
         if (request.getParameter("edit") != null) {
             TaskList taskList = (TaskList) ctx.getAttribute("taskList");
             for (Task task : taskList.getTaskList()) {
                 if (Integer.toString(task.getId()).equals(request.getParameter("edit"))) {
 
                     //Опять разница в час
-                    Calendar c = task.getDateTime();
-                    c.add(Calendar.HOUR, -1);
-                    task.setDateTime(c);
+//                    Calendar c = task.getDateTime();
+//                    c.add(Calendar.HOUR, -1);
+//                    task.setDateTime(c);
                     //------------------
 
                     request.setAttribute("oldTask", task);
@@ -49,8 +49,9 @@ public class EditTask extends Dispatcher {
                         client.deleteTask(task);
                         taskList.deleteTask(task);
                     } catch (Exception e) {
-                        //TODO: Обработка
+                        request.setAttribute("edit_error", e.getMessage());
                         e.printStackTrace();
+                        this.forward("/TaskListPage.jsp", request, response);
                     }
                     break;
                 }
@@ -68,7 +69,7 @@ public class EditTask extends Dispatcher {
 
             //Костыль
             //Продолжение в скрипте TaskListPage
-            newDate.add(Calendar.HOUR, 1);
+//            newDate.add(Calendar.HOUR, 1);
 
             newDate.add(Calendar.MINUTE, minutes);
             newDate.set(Calendar.SECOND, 0);
@@ -77,8 +78,9 @@ public class EditTask extends Dispatcher {
                 client.postponeTask(nearestTask, newDate);
                 taskList.postpone(nearestTask, newDate);
             } catch (Exception e) {
-                //TODO: Обработка
+                request.setAttribute("edit_error", e.getMessage());
                 e.printStackTrace();
+                this.forward("/TaskListPage.jsp", request, response);
             }
             response.sendRedirect("GetTasks");
         }
@@ -91,8 +93,9 @@ public class EditTask extends Dispatcher {
                 client.completeTask(nearestTask);
                 taskList.complete(nearestTask);
             } catch (Exception e) {
-                //TODO: Обработка
+                request.setAttribute("edit_error", e.getMessage());
                 e.printStackTrace();
+                this.forward("/TaskListPage.jsp", request, response);
             }
             response.sendRedirect("GetTasks");
         }

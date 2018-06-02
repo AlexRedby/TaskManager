@@ -15,10 +15,18 @@ public class CloseClient extends Dispatcher {
 
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ServletContext ctx = getServletContext();
-        Client client = (Client) ctx.getAttribute("user");
-        client.close();
-        ctx.removeAttribute("user");
-        forward("/index.jsp", request, response);
+        try {
+            ServletContext ctx = getServletContext();
+            Client client = (Client) ctx.getAttribute("user");
+            client.close();
+            ctx.removeAttribute("user");
+            ctx.removeAttribute("taskList");
+            ctx.removeAttribute("tasks");
+            forward("/index.jsp", request, response);
+        }
+        catch (Exception e){
+            request.setAttribute("error", "Соединение с сервером прервано");
+            forward("/index.jsp", request, response);
+        }
     }
 }

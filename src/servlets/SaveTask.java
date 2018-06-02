@@ -33,7 +33,9 @@ public class SaveTask extends Dispatcher {
         try {
             cal.setTime(formatter.parse(request.getParameter("date")));
         } catch (Exception e) {
+            request.setAttribute("edit_error", e.getMessage());
             e.printStackTrace();
+            response.sendRedirect("GetTasks");
         }
         String contacts = request.getParameter("contacts");
         boolean active = false;
@@ -56,8 +58,9 @@ public class SaveTask extends Dispatcher {
             }
 
         } catch (Exception e) {
-            //todo: Сделать обработку исключений
+            request.setAttribute("edit_error", e.getMessage());
             e.printStackTrace();
+            this.forward("/TaskListPage.jsp", request, response);
         }
         response.sendRedirect("GetTasks");
     }

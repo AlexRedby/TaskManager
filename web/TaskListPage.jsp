@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="table.css"/>
     <title>Ваши задачи</title>
     <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+
     <script>
         var activeElement;
         function focusMethod() {
@@ -31,7 +32,7 @@
         function makeCountdown(){
             <%--Календарь возвращает на час больше... Не понимаю с чем это связано--%>
             <%--Продолжения костыля в EditTask в блоке postpone--%>
-            var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()} - 1*60*60*1000;
+            var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};// - 1*60*60*1000;
 
             var currentMilliseconds = new Date().getTime();
 
@@ -63,6 +64,9 @@
 
 <body>
     <div class="center">
+        <p style="color: red;">${edit_error}</p>
+        <%request.removeAttribute("edit_error");%>
+
         <table>
             <tr class= "title main">
                 <td class="main">ID</td>

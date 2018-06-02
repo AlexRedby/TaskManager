@@ -48,7 +48,9 @@ public class GetTasks extends Dispatcher {
                 this.forward("/TaskListPage.jsp", request, response);
             }
         }catch (Exception e){
+            request.setAttribute("edit_error", e.getMessage());
             e.printStackTrace();
+            this.forward("/TaskListPage.jsp", request, response);
         }
     }
 }
