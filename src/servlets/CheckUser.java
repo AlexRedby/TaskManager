@@ -20,7 +20,7 @@ public class CheckUser extends Dispatcher {
             newUser = false;
             request.setAttribute("newUser", newUser);
         }
-        if (request.getParameter("register") != null){
+        if (request.getParameter("register") != null) {
             newUser = true;
             request.setAttribute("newUser", newUser);
         }
@@ -29,8 +29,10 @@ public class CheckUser extends Dispatcher {
             Client client = new Client(request.getParameter("login"), request.getParameter("password"), newUser);
             ctx.setAttribute("user", client);
             ctx.setAttribute("taskList", new TaskList(client.getAllTasks()));
-//            this.forward("/GetTasks", request, response);
-            response.sendRedirect("GetTasks"); // перенаправляет запрос на другой сервлет (меняется ссылка в браузере)
+
+            response.sendRedirect("GetTasks"); // Вместо *this.forward()* перенаправляет запрос на другой сервлет
+                                                  // (меняется ссылка в браузере)
+
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
             this.forward("/index.jsp", request, response);

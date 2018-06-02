@@ -24,17 +24,12 @@ public class GetTasks extends Dispatcher {
         TaskList taskList = (TaskList) ctx.getAttribute("taskList");
 
         try {
-//            Client client = (Client) ctx.getAttribute("user");
-//            TaskList taskList = new TaskList(client.getAllTasks());
-
-
             ctx.setAttribute("nearestTask", taskList.getNearestTask());
 
-            if (request.getParameter("active") == null){
+            if (request.getParameter("active") == null) {
                 ctx.setAttribute("tasks", taskList.getTaskList());
                 this.forward("/TaskListPage.jsp", request, response);
-            }
-            else {
+            } else {
                 switch (request.getParameter("active")) {
                     case "a": {
                         ctx.setAttribute("tasks", taskList.getTaskList(true));
@@ -47,7 +42,7 @@ public class GetTasks extends Dispatcher {
                 }
                 this.forward("/TaskListPage.jsp", request, response);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             request.setAttribute("edit_error", e.getMessage());
             e.printStackTrace();
             this.forward("/TaskListPage.jsp", request, response);

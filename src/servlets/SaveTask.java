@@ -54,7 +54,6 @@ public class SaveTask extends Dispatcher {
                 task.setId(Integer.parseInt(request.getParameter("save")));
                 client.updateTask(task);
                 taskList.updateTask(task);
-
             }
 
         } catch (Exception e) {

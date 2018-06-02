@@ -23,8 +23,7 @@ public class CloseClient extends Dispatcher {
             ctx.removeAttribute("taskList");
             ctx.removeAttribute("tasks");
             forward("/index.jsp", request, response);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             request.setAttribute("error", "Соединение с сервером прервано");
             forward("/index.jsp", request, response);
         }

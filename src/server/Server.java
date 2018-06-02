@@ -231,7 +231,7 @@ public class Server implements Runnable {
                     case EXIT: {
                         //IOHelper.writeTaskList(taskList, fileName);
                         activeUsers.remove(user.getName());
-                        System.out.println("Server: Таски записаны в файл");
+//                        System.out.println("Server: Таски записаны в файл");
                         socket.close();
                         break;
                     }

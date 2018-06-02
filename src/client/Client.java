@@ -26,8 +26,7 @@ public class Client implements Closeable {
             serverReader = new ObjectInputStream(new DataInputStream(socket.getInputStream()));
             //Ждём ответа от сервера 5 секунд
             socket.setSoTimeout(5000);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Не удалось соедениться с сервером");
         }
 
@@ -56,18 +55,17 @@ public class Client implements Closeable {
 
         try {
             return (State) serverReader.readObject();
-        }
-        catch (SocketTimeoutException ex){
+        } catch (SocketTimeoutException ex) {
             close();
             throw new SocketTimeoutException("Не получили ответ от сервера!");
         }
     }
 
     public void login(String login, String password) throws Exception {
-        if(login.equals("")){
+        if (login.equals("")) {
             throw new Exception("Не введен логин!");
         }
-        if (password.equals("")){
+        if (password.equals("")) {
             throw new Exception("Не введен пароль!");
         }
         try {
@@ -84,18 +82,17 @@ public class Client implements Closeable {
                     System.out.println("Client: Успешно вошли, сервер ответил OK");
                     break;
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Невозможно войти! Соединение с сервером прервано");
         }
     }
 
     public void register(String login, String password) throws Exception {
 
-        if(login.equals("")){
+        if (login.equals("")) {
             throw new Exception("Не введен логин!");
         }
-        if (password.equals("")){
+        if (password.equals("")) {
             throw new Exception("Не введен пароль!");
         }
         try {
@@ -104,8 +101,7 @@ public class Client implements Closeable {
                 throw new Exception("Логин уже занят. Придумайте новый.");
             }
             System.out.println("Client: Пользователь зарегистрирован, сервер ответил OK");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Невозможно зарегестрироваться! Соединение с сервером прервано");
         }
 
@@ -113,7 +109,7 @@ public class Client implements Closeable {
 
     public void addTask(Task task) throws Exception {
         try {
-        System.out.println("Client: Посылаем запрос на добавление");
+            System.out.println("Client: Посылаем запрос на добавление");
 
             State answerFromServer = sendRequest(Action.ADD_TASK, task);
             if (answerFromServer != State.OK) {
@@ -123,8 +119,7 @@ public class Client implements Closeable {
             int id = (int) serverReader.readObject();
             task.setId(id);
             System.out.println("Client: Таск добавился");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Задача не добавлена! Соединение с сервером прервано");
         }
     }
@@ -139,8 +134,7 @@ public class Client implements Closeable {
                 throw new Exception("Client: Не удалось завершить задачу!!!");
             }
             System.out.println("Client: Таск был отмечен как завершённый");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Задача не завершена! Соединение с сервером прервано");
         }
     }
@@ -154,8 +148,7 @@ public class Client implements Closeable {
                 throw new Exception("Client: Не удалось обновить таск!!!");
             }
             System.out.println("Client: Заменили таск на " + newTask);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Задача не обновлена! Соединение с сервером прервано");
         }
     }
@@ -169,8 +162,7 @@ public class Client implements Closeable {
                 throw new Exception("Client: Таск не отложился!!!");
             }
             System.out.println("Client: Таск отложился");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Задача не отложена! Соединение с сервером прервано");
         }
 
@@ -185,8 +177,7 @@ public class Client implements Closeable {
                 throw new Exception("Client: Таск не удалился!!!");
             }
             System.out.println("Client: Удалили таск " + task.toString());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Задача не удалена! Соединение с сервером прервано");
         }
     }
@@ -199,17 +190,15 @@ public class Client implements Closeable {
             if (answerFromServer == State.OK) {
                 tasks = (ArrayList<Task>) serverReader.readObject();
                 System.out.println("Client: Таски приняты");
-            } else if(answerFromServer == State.NO_TASKS){
+            } else if (answerFromServer == State.NO_TASKS) {
                 tasks = new ArrayList<>();
-            }
-            else {
+            } else {
                 close();
                 throw new Exception("Client: Ошибка на сервере!");
             }
 
             return tasks;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new Exception("Невозможно получить задачи! Соединение с сервером прервано");
         }
 

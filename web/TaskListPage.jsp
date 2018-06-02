@@ -18,11 +18,6 @@
             document.getElementsByName("edit")[0].disabled = false;
             activeElement = document.activeElement.getAttribute("id");
         }
-        // TODO: Сделать, чтобы кнопки "Удалить" И "Изменить" были не активны, если не выделена ни одна задача
-        // function blurMethod() {
-        //      document.getElementsByName("del")[0].disabled = true;
-        //      document.getElementsByName("edit")[0].disabled = true;
-        // }
 
         function getFocusedTaskId() {
             document.getElementsByName("edit")[0].value = activeElement;

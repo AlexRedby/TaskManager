@@ -22,7 +22,7 @@ public class EditTask extends Dispatcher {
         ServletContext ctx = getServletContext();
         if (request.getParameter("add") != null) {
             this.forward("/AddTaskPage.jsp", request, response);
-    }
+        }
         if (request.getParameter("edit") != null) {
             TaskList taskList = (TaskList) ctx.getAttribute("taskList");
             for (Task task : taskList.getTaskList()) {
