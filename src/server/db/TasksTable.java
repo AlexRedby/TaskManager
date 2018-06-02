@@ -54,6 +54,9 @@ public class TasksTable {
             //Возвращаемое значение функцией
             cstm.registerOutParameter(1, Types.INTEGER);
 
+            if(task.getInfo() == null) task.setInfo("");
+            if(task.getContacts() == null) task.setContacts("");
+
             //Передаваемые параметры
             cstm.setString(2, task.getName());
             cstm.setString(3, task.getInfo());

@@ -14,11 +14,11 @@
                     <legend>Add task page</legend>
 
                     <label for="name"> Название:</label>
-                         <input type="text" id="name" name="name" value="${oldTask.getName()}" size="20" class="filds"/><br>
+                         <input type="text" id="name" name="name" value="${oldTask.getName()}" size="20" class="filds" required/><br>
 
 
                     <label for="info">Описание:</label>
-                        <textarea id="info" name="info" class="filds" style="resize: none">${oldTask.getInfo()}</textarea>
+                        <textarea id="info" name="info" class="filds" style="resize: none" required>${oldTask.getInfo()}</textarea>
 
 
                     <label for="dateTime">Дата и время:</label>
@@ -54,7 +54,7 @@
 
 
                     <label for="contacts">Контакты:</label>
-                    <input type="text" id="contacts" name="contacts" value="${oldTask.getContacts()}" size="20" class="filds"/><br>
+                    <input type="text" id="contacts" name="contacts" value="${oldTask.getContacts()}" size="20" class="filds" required/><br>
 
 
                     <label>Активность:</label>

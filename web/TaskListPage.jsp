@@ -25,9 +25,7 @@
         }
 
         function makeCountdown(){
-            <%--Календарь возвращает на час больше... Не понимаю с чем это связано--%>
-            <%--Продолжения костыля в EditTask в блоке postpone--%>
-            var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};// - 1*60*60*1000;
+            var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};
 
             var currentMilliseconds = new Date().getTime();
 
@@ -162,8 +160,6 @@
 
     <!-- Затемнённый фон -->
     <div class = "dark-back"></div>
-
-    <div id="time_div" style="font-size:20px; font-weight:600; width:90px; margin-left:50%"></div>
 
     <!-- Запускаем скрипт -->
     <script>

@@ -1,17 +1,12 @@
 package src.servlets;
 
-import src.client.Client;
 import src.common.controller.TaskList;
-import src.common.model.Task;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.TimeZone;
-
 
 public class GetTasks extends Dispatcher {
     public String getServletInfo() {

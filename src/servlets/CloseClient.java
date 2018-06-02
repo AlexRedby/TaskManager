@@ -1,12 +1,10 @@
 package src.servlets;
 
-
 import src.client.Client;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
-
 
 public class CloseClient extends Dispatcher {
     public String getServletInfo() {

@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Calendar;
 
-
 public class EditTask extends Dispatcher {
     public String getServletInfo() {
         return "Add, edit or delete task servlet";
@@ -27,13 +26,6 @@ public class EditTask extends Dispatcher {
             TaskList taskList = (TaskList) ctx.getAttribute("taskList");
             for (Task task : taskList.getTaskList()) {
                 if (Integer.toString(task.getId()).equals(request.getParameter("edit"))) {
-
-                    //Опять разница в час
-//                    Calendar c = task.getDateTime();
-//                    c.add(Calendar.HOUR, -1);
-//                    task.setDateTime(c);
-                    //------------------
-
                     request.setAttribute("oldTask", task);
                     break;
                 }
@@ -66,10 +58,6 @@ public class EditTask extends Dispatcher {
             Calendar newDate = Calendar.getInstance();
             //Время в минутах, на которое нужно отложить задачу
             int minutes = Integer.parseInt(request.getParameter("postponeValue"));
-
-            //Костыль
-            //Продолжение в скрипте TaskListPage
-//            newDate.add(Calendar.HOUR, 1);
 
             newDate.add(Calendar.MINUTE, minutes);
             newDate.set(Calendar.SECOND, 0);

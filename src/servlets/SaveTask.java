@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-
 public class SaveTask extends Dispatcher {
 
     public String getServletInfo() {
@@ -46,7 +45,6 @@ public class SaveTask extends Dispatcher {
         Task task = new Task(name, info, cal, contacts, active);
         Client client = (Client) ctx.getAttribute("user");
         try {
-            String s = request.getParameter("save");
             if (request.getParameter("save").equals("")) {
                 client.addTask(task);
                 taskList.addTask(task);

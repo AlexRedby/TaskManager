@@ -30,8 +30,7 @@ public class CheckUser extends Dispatcher {
             ctx.setAttribute("user", client);
             ctx.setAttribute("taskList", new TaskList(client.getAllTasks()));
 
-            response.sendRedirect("GetTasks"); // Вместо *this.forward()* перенаправляет запрос на другой сервлет
-                                                  // (меняется ссылка в браузере)
+            response.sendRedirect("GetTasks");
 
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
