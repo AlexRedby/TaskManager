@@ -11,15 +11,15 @@ public class OracleUtils {
     private static DataSource dataSource;
 
     public static Connection getConnection() throws SQLException {
-        if(dataSource == null){
+        if(OracleUtils.dataSource == null){
             Locale.setDefault(Locale.ENGLISH);
 
-            OracleDataSource ds = new OracleDataSource();
-            ds.setURL("jdbc:oracle:thin:@//localhost:1521/XE");
-            ds.setUser("TMUser");
-            ds.setPassword("1234");
+            OracleDataSource dataSource = new OracleDataSource();
+            dataSource.setURL(Constants.ORACLE_URL);
+            dataSource.setUser(Constants.ORACLE_USER);
+            dataSource.setPassword(Constants.ORACLE_PASSWORD);
 
-            dataSource = ds;
+            OracleUtils.dataSource = dataSource;
         }
 
         return dataSource.getConnection();
