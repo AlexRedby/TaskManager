@@ -6,7 +6,7 @@ public class Constants {
     public static final String TASK_COLUMN_NAME = "name";
     public static final String TASK_COLUMN_INFO = "info";
     public static final String TASK_COLUMN_DATE = "date_time";
-    public static final String TASK_COLUMN_CONTSACTS = "contacts";
+    public static final String TASK_COLUMN_CONSTACTS = "contacts";
     public static final String TASK_COLUMN_ACTIVE = "active";
     public static final String TASK_COLUMN_OWNER = "owner";
 

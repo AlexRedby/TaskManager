@@ -27,7 +27,7 @@ public class TasksTable {
                 currentTask.setName(resultSet.getString(Constants.TASK_COLUMN_NAME));
                 currentTask.setInfo(resultSet.getString(Constants.TASK_COLUMN_INFO));
                 currentTask.setDateTime(OracleUtils.getCalendar(resultSet.getTimestamp(Constants.TASK_COLUMN_DATE)));
-                currentTask.setContacts(resultSet.getString(Constants.TASK_COLUMN_CONTSACTS));
+                currentTask.setContacts(resultSet.getString(Constants.TASK_COLUMN_CONSTACTS));
                 currentTask.setActive(OracleUtils.getBoolean(resultSet.getInt(Constants.TASK_COLUMN_ACTIVE)));
 
                 tasks.add(currentTask);

@@ -26,14 +26,12 @@ import java.util.*;
 public class Server implements Runnable {
 
     private Socket socket;
-    private TaskList taskList;
     private User user;
     private ActiveUsers activeUsers;
 
     public Server(Socket socket) {
         this.socket = socket;
         this.activeUsers = ActiveUsers.getInstance();
-        taskList = new TaskList();
     }
 
     private void sendAnswer(State answer, ObjectOutputStream writer) throws IOException {
@@ -66,9 +64,6 @@ public class Server implements Runnable {
 
                 switch (neededAction) {
                     case LOGIN: {
-                        //TO-DO: Заменить передачу логина и пароля на передачу User
-                        //TO-DO: Шифрование сделать в клиенте?
-
                         //Читаем Login
                         String login = (String) reader.readObject();
                         System.out.println("Server: Получили login.");
@@ -91,8 +86,6 @@ public class Server implements Runnable {
 
                             user = UsersTable.get(user);
                             if (user != null) {
-                                taskList = new TaskList(TasksTable.getAll(user));
-
                                 sendAnswer(State.OK, writer);
 
                                 activeUsers.add(login);
@@ -119,8 +112,6 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили пароль.");
 
                         if(!UsersTable.haveLogin(login)){
-                            taskList = new TaskList();
-
                             String encryptPassStr = encrypt(password, login);
                             user = new User(login, encryptPassStr);
 
@@ -146,9 +137,8 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task");
 
                         task.setId(TasksTable.add(task,user));
-
-                        taskList.addTask(task);
                         System.out.println("Server: Добавил новый таск");
+
                         sendAnswer(State.OK, writer);
                         writer.writeObject(task.getId());
                         writer.flush();
@@ -160,8 +150,6 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили новый Task.");
 
                         TasksTable.update(task);
-
-                        taskList.updateTask(task);
                         System.out.println("Server: заменили старый Task на новый.");
 
                         sendAnswer(State.OK, writer);
@@ -172,15 +160,13 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task.");
 
                         TasksTable.delete(task);
-
-                        taskList.deleteTask(task);
                         System.out.println("Server: Удалил Task.");
 
                         sendAnswer(State.OK, writer);
                         break;
                     }
                     case GET_ALL_TASKS: {
-                        List<Task> tasks = taskList.getTaskList();
+                        List<Task> tasks = TasksTable.getAll(user);
 
                         State answer = State.NO_TASKS;
                         if (!tasks.isEmpty()) {
@@ -204,8 +190,6 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Task.");
 
                         TasksTable.complete(task);
-
-                        taskList.complete(task);
                         System.out.println("Server: Завершил Task.");
 
                         sendAnswer(State.OK, writer);
@@ -220,8 +204,6 @@ public class Server implements Runnable {
                         System.out.println("Server: Получили Новое время для таска.");
 
                         TasksTable.postpone(task, newDateTime);
-
-                        taskList.postpone(task, newDateTime);
                         System.out.println("Server: Отложили таск");
 
                         sendAnswer(State.OK, writer);
@@ -229,9 +211,7 @@ public class Server implements Runnable {
                     }
 
                     case EXIT: {
-                        //IOHelper.writeTaskList(taskList, fileName);
                         activeUsers.remove(user.getName());
-//                        System.out.println("Server: Таски записаны в файл");
                         socket.close();
                         break;
                     }

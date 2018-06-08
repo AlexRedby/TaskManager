@@ -63,13 +63,13 @@ public class TaskList implements Serializable {
     }
 
     public void updateTask(Task task){
-        for (Task currTask: taskList){
-            if (currTask.getId() == task.getId()){
-               currTask.setName(task.getName());
-               currTask.setActive(task.isActive());
-               currTask.setDateTime(task.getDateTime());
-               currTask.setContacts(task.getContacts());
-               currTask.setInfo(task.getInfo());
+        for (Task currentTask: taskList){
+            if (currentTask.getId() == task.getId()){
+               currentTask.setName(task.getName());
+               currentTask.setActive(task.isActive());
+               currentTask.setDateTime(task.getDateTime());
+               currentTask.setContacts(task.getContacts());
+               currentTask.setInfo(task.getInfo());
                return;
             }
         }
@@ -90,7 +90,6 @@ public class TaskList implements Serializable {
                 if (currentTask.compareTo(nearestTask) < 0)
                     nearestTask = currentTask;
             }
-
             return nearestTask;
         }
         return null;
