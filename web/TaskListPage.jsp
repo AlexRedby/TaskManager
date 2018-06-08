@@ -44,12 +44,6 @@
         }
 
         function begin(){
-            //По клику на затемнённый фон, он и popup снова скрываются
-            $(".dark-back").click(function () {
-                $(".popup").removeClass('active');
-                $(".dark-back").removeClass('active');
-            });
-
             makeCountdown();
         }
     </script>

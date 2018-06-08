@@ -10,31 +10,37 @@
     </head>
 
     <body>
-    <c:if test="${newUser==false}" var="val" scope="request">
-        <b>Вход не выполнен!!!!</b><br>
-        <%request.removeAttribute("newUser");%>
-    </c:if>
-    <c:if test="${newUser==true}" var="val" scope="request">
-        <b>Регистрация не выполнена!!!!</b><br>
-        <%request.removeAttribute("newUser");%>
-    </c:if>
 
-    <p style="color: red;">${error}</p>
-    <%request.removeAttribute("error");%>
-
-        <form name="loginform" action="CheckUser" method="post" class="center">
+    <div class align="center">
+        <form name="loginform" action="CheckUser" method="post">
             <fieldset>
                 <legend>Login page</legend>
 
-                <label>Логин:</label>
-                <input type="text" name="login" value="" size="20" /><br>
+                <div align="left">
+                    <label>Логин:</label><br>
+                    <input type="text" name="login" value="" size="20" /><br>
 
-                <label>Пароль:</label>
-                <input type="password" name="password" value="" size="20" /><br>
+                    <label>Пароль:</label><br>
+                    <input type="password" name="password" value="" size="20" /><br>
+                </div>
             </fieldset>
             <p><input type="submit" value="Войти" name="log_in" /></p>
             <p><input type="submit" value="Регистрация" name="register" /></p>
         </form>
+
+        <%-- Проверка на ошибку --%>
+        <c:if test="${newUser==false}" var="val" scope="request">
+            <b>Вход не выполнен!!!</b><br>
+            <%request.removeAttribute("newUser");%>
+        </c:if>
+        <c:if test="${newUser==true}" var="val" scope="request">
+            <b>Регистрация не выполнена!!!</b><br>
+            <%request.removeAttribute("newUser");%>
+        </c:if>
+
+        <p style="color: red;">${error}</p>
+        <%request.removeAttribute("error");%>
+    </div>
 
     </body>
 </html>

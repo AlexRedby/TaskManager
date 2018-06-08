@@ -4,11 +4,13 @@ label {
   vertical-align: top;
   margin: 6px;
 }
+
 fieldset {
   margin-bottom: 15px;
   padding: 10px;
-  width: 280px
+  width: fit-content;
 }
+
 p {
   margin-top: 0px;
 }
@@ -24,11 +26,11 @@ b{
 
 .center{
   margin: 0 auto;
-  width:500px;
+  width: 500px;
 }
 
 input[type="submit"]{
-  width: 210px;
+  width: 200px;
 }
 
 .filds{
