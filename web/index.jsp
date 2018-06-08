@@ -5,8 +5,21 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Login Page</title>
         <link rel="stylesheet" type="text/css" href="index.css"/>
+
+        <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
+        <script>
+            function makeRegistrationPage() {
+                $("#login").addClass('hidden');
+                $("#registration").removeClass('hidden');
+            }
+            
+            function makeLoginPage() {
+                $("#registration").addClass('hidden');
+                $("#login").removeClass('hidden');
+            }
+        </script>
     </head>
 
     <body>
@@ -24,8 +37,16 @@
                     <input type="password" name="password" value="" size="20" /><br>
                 </div>
             </fieldset>
-            <p><input type="submit" value="Войти" name="log_in" /></p>
-            <p><input type="submit" value="Регистрация" name="register" /></p>
+
+            <div id="login">
+                <p><input type="submit" value="Войти" name="log_in" /></p>
+                <p><input type="button" value="Регистрация" onclick="makeRegistrationPage()" /></p>
+            </div>
+
+            <div id="registration" class = "hidden">
+                <p><input type="submit" value="Создать аккаунт" name="register" /></p>
+                <p><input type="button" value="Авторизация" onclick="makeLoginPage()" /></p>
+            </div>
         </form>
 
         <%-- Проверка на ошибку --%>

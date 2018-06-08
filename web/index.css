@@ -33,10 +33,25 @@ input[type="submit"]{
   width: 200px;
 }
 
+input[type="button"]{
+    outline: none;
+    font-weight: bold;
+    border: white;
+    background: white;
+}
+
+input[type="button"]:active{
+    color: blue;
+}
+
 .filds{
     width: 250px;
 }
 
 .fildsetAdd{
     width: 400px;
+}
+
+.hidden{
+    display: none;
 }
