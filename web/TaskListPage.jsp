@@ -12,21 +12,8 @@
     <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
 
     <script>
-        var activeElement;
-        function focusMethod() {
-            document.getElementsByName("del")[0].disabled = false;
-            document.getElementsByName("edit")[0].disabled = false;
-            activeElement = document.activeElement.getAttribute("id");
-        }
-
-        function getFocusedTaskId() {
-            document.getElementsByName("edit")[0].value = activeElement;
-            document.getElementsByName("del")[0].value = activeElement;
-        }
-
         function makeCountdown(){
             var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};
-
             var currentMilliseconds = new Date().getTime();
 
             var n = taskMilliseconds - currentMilliseconds;
@@ -56,7 +43,7 @@
 
         <table>
             <tr class= "title main">
-                <td class="main">ID</td>
+                <td class="main"> </td>
                 <td class="main">Название</td>
                 <td class="main">Информация</td>
                 <td class="main">Контакты</td>
@@ -64,7 +51,7 @@
             </tr>
             <c:forEach items="${tasks}" var="task">
 
-                <tr class="main" id = "${task.getId()}"  onfocus = "focusMethod()" tabindex=${task.getId()} >
+                <tr class="main" id = "${task.getId()}">
 
                 <c:if test="${!task.isActive()}" var="val" scope="request">
                     <script>
@@ -72,7 +59,7 @@
                     </script>
                 </c:if>
 
-                <td class="main">${task.getId()}</td>
+                <td class="main"> <input type="checkbox" id=${task.getId()} name="checkbox"></td>
                 <td class="main">${task.getName()}</td>
                 <td class="main">${task.getInfo()}</td>
                 <td class="main">${task.getContacts()}</td>
@@ -95,11 +82,11 @@
         </form>
 
         <form name="delTask" action="EditTask" class="inline">
-            <button disabled name="del" onclick="getFocusedTaskId()">Удалить</button>
+            <button disabled name="del">Удалить</button>
         </form>
 
         <form name="editTask" action="EditTask" class="inline">
-            <button disabled name="edit" onclick="getFocusedTaskId()">Изменить</button><br>
+            <button disabled name="edit">Изменить</button><br>
         </form>
 
         <br>
@@ -107,8 +94,35 @@
             <button value="exit" name="edit">Выйти</button>
         </form>
 
-
     </div>
+
+    <script>
+        var allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+
+        for(var i = 0; i < allCheckboxes.length; i++) {
+            allCheckboxes[i].addEventListener('click', updateDisplay);
+        }
+
+        function updateDisplay() {
+            var activeElements = [];
+            var checkedCount;
+            $( 'input[name="checkbox"]:checked' ).each(function() {activeElements.push($(this).attr("id"))});
+            checkedCount = activeElements.length;
+            document.getElementsByName("del")[0].value = activeElements;
+            document.getElementsByName("edit")[0].value = activeElements;
+
+            if(checkedCount === 1) {
+                document.getElementsByName("del")[0].disabled = false;
+                document.getElementsByName("edit")[0].disabled = false;
+            } else if(checkedCount > 1) {
+                document.getElementsByName("del")[0].disabled = false;
+                document.getElementsByName("edit")[0].disabled = true;
+            } else {
+                document.getElementsByName("del")[0].disabled = true;
+                document.getElementsByName("edit")[0].disabled = true;
+            }
+        }
+    </script>
 
     <!-- PopUp Window -->
     <div class = "popup">

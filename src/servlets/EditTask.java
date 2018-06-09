@@ -33,19 +33,24 @@ public class EditTask extends Dispatcher {
             this.forward("/AddTaskPage.jsp", request, response);
         }
         if (request.getParameter("del") != null) {
+            String parameter = request.getParameter("del");
+            String[] ids = parameter.split(",");
+
             TaskList taskList = (TaskList) ctx.getAttribute("taskList");
             Client client = (Client) ctx.getAttribute("user");
-            for (Task task : taskList.getTaskList()) {
-                if (Integer.toString(task.getId()).equals(request.getParameter("del"))) {
-                    try {
-                        client.deleteTask(task);
-                        taskList.deleteTask(task);
-                    } catch (Exception e) {
-                        request.setAttribute("edit_error", e.getMessage());
-                        e.printStackTrace();
-                        this.forward("/TaskListPage.jsp", request, response);
+            for (String id: ids) {
+                for (Task task : taskList.getTaskList()) {
+                    if (Integer.toString(task.getId()).equals(id)){
+                        try {
+                            client.deleteTask(task);
+                            taskList.deleteTask(task);
+                        } catch (Exception e) {
+                            request.setAttribute("edit_error", e.getMessage());
+                            e.printStackTrace();
+                            this.forward("/TaskListPage.jsp", request, response);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
             response.sendRedirect("GetTasks");

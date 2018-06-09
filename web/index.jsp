@@ -28,7 +28,7 @@
 
     <body>
 
-    <div class align="center">
+    <div align="center">
         <form name="loginform" action="CheckUser" method="post">
             <fieldset>
                 <legend id="loginLegend">Login page</legend>
