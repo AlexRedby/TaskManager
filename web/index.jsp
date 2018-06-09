@@ -13,11 +13,15 @@
             function makeRegistrationPage() {
                 $("#login").addClass('hidden');
                 $("#registration").removeClass('hidden');
+                $("#registrationLegend").removeClass('hidden');
+                $("#loginLegend").addClass('hidden');
             }
             
             function makeLoginPage() {
                 $("#registration").addClass('hidden');
                 $("#login").removeClass('hidden');
+                $("#registrationLegend").addClass('hidden');
+                $("#loginLegend").removeClass('hidden');
             }
         </script>
     </head>
@@ -27,14 +31,15 @@
     <div class align="center">
         <form name="loginform" action="CheckUser" method="post">
             <fieldset>
-                <legend>Login page</legend>
+                <legend id="loginLegend">Login page</legend>
+                <legend id="registrationLegend" class="hidden">Registration page</legend>
 
                 <div align="left">
-                    <label>Логин:</label><br>
-                    <input type="text" name="login" value="" size="20" /><br>
+                    <label for="loginText">Логин:</label><br>
+                        <input type="text" id="loginText" name="login" value="" size="20" required/><br>
 
-                    <label>Пароль:</label><br>
-                    <input type="password" name="password" value="" size="20" /><br>
+                    <label for="passwordText">Пароль:</label><br>
+                    <input type="password" id="passwordText" name="password" value="" size="20" required/><br>
                 </div>
             </fieldset>
 
