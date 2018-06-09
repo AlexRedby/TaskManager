@@ -25,6 +25,10 @@
                     <input class="inline filds" name="date" type="datetime-local" id="dateTime" ><br>
                     <script>
 
+                        function checkDate() {
+                            document.getElementById("dateTime").min = getFormattedDate(new Date());
+                        }
+
                         function getFormattedDate(date) {
                             var day = date.getDate();
                             var month = date.getMonth() + 1;
@@ -49,7 +53,6 @@
                             date = currentDate;
 
                         document.getElementById("dateTime").value =  getFormattedDate(date);
-                        document.getElementById("dateTime").min = getFormattedDate(currentDate);
                     </script>
 
 
@@ -69,7 +72,7 @@
 
                 </fieldset>
 
-                <button name="save">Сохранить</button>
+                <button name="save" onclick="checkDate()">Сохранить</button>
                 <script>
                     document.getElementsByName("save")[0].value = ${oldTask.getId()};
                 </script>

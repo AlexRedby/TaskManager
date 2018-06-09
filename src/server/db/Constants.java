@@ -15,8 +15,8 @@ public class Constants {
     public static final String USER_COLUMN_PASSWORD = "password";
 
     public static final String ORACLE_URL = "jdbc:oracle:thin:@//localhost:1521/XE";
-    public static final String ORACLE_USER = "password";
-    public static final String ORACLE_PASSWORD = "password";
+    public static final String ORACLE_USER = "TMUser";
+    public static final String ORACLE_PASSWORD = "1234";
     //-----------------------------------------------------------------------
 
     //--------------------------TaskTable constants--------------------------
