@@ -13,7 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class SaveTask extends Dispatcher {
-
+    static public String getName(){
+        return "SaveTask";
+    }
     public String getServletInfo() {
         return "Save Task servlet";
     }
@@ -22,8 +24,8 @@ public class SaveTask extends Dispatcher {
             throws ServletException, IOException {
         //Поддержка русских букв
         request.setCharacterEncoding("UTF-8");
-        ServletContext ctx = getServletContext();
-        TaskList taskList = (TaskList) ctx.getAttribute("taskList");
+        ServletContext context = getServletContext();
+        TaskList taskList = (TaskList) context.getAttribute("taskList");
         String name = request.getParameter("name");
         String info = request.getParameter("info");
         Calendar cal = Calendar.getInstance();
@@ -34,16 +36,16 @@ public class SaveTask extends Dispatcher {
         } catch (Exception e) {
             request.setAttribute("edit_error", e.getMessage());
             e.printStackTrace();
-            response.sendRedirect("GetTasks");
+            response.sendRedirect(GetTasks.getName());
         }
         String contacts = request.getParameter("contacts");
         boolean active = false;
-        if (request.getParameter("active").equals("a")) {
+        if (request.getParameter("active").equals("active")) {
             active = true;
         }
 
         Task task = new Task(name, info, cal, contacts, active);
-        Client client = (Client) ctx.getAttribute("user");
+        Client client = (Client) context.getAttribute("user");
         try {
             if (request.getParameter("save").equals("")) {
                 client.addTask(task);
@@ -57,8 +59,8 @@ public class SaveTask extends Dispatcher {
         } catch (Exception e) {
             request.setAttribute("edit_error", e.getMessage());
             e.printStackTrace();
-            this.forward("/TaskListPage.jsp", request, response);
+            this.forward(Constants.ADD_TASK_PAGE_ADDRESS, request, response);
         }
-        response.sendRedirect("GetTasks");
+        response.sendRedirect(GetTasks.getName());
     }
 }

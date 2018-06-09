@@ -12,32 +12,35 @@ import java.io.IOException;
 import java.util.Calendar;
 
 public class EditTask extends Dispatcher {
+    static public String getName(){
+        return "EditTask";
+    }
     public String getServletInfo() {
         return "Add, edit or delete task servlet";
     }
 
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ServletContext ctx = getServletContext();
-        if (request.getParameter("add") != null) {
-            this.forward("/AddTaskPage.jsp", request, response);
+        ServletContext context = getServletContext();
+        if (request.getParameter("add_task") != null) {
+            this.forward(Constants.ADD_TASK_PAGE_ADDRESS, request, response);
         }
-        if (request.getParameter("edit") != null) {
-            TaskList taskList = (TaskList) ctx.getAttribute("taskList");
+        if (request.getParameter("edit_task") != null) {
+            TaskList taskList = (TaskList) context.getAttribute("taskList");
             for (Task task : taskList.getTaskList()) {
-                if (Integer.toString(task.getId()).equals(request.getParameter("edit"))) {
+                if (Integer.toString(task.getId()).equals(request.getParameter("edit_task"))) {
                     request.setAttribute("oldTask", task);
                     break;
                 }
             }
-            this.forward("/AddTaskPage.jsp", request, response);
+            this.forward(Constants.ADD_TASK_PAGE_ADDRESS, request, response);
         }
-        if (request.getParameter("del") != null) {
-            String parameter = request.getParameter("del");
+        if (request.getParameter("delete_task") != null) {
+            String parameter = request.getParameter("delete_task");
             String[] ids = parameter.split(",");
 
-            TaskList taskList = (TaskList) ctx.getAttribute("taskList");
-            Client client = (Client) ctx.getAttribute("user");
+            TaskList taskList = (TaskList) context.getAttribute("taskList");
+            Client client = (Client) context.getAttribute("user");
             for (String id: ids) {
                 for (Task task : taskList.getTaskList()) {
                     if (Integer.toString(task.getId()).equals(id)){
@@ -47,18 +50,18 @@ public class EditTask extends Dispatcher {
                         } catch (Exception e) {
                             request.setAttribute("edit_error", e.getMessage());
                             e.printStackTrace();
-                            this.forward("/TaskListPage.jsp", request, response);
+                            this.forward(Constants.TASK_LIST_PAGE_ADDRESS, request, response);
                         }
                         break;
                     }
                 }
             }
-            response.sendRedirect("GetTasks");
+            response.sendRedirect(GetTasks.getName());
         }
         if (request.getParameter("postpone") != null) {
-            Client client = (Client) ctx.getAttribute("user");
-            TaskList taskList = (TaskList) ctx.getAttribute("taskList");
-            Task nearestTask = (Task) ctx.getAttribute("nearestTask");
+            Client client = (Client) context.getAttribute("user");
+            TaskList taskList = (TaskList) context.getAttribute("taskList");
+            Task nearestTask = (Task) context.getAttribute("nearestTask");
 
             Calendar newDate = Calendar.getInstance();
             //Время в минутах, на которое нужно отложить задачу
@@ -73,14 +76,14 @@ public class EditTask extends Dispatcher {
             } catch (Exception e) {
                 request.setAttribute("edit_error", e.getMessage());
                 e.printStackTrace();
-                this.forward("/TaskListPage.jsp", request, response);
+                this.forward(Constants.TASK_LIST_PAGE_ADDRESS, request, response);
             }
-            response.sendRedirect("GetTasks");
+            response.sendRedirect(GetTasks.getName());
         }
         if (request.getParameter("complete") != null) {
-            Client client = (Client) ctx.getAttribute("user");
-            TaskList taskList = (TaskList) ctx.getAttribute("taskList");
-            Task nearestTask = (Task) ctx.getAttribute("nearestTask");
+            Client client = (Client) context.getAttribute("user");
+            TaskList taskList = (TaskList) context.getAttribute("taskList");
+            Task nearestTask = (Task) context.getAttribute("nearestTask");
 
             try {
                 client.completeTask(nearestTask);
@@ -88,9 +91,9 @@ public class EditTask extends Dispatcher {
             } catch (Exception e) {
                 request.setAttribute("edit_error", e.getMessage());
                 e.printStackTrace();
-                this.forward("/TaskListPage.jsp", request, response);
+                this.forward(Constants.TASK_LIST_PAGE_ADDRESS, request, response);
             }
-            response.sendRedirect("GetTasks");
+            response.sendRedirect(GetTasks.getName());
         }
 
     }

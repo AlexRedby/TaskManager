@@ -1,10 +1,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page
         contentType="text/html;charset=UTF-8"
-        language="java"
 %>
 
-<link rel="table" type="text/css" href="st.css"/>
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="table.css"/>
@@ -12,46 +10,43 @@
     <script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
 
     <script>
-        function makeCountdown(){
+        function makeCountdown() {
             var taskMilliseconds = ${nearestTask.getDateTime().getTimeInMillis()};
             var currentMilliseconds = new Date().getTime();
 
             var n = taskMilliseconds - currentMilliseconds;
-            if(n > 0){
-                setTimeout(popup,n);
+            if (n > 0) {
+                setTimeout(popup, n);
             }
             else {
                 popup();
             }
         }
 
-        function popup(){
+        function popup() {
             $(".dark-back").addClass('active');
             $(".popup").addClass('active');
         }
 
-        function begin(){
+        function begin() {
             makeCountdown();
         }
     </script>
 </head>
 
 <body>
-    <div class="center">
-        <p style="color: red;">${edit_error}</p>
-        <%request.removeAttribute("edit_error");%>
+<div class="center">
+    <table>
+        <tr class="title main">
+            <td class="main"></td>
+            <td class="main">Название</td>
+            <td class="main">Информация</td>
+            <td class="main">Контакты</td>
+            <td class="main">Дата и время</td>
+        </tr>
+        <c:forEach items="${tasks}" var="task">
 
-        <table>
-            <tr class= "title main">
-                <td class="main"> </td>
-                <td class="main">Название</td>
-                <td class="main">Информация</td>
-                <td class="main">Контакты</td>
-                <td class="main">Дата и время</td>
-            </tr>
-            <c:forEach items="${tasks}" var="task">
-
-                <tr class="main" id = "${task.getId()}">
+            <tr class="main" id="${task.getId()}">
 
                 <c:if test="${!task.isActive()}" var="val" scope="request">
                     <script>
@@ -59,74 +54,80 @@
                     </script>
                 </c:if>
 
-                <td class="main"> <input type="checkbox" id=${task.getId()} name="checkbox"></td>
+                <td class="main"><input type="checkbox" id="${task.getId()}" name="checkbox"></td>
                 <td class="main">${task.getName()}</td>
                 <td class="main">${task.getInfo()}</td>
                 <td class="main">${task.getContacts()}</td>
                 <td class="main">${task.getFormattedDateTime()}</td>
 
             </tr>
-            </c:forEach>
-        </table>
+        </c:forEach>
+    </table>
+    <br>
+
+    <form name="getTasks" action="GetTasks">
+        <button>Показать все</button>
+        <button value="active_tasks" name="active">Показать активные</button>
+        <button value="not_active_tasks" name="active">Показать не активные</button>
+    </form>
+    <br>
+
+    <form name="addTask" action="EditTask" class="inline" method="post">
+        <button name="add_task">Добавить</button>
+    </form>
+
+    <form name="deleteTask" action="EditTask" class="inline">
+        <button name="delete_task">Удалить</button>
+    </form>
+
+    <form name="editTask" action="EditTask" class="inline">
+        <button name="edit_task">Изменить</button>
         <br>
+    </form>
 
-        <form name="getTasks" action="GetTasks">
-            <button>Показать все</button>
-            <button value="a" name="active" >Показать активные</button>
-            <button value="na" name="active" >Показать не активные</button>
-        </form>
-        <br>
+    <br>
+    <form action="CloseClient" class="exit">
+        <button value="exit" name="exit">Выйти</button>
+    </form>
 
-        <form name="addTask" action="EditTask" class="inline" method="post">
-            <button value="add" name="add">Добавить</button>
-        </form>
+    <p style="color: red;">${edit_error}</p>
+    <%request.removeAttribute("edit_error");%>
+</div>
 
-        <form name="delTask" action="EditTask" class="inline">
-            <button disabled name="del">Удалить</button>
-        </form>
+<script>
 
-        <form name="editTask" action="EditTask" class="inline">
-            <button disabled name="edit">Изменить</button><br>
-        </form>
+    $('input[name="checkbox"]').each(function () {
+        this.addEventListener('click', updateDisplay);
+    });
+    updateDisplay();
 
-        <br>
-        <form action="CloseClient" class="exit">
-            <button value="exit" name="edit">Выйти</button>
-        </form>
+    function updateDisplay() {
+        var activeElements = [];
+        var checkedCount;
+        $('input[name="checkbox"]:checked').each(function () {
+            activeElements.push($(this).attr("id"))
+        });
+        checkedCount = activeElements.length;
+        document.getElementsByName("delete_task")[0].value = activeElements;
+        document.getElementsByName("edit_task")[0].value = activeElements;
 
-    </div>
-
-    <script>
-        var allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-
-        for(var i = 0; i < allCheckboxes.length; i++) {
-            allCheckboxes[i].addEventListener('click', updateDisplay);
+        if (checkedCount === 1) {
+            document.getElementsByName("delete_task")[0].disabled = false;
+            document.getElementsByName("edit_task")[0].disabled = false;
+        } else if (checkedCount > 1) {
+            document.getElementsByName("delete_task")[0].disabled = false;
+            document.getElementsByName("edit_task")[0].disabled = true;
+        } else {
+            document.getElementsByName("delete_task")[0].disabled = true;
+            document.getElementsByName("edit_task")[0].disabled = true;
         }
+    }
 
-        function updateDisplay() {
-            var activeElements = [];
-            var checkedCount;
-            $( 'input[name="checkbox"]:checked' ).each(function() {activeElements.push($(this).attr("id"))});
-            checkedCount = activeElements.length;
-            document.getElementsByName("del")[0].value = activeElements;
-            document.getElementsByName("edit")[0].value = activeElements;
+</script>
 
-            if(checkedCount === 1) {
-                document.getElementsByName("del")[0].disabled = false;
-                document.getElementsByName("edit")[0].disabled = false;
-            } else if(checkedCount > 1) {
-                document.getElementsByName("del")[0].disabled = false;
-                document.getElementsByName("edit")[0].disabled = true;
-            } else {
-                document.getElementsByName("del")[0].disabled = true;
-                document.getElementsByName("edit")[0].disabled = true;
-            }
-        }
-    </script>
-
-    <!-- PopUp Window -->
-    <div class = "popup">
-        <form action="EditTask">
+<!-- PopUp Window -->
+<div class="popup">
+    <form action="EditTask">
         <div align="center"><h2>Задача наступила!</h2></div>
         <b>${nearestTask.getName()}</b><br><br>
         ${nearestTask.getInfo()}<br>
@@ -135,24 +136,32 @@
             <legend>Отложить на:</legend>
 
             <table>
-                <tr><td>
-                    <input type="radio" id="5Minute" name="postponeValue" value="5" checked/>
-                    <label for="5Minute">5 Минут</label>
-                </td><td>
-                    <input type="radio" id="10Minute" name="postponeValue" value="10"/>
-                    <label for="10Minute">10 Минут</label>
-                </td></tr>
-                <tr><td>
-                    <input type="radio" id="30Minute" name="postponeValue" value="30"/>
-                    <label for="30Minute">30 Минут</label>
-                </td><td>
-                    <input type="radio" id="1Hour" name="postponeValue" value="60"/>
-                    <label for="1Hour">Час</label>
-                </td></tr>
-                <tr><td>
-                    <input type="radio" id="1Day" name="postponeValue" value="1440"/>
-                    <label for="1Day">День</label>
-                </td></tr>
+                <tr>
+                    <td>
+                        <input type="radio" id="5Minute" name="postponeValue" value="5" checked/>
+                        <label for="5Minute">5 Минут</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="10Minute" name="postponeValue" value="10"/>
+                        <label for="10Minute">10 Минут</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" id="30Minute" name="postponeValue" value="30"/>
+                        <label for="30Minute">30 Минут</label>
+                    </td>
+                    <td>
+                        <input type="radio" id="1Hour" name="postponeValue" value="60"/>
+                        <label for="1Hour">Час</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" id="1Day" name="postponeValue" value="1440"/>
+                        <label for="1Day">День</label>
+                    </td>
+                </tr>
             </table>
             <br>
             <div align="center">
@@ -163,16 +172,16 @@
         <div align="center">
             <button value="complete" name="complete">Завершить</button>
         </div>
-        </form>
-    </div>
+    </form>
+</div>
 
-    <!-- Затемнённый фон -->
-    <div class = "dark-back"></div>
+<!-- Затемнённый фон -->
+<div class="dark-back"></div>
 
-    <!-- Запускаем скрипт -->
-    <script>
-        begin();
-    </script>
+<!-- Запускаем скрипт -->
+<script>
+    begin();
+</script>
 
 </body>
 </html>

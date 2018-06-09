@@ -8,33 +8,36 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 public class CheckUser extends Dispatcher {
+    static public String getName(){
+        return "CheckUser";
+    }
     public String getServletInfo() {
         return "Registration servlet";
     }
 
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ServletContext ctx = getServletContext();
+        ServletContext context = getServletContext();
         boolean newUser = true;
         if (request.getParameter("log_in") != null) {
             newUser = false;
-            request.setAttribute("newUser", newUser);
+            request.setAttribute("newUser", false);
         }
         if (request.getParameter("register") != null) {
             newUser = true;
-            request.setAttribute("newUser", newUser);
+            request.setAttribute("newUser", true);
         }
 
         try {
             Client client = new Client(request.getParameter("login"), request.getParameter("password"), newUser);
-            ctx.setAttribute("user", client);
-            ctx.setAttribute("taskList", new TaskList(client.getAllTasks()));
+            context.setAttribute("user", client);
+            context.setAttribute("taskList", new TaskList(client.getAllTasks()));
 
-            response.sendRedirect("GetTasks");
+            response.sendRedirect(GetTasks.getName());
 
         } catch (Exception e) {
-            request.setAttribute("error", e.getMessage());
-            this.forward("/index.jsp", request, response);
+            request.setAttribute("checkUserError", e.getMessage());
+            this.forward(Constants.LOGIN_PAGE_ADDRESS, request, response);
         }
     }
 

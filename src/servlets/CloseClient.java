@@ -7,6 +7,9 @@ import javax.servlet.http.*;
 import java.io.IOException;
 
 public class CloseClient extends Dispatcher {
+    static public String getName(){
+        return "CloseClient";
+    }
     public String getServletInfo() {
         return "Close client servlet";
     }
@@ -14,16 +17,16 @@ public class CloseClient extends Dispatcher {
     public void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            ServletContext ctx = getServletContext();
-            Client client = (Client) ctx.getAttribute("user");
+            ServletContext context = getServletContext();
+            Client client = (Client) context.getAttribute("user");
             client.close();
-            ctx.removeAttribute("user");
-            ctx.removeAttribute("taskList");
-            ctx.removeAttribute("tasks");
-            forward("/index.jsp", request, response);
+            context.removeAttribute("user");
+            context.removeAttribute("taskList");
+            context.removeAttribute("tasks");
+            forward(Constants.LOGIN_PAGE_ADDRESS, request, response);
         } catch (Exception e) {
-            request.setAttribute("error", "Соединение с сервером прервано");
-            forward("/index.jsp", request, response);
+            request.setAttribute("ServerError", "Соединение с сервером прервано");
+            forward(Constants.LOGIN_PAGE_ADDRESS, request, response);
         }
     }
 }

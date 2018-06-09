@@ -12,11 +12,11 @@ fieldset {
 }
 
 p {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 legend {
-  padding: 0px 3px;
+  padding: 0 3px;
   font-weight: bold;
 }
 
@@ -44,7 +44,7 @@ input[type="button"]:active{
     color: blue;
 }
 
-.filds{
+.fields{
     width: 250px;
 }
 

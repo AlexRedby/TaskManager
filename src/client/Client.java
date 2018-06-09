@@ -61,15 +61,19 @@ public class Client implements Closeable {
         }
     }
 
-    public void login(String login, String password) throws Exception {
+    private void login(String login, String password) throws Exception {
         if (login.equals("")) {
             throw new Exception("Не введен логин!");
         }
         if (password.equals("")) {
             throw new Exception("Не введен пароль!");
         }
+        State answerFromServer;
         try {
-            State answerFromServer = sendRequest(Action.LOGIN, login, password);
+            answerFromServer = sendRequest(Action.LOGIN, login, password);
+        } catch (Exception e) {
+            throw new Exception("Невозможно войти! Соединение с сервером прервано");
+        }
             switch (answerFromServer) {
                 case LOGIN_ERROR:
                     throw new Exception("Неверный логин!");
@@ -82,29 +86,26 @@ public class Client implements Closeable {
                     System.out.println("Client: Успешно вошли, сервер ответил OK");
                     break;
             }
-        } catch (Exception e) {
-            throw new Exception("Невозможно войти! Соединение с сервером прервано");
-        }
+
     }
 
-    public void register(String login, String password) throws Exception {
-
+    private void register(String login, String password) throws Exception {
         if (login.equals("")) {
             throw new Exception("Не введен логин!");
         }
         if (password.equals("")) {
             throw new Exception("Не введен пароль!");
         }
+        State answerFromServer;
         try {
-            State answerFromServer = sendRequest(Action.REGISTRATION, login, password);
+            answerFromServer = sendRequest(Action.REGISTRATION, login, password);
+        } catch (Exception e) {
+            throw new Exception("Невозможно зарегестрироваться! Соединение с сервером прервано");
+        }
             if (answerFromServer == State.LOGIN_ERROR) {
                 throw new Exception("Логин уже занят. Придумайте новый.");
             }
             System.out.println("Client: Пользователь зарегистрирован, сервер ответил OK");
-        } catch (Exception e) {
-            throw new Exception("Невозможно зарегестрироваться! Соединение с сервером прервано");
-        }
-
     }
 
     public void addTask(Task task) throws Exception {
@@ -183,7 +184,7 @@ public class Client implements Closeable {
     }
 
     public List<Task> getAllTasks() throws Exception {
-        List<Task> tasks = null;
+        List<Task> tasks;
         try {
             System.out.println("Client: Посылаем запрос на все таски");
             State answerFromServer = sendRequest(Action.GET_ALL_TASKS);
